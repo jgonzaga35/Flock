@@ -8,7 +8,7 @@ def auth_login(email, password):
 
     for user in database['users']:
         if user['email'] == email:
-            if user['password'] = password:
+            if user['password'] == password:
                 u_id = user[KEY_USER_ID]
                 token = u_id
                 database['active_tokens'].append(token)
