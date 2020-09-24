@@ -25,15 +25,17 @@ def test_login_invalid_email():
 
 # Tests for auth_logout
 def test_logout_fail():
-    {u_id, token} = register_new_account
+    result = register_new_account
+    token = result['token']
     auth_logout(token)
-    {is_success} = auth_logout(token)
-    assert is_success = False
+    is_success = auth_logout(token)['is_success']
+    assert is_success == False
 
 def test_logout_success():
-    {u_id, token} = register_new_account
-    {is_success} = auth_logout(token)
-    assert is_success = True
+    result = register_new_account
+    token = result['token']
+    is_success = auth_logout(token)['is_success']
+    assert is_success == True
 
 # Successful cases for auth_register
 def test_register_success_case():
