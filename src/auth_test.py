@@ -2,18 +2,17 @@ from auth import auth_login, auth_logout, auth_register
 from error import InputError, AccessError
 import pytest
 
-@pytest.fixture
 def register_new_account():
     return auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
 
 # Successful cases for auth_login
 def test_login_success_case():
-    result = register_new_account
+    result = register_new_account()
     auth_login('validemail@gmail.com', '123abc!@#')
 
 # Fail cases for auth_login
 def test_login_fail_case():
-    result = register_new_account
+    result = register_new_account()
     with pytest.raises(InputError) as e:
         auth_login('didntusethis@gmail.com', '123abcd!@#')  # Never registered
         auth_login('validemail@gmail.com', '123')           # Wrong password
@@ -25,21 +24,21 @@ def test_login_invalid_email():
 
 # Tests for auth_logout
 def test_logout_fail():
-    result = register_new_account
+    result = register_new_account()
     token = result['token']
     auth_logout(token)
     is_success = auth_logout(token)['is_success']
     assert is_success == False
 
 def test_logout_success():
-    result = register_new_account
+    result = register_new_account()
     token = result['token']
     is_success = auth_logout(token)['is_success']
     assert is_success == True
 
 # Successful cases for auth_register
 def test_register_success_case():
-    result = register_new_account
+    result = register_new_account()
 
 # Fail cases for auth_register
 def auth_register_invalid_email():
@@ -48,7 +47,7 @@ def auth_register_invalid_email():
         auth_register('didntusethis.com', '123abcd!@#')
 
 def auth_register_used_email():
-    result = register_new_account
+    result = register_new_account()
     with pytest.raises(InputError) as e:
         auth_register('validemail@gmail.com', '123abcd!@#', 'Peter', 'Li')
 
