@@ -6,10 +6,20 @@ KEY_USER_ID = 'id'
 def auth_login(email, password):
     check_email(email)
 
-    return {
-        'u_id': 1,
-        'token': '12345',
-    }
+    for user in database['users']:
+        if user['email'] == email:
+            if user['password'] = password:
+                u_id = user[KEY_USER_ID]
+                token = u_id
+                database['active_tokens'].append(token)
+
+                return {
+                    'u_id': u_id,
+                    'token': token,
+                }
+            else:
+                raise InputError("Wrong password.")
+    raise InputError("User doesn't exist.")
 
 def auth_logout(token):
     if token in database['active_tokens']:
