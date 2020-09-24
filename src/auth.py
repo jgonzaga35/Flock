@@ -2,7 +2,6 @@ from error import InputError, AccessError
 import re
 
 database = {'users': [], 'channels': [], 'active_tokens': []}
-KEY_USER_ID = 'id'
 
 def auth_login(email, password):
     check_email(email)
@@ -10,7 +9,7 @@ def auth_login(email, password):
     for user in database['users']:
         if user['email'] == email:
             if user['password'] == password:
-                u_id = user[KEY_USER_ID]
+                u_id = user['id']
                 token = u_id
                 database['active_tokens'].append(token)
 
@@ -42,7 +41,7 @@ def auth_register(email, password, name_first, name_last):
         'password': password,
         'first_name': name_first,
         'last_name': name_last,
-        KEY_USER_ID: u_id
+        'id': u_id
     }
     token = u_id
 
@@ -58,8 +57,8 @@ def auth_register(email, password, name_first, name_last):
 def highest_id():
     highest = 0
     for user in database['users']:
-        if user[KEY_USER_ID] > highest:
-            highest = user[KEY_USER_ID]
+        if user['id'] > highest:
+            highest = user['id']
     return highest
 
 # Helper function for validating an Email
