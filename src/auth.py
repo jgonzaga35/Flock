@@ -56,14 +56,11 @@ def auth_register(email, password, name_first, name_last):
 
 # Helper function to find the user with the highest id
 def highest_id():
-    if len(database['users']) == 0:
-        return 0
-    else:
-        highest = 0
-        for user in database['users']:
-            if user[KEY_USER_ID] > highest:
-                highest = user[KEY_USER_ID]
-        return highest
+    highest = 0
+    for user in database['users']:
+        if user[KEY_USER_ID] > highest:
+            highest = user[KEY_USER_ID]
+    return highest
 
 # Helper function for validating an Email
 def check_email(email):
