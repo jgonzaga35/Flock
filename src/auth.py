@@ -1,3 +1,4 @@
+from error import InputError, AccessError
 import re
 
 database = {'users': [], 'channels': [], 'active_tokens': []}
