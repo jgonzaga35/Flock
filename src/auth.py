@@ -38,10 +38,10 @@ def auth_register(email, password, name_first, name_last):
 
     u_id = highest_id() + 1
     new_user = {
-        'email': email, 
-        'password': password, 
-        'first_name': name_first, 
-        'last_name': name_last, 
+        'email': email,
+        'password': password,
+        'first_name': name_first,
+        'last_name': name_last,
         KEY_USER_ID: u_id
     }
     token = u_id
@@ -65,21 +65,21 @@ def highest_id():
                 highest = user[KEY_USER_ID]
         return highest
 
-# Helper function for validating an Email 
-def check_email(email):  
+# Helper function for validating an Email
+def check_email(email):
     regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if(re.search(regex,email)):  
+    if(re.search(regex,email)):
         return
-    else:  
+    else:
         raise InputError("Email inputted is invalid.")
 
 # Helper function to check register info.
 def input_error_checking(email, password, name_first, name_last):
     check_email(email)
-    
+
     if len(password) < 6:
         raise InputError("Password is too short.")
-    
+
     if len(name_first) > 50 or len(name_first) < 1:
         raise InputError("First name is invalid.")
 
