@@ -1,28 +1,52 @@
 from channel import channel_details, channel_leave, channel_join, channel_addowner
 from channels import channels_create
 from auth import auth_login, auth_register
+from error import InputError, AccessError
 import pytest
 
-
+# register a new user and log in, return the dictionary including u_id and token
 @pytest.fixture
-def initialize_user():
-    #user's information includes a dictionary {token, u_id}
-    user_information = auth_register('baixu.must@gmail.com', 'qweAsd1232566', 'White', 'Black')
-    auth_login('baixu.must@gmail.com', 'qweAsd1232566')
-    return user_information
-    
-def test_channel_join_success(initialize_user):
-    u_id, token = initialize_user['u_id'], initialize_user['token']
+def new_user():
+    user_info = auth_register('balabala.love@gmail.com', 'qweAsd1232566', 'White', 'Black')
+    auth_login('balabala.love@gmail.com', 'qweAsd1232566')
+    return user_info
+
+# Join the channel successfully
+def test_channel_join_success(new_user):
+    u_id, token = new_user['u_id'], new_user['token']
     channel_id = channels_create(token, "Channel_A", True)
     channel_join(token, channel_id)
 
-def test_channel_join_invalid_channelId():
+# user try to join a channel with invalid channel id
+def test_channel_join_invalid_channelId(new_user):
+    u_id, token = new_user['u_id'], new_user['token']
+    invalid_channel_id = 1
+    with pytest.raises(InputError):
+        channel_join(token, invalid_channel_id)
+
+# join a user without authority to a channel    
+def test_channel_join_user_not_auth(new_user):
+    u_id, token = new_user['u_id'], new_user['token']
+    channel_id = channels_create(token, "Private_channel", False) # Create a new private channel
+    
+    '''Create another user which don't have authority to this channel'''
+    user_B = auth_register('labalab.love@gmail.com', 'qweASD5200a01', 'Yellow', 'Re')
+    auth_login('labalab.love@gmail.com','qweASD5200a01') 
+    with pytest.raises(AccessError):
+        channel_join(user_B['token'], channel_id)
+    
+# user successfully leave the channel
+def test_channel_leave_success(new_user):
+    u_id, token = new_user['u_id'], new_user['token']
+    private_channal_id = channels_create(token, 'private_channel') #Create private channel
+    public_channel_id = channels_create(token, 'public_channel')   #Create public channel
+    channel_leave(token, public_channel_id)
+    channel_leave(token, private_channal_id)
+    
+def test_channel_leave_inexist_user(new_user):
     pass
-def test_channel_join_user_not_auth():
-    pass
-def test_channel_leave_success():
-    pass
-def test_channel_leave_user_not_exist():
-    pass
+
+
+
 def test_channel_leave_channel_id_invalid():
     pass
