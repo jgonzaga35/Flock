@@ -1,4 +1,5 @@
 from auth import auth_login, auth_logout, auth_register
+from error import InputError, AccessError
 import pytest
 
 @pytest.fixture
@@ -18,10 +19,12 @@ def test_login_invalid_email():
 
 def test_login_success_case():
     result = login_account
-    auth.auth_login('validemail@gmail.com', '123abc!@#')
+    auth_login('validemail@gmail.com', '123abc!@#')
 
 def auth_logout_test():
     pass
 
-def auth_register():
-    pass
+def auth_register_invalid_email():
+    with pytest.raises(InputError) as e:
+        auth_register('didntusethis@gmail', '123abcd!@#')
+        auth_register('didntusethis.com', '123abcd!@#')
