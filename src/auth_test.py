@@ -21,10 +21,25 @@ def test_login_success_case():
     result = login_account
     auth_login('validemail@gmail.com', '123abc!@#')
 
-def auth_logout_test():
-    pass
+# Successful cases for aut_register
 
+
+# Fail cases for auth_register
 def auth_register_invalid_email():
     with pytest.raises(InputError) as e:
         auth_register('didntusethis@gmail', '123abcd!@#')
         auth_register('didntusethis.com', '123abcd!@#')
+
+def auth_register_used_email():
+    result = login_account
+    with pytest.raises(InputError) as e:
+        auth_register('validemail@gmail.com', '123abcd!@#', 'Peter', 'Li')
+
+def auth_register_weak_password():
+    with pytest.raises(InputError) as e:
+        auth_register('validemail@gmail.com', 'LOL', 'Peter', 'Li')
+
+def auth_register_wrong_name():
+    with pytest.raises(InputError) as e:
+        auth_register('validemail@gmail.com', '123abc!@#', 'dsjfsdkfjsdafklsdjfsdklfjlkasdkflasdjkfjklsdafjklasdkjlflksjadfjklsdakjfjkdsaflkjadslkflkasdklfklkljdsafl', 'Everest')
+        auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'asdfjskaldjflsadfjklasdfjaksldfjakjsdhfsjkadhfkjasdhfkjsdhfkjasdfhkjsadhfkjasdhf')
