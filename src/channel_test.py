@@ -21,7 +21,7 @@ def test_channel_details_invalid():
     id2 = channels_create(tokenb, "channel2", False)
 
     details1 = channel_details(tokena, id1)
-    assert details1 = {
+    assert details1 == {
         'name': 'channel1',
         'owner_members': [
             auth_get_user_details_from_id(ida),
@@ -31,7 +31,7 @@ def test_channel_details_invalid():
         ]
     }
     details2 = channel_details(tokena, id1)
-    assert details2 = {
+    assert details2 == {
         'name': 'channel2',
         'owner_members': [
             auth_get_user_details_from_id(idb),
