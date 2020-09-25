@@ -6,27 +6,27 @@ import pytest
 
 # register a new user and log in, return the dictionary including u_id and token
 @pytest.fixture
-def new_user():
+def fixture_new_user():
     user_info = auth_register('balabala.love@gmail.com', 'qweAsd1232566', 'White', 'Black')
     auth_login('balabala.love@gmail.com', 'qweAsd1232566')
     return user_info
 
 # Join the channel successfully
-def test_channel_join_success(new_user):
-    user = new_user
+def test_join_channel_successfully(fixture_new_user):
+    user = fixture_new_user
     channel_id = channels_create(user['token'], "Channel_A", True)
     channel_join(user['token'], channel_id)
 
 # user try to join a channel with invalid channel id
-def test_channel_join_invalid_channelId(new_user):
-    user = new_user
+def test_join_channel_with_invalid_id(fixture_new_user):
+    user = fixture_new_user
     invalid_channel_id = 1
     with pytest.raises(InputError):
         channel_join(user['token'], invalid_channel_id)
 
 # join a user without authority to a channel    
-def test_channel_join_user_not_auth(new_user):
-    user_A = new_user
+def test_join_channel_without_authority(fixture_new_user):
+    user_A = fixture_new_user
     channel_id = channels_create(user_A['token'], "Private_channel", False) # Create a new private channel
     
     '''Create another user which don't have authority to this channel'''
@@ -36,15 +36,15 @@ def test_channel_join_user_not_auth(new_user):
         channel_join(user_B['token'], channel_id)
     
 # user successfully leave the channel
-def test_channel_leave_success(new_user):
-    user = new_user
+def test_leave_channel_successfully(fixture_new_user):
+    user = fixture_new_user
     private_channal_id = channels_create(user['token'], 'private_channel') #Create private channel
     public_channel_id = channels_create(user['token'], 'public_channel')   #Create public channel
     channel_leave(user['token'], public_channel_id)
     channel_leave(user['token'], private_channal_id)
     
-def test_channel_leave_inexist_user(new_user):
-    user_A = new_user
+def test_inexist_uesr_leave_channel(fixture_new_user):
+    user_A = fixture_new_user
     public_channel_id = channels_create(user['token'], 'public_channel', True)      # User A create a public channel and
     private_channel_id = channels_create(user['token'], 'private_channel', False)   # a private channel
     
@@ -58,8 +58,8 @@ def test_channel_leave_inexist_user(new_user):
 
 
 
-def test_channel_leave_channel_id_invalid(new_user):
-    user = new_user
+def test_channel_leave_channel_id_invalid(fixture_new_user):
+    user = fixture_new_user
     channel_id = channels_create(user['token'], 'channel_A', true)
     with pytest.raises(InputError):
         channel_leave(user['token'], channel_id + 1)
