@@ -19,18 +19,18 @@ def channel_details(token, channel_id):
     if channel is None:
         raise InputError(f"{channel_id} is invalid channel")
 
-    if current_user_id not in channel['membersid']:
+    if current_user_id not in channel['all_members_id']:
         raise AccessError(f"user {current_user_id} not authorized to access this channel")
 
     # build the information dictionnary
 
     owners = []
-    for ownerid in channel['ownersid']:
+    for ownerid in channel['owner_members_id']:
         user_data = auth_get_user_data_from_id(ownerid)
         owners.append(formated_user_details_from_user_data(user_data))
 
     members = []
-    for memberid in channel['membersid']:
+    for memberid in channel['all_members_id']:
         user_data = auth_get_user_data_from_id(memberid)
         members.append(formated_user_details_from_user_data(user_data))
 
