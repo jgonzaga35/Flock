@@ -22,8 +22,6 @@ def test_messages_invalid_start_index():
     new_channel_ID = channels_create(0, 'new_channel', 'is_public')
     assert channel_messsages(0, new_channel_ID['channel_id'], 0) == -1
     
-
-
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
     # Register a owner and two users and logs them in
@@ -47,5 +45,5 @@ def register_and_login_user(email, password, name_first, name_last):
     return user_credentials
 
 # Helper function to send 10 messages to a given channel
-#def add_ten_messages_to_channel(channel_id):
-    #database['channels'] = 
+# def populate_channel_ten_messages(channel_id):
+    # database['channels']
