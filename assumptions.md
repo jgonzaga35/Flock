@@ -1,8 +1,10 @@
 **auth_test**
 
+
 * auth_register
 	* It's assumed that the length of first/ last name is 1-50 inclusively
 	* Each user has a unique user-id
+	* User handle can only consist of alphanumeric characters
 
 * channel_join
     * When a user is invited to channel, they can see any previous messages on the channel before they were invited.
