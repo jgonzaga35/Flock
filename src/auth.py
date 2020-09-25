@@ -1,7 +1,6 @@
+from database import database
 from error import InputError, AccessError
 import re
-
-database = {'users': [], 'channels': [], 'active_tokens': []}
 
 def auth_login(email, password):
     check_email(email)
