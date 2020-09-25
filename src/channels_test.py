@@ -11,6 +11,14 @@ def test_create_simple():
     channel_id = channel['channel_id']
     assert channel_id == 0
 
+def test_channel_name():
+    clear_database()
+    user = register_and_login_user()
+    channel = channels_create(user['token'], 'channel_name', is_public = True)
+    channel_id = channel['channel_id']
+    channel_name = database['channels'][channel_id]['name']
+    assert channel_name == 'channel_name'
+
 def test_create_public():
     clear_database()
     user = register_and_login_user()
@@ -32,8 +40,6 @@ def test_long_name_error():
     user = register_and_login_user()
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', is_public = True)
-
-
 
 # Helper function that registers a user and logs them in
 # Returns {u_id, token}
