@@ -24,8 +24,8 @@ def test_channel_details_basic():
         'name': 'channel1',
         'id': id1,
         'is_public': True,
-        'ownersid': [usera['u_id']],
-        'membersid': [usera['u_id']]
+        'owner_members_id': [usera['u_id']],
+        'all_members_id': [usera['u_id']]
     })
    
     details1 = channel_details(usera['token'], id1)
@@ -53,8 +53,8 @@ def test_channel_details_private():
         'name': 'channel2',
         'id': 1,
         'is_public': False,
-        'ownersid': [userb['u_id']],
-        'membersid': [userb['u_id']]
+        'owner_members_id': [userb['u_id']],
+        'all_members_id': [userb['u_id']]
     })
 
     assert channel_details(userb['token'], 1) == {

@@ -48,11 +48,11 @@ def test_member_becomes_owner_and_member():
     channel = channels_create(user['token'], 'channel', is_public=True)
     details = channel_details(user['token'], channel['channel_id'])
 
-    assert len(details['owners_members']) == 1
-    assert details['owner_members'][0]['u_id'] == user['id']
+    assert len(details['owner_members']) == 1
+    assert details['owner_members'][0]['u_id'] == user['u_id']
 
     assert len(details['all_members']) == 1
-    assert details['all_members'][0]['u_id'] == user['id']
+    assert details['all_members'][0]['u_id'] == user['u_id']
 
 # Helper function that registers a user and logs them in
 # Returns {u_id, token}
