@@ -24,6 +24,7 @@
     * private channels are channels that cannot be joined unless the user is an admin.
     * public channels are channels that can be joined by any user.
     * If a user creates a channel, he/she should be in that channel automatically. Therefore, there will be no channels_join operation for that user.
+    * The creator of the channel automatically becomes the owner.
 
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
