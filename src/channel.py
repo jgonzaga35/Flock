@@ -1,5 +1,5 @@
-from database import data
-from errors import InputError
+from database import database
+from error import InputError
 
 
 def channel_invite(token, channel_id, u_id):
@@ -7,25 +7,25 @@ def channel_invite(token, channel_id, u_id):
 
 
 def channel_details(token, channel_id):
-    if channel_id not in data[KEY_CHANNELS]:
-        raise InputError("invalid channel id")
+    if channel_id not in database['channels']:
+        raise InputError(f"{channel_id} is invalid channel id")
 
-    current_user = auth_get_current_user_from_token(token)
+    current_user_id = auth_get_current_user_id_from_token(token)
 
-    if current_user[KEY_USER_ID] not in channel[KEY_CHANNEL_MEMBERS]:
+    if current_user['id'] not in channel['members']:
         raise AccessError("not authorized to access this channel")
 
-    channel = data[KEY_CHANNELS]
+    channel = database['channels']
     owners = []
-    for ownerid in channel[KEY_CHANNEL_OWNER]:
+    for ownerid in channel['ownersid']:
         owners.append(auth_get_user_details_from_id(ownerid))
 
     members = []
-    for memberid in channel[KEY_CHANNEL_MEMBERS]:
+    for memberid in channel['membersid']:
         members.append(auth_get_user_details_from_id(memberid))
 
     return {
-        "name": channel[KEY_CHANNEL_NAME],
+        "name": channel['name'],
         "owner_members": owners,
         "all_members": all_members,
     }

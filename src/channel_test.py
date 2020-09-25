@@ -1,19 +1,18 @@
-from database import data
-from auth import auth_register, auth_get_user_details_from_id
+from database import database
+from auth import auth_register, auth_get_user_data_from_id
 from channel import channel_details
 from channels import channels_create
 
 
 def register_a_and_b():
     """ Registers sample users """
-    paira = auth_register("email@a.com", "", "A", "LastA")
-    pairb = auth_register("email@b.com", "", "B", "LastB")
+    paira = auth_register("email@a.com", "averylongpassword", "A", "LastA")
+    pairb = auth_register("email@b.com", "averylongpassword", "B", "LastB")
     return paira, pairb
 
 
-def test_channel_details_invalid():
-    data.clear()
-    token = "token"  # TODO: make a proper token using auth
+def test_channel_details_basic():
+    # FIXME: clear the database with a fixture
 
     (ida, tokena), (idb, tokenb) = register_a_and_b()
 
@@ -24,20 +23,20 @@ def test_channel_details_invalid():
     assert details1 == {
         'name': 'channel1',
         'owner_members': [
-            auth_get_user_details_from_id(ida),
+            auth_get_user_data_from_id(ida),
         ],
         'all_members': [
-            auth_get_user_details_from_id(ida),
+            auth_get_user_data_from_id(ida),
         ]
     }
     details2 = channel_details(tokena, id1)
     assert details2 == {
         'name': 'channel2',
         'owner_members': [
-            auth_get_user_details_from_id(idb),
+            auth_get_user_data_from_id(idb),
         ],
         'all_members': [
-            auth_get_user_details_from_id(idb),
+            auth_get_user_data_from_id(idb),
         ]
     }
 
