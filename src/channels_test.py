@@ -1,4 +1,5 @@
 from channels import channels_create
+from channel import channel_details
 from database import database, clear_database
 from error import InputError
 from auth import auth_register, auth_login
@@ -10,8 +11,6 @@ def test_create_simple():
     channel = channels_create(user['token'], 'channel', is_public = True)
     channel_id = channel['channel_id']
     assert channel_id == 0
-    assert channel['owners_id'] == [user['u_id']]
-    assert channel['members_id'] == [user['u_id']]
 
 def test_channel_name():
     clear_database()
@@ -20,7 +19,6 @@ def test_channel_name():
     channel_id = channel['channel_id']
     channel_name = database['channels'][channel_id]['name']
     assert channel_name == 'channel_name'
-    assert channel['owners_id'] == [user['u_id']]
 
 def test_create_public():
     clear_database()
@@ -29,7 +27,6 @@ def test_create_public():
     channel_id = channel['channel_id']
     public_status = database['channels'][channel_id]['is_public']
     assert public_status == True
-    assert channel['owners_id'] == [user['u_id']]
 
 def test_create_private():
     clear_database()
@@ -38,13 +35,24 @@ def test_create_private():
     channel_id = channel['channel_id']
     public_status = database['channels'][channel_id]['is_public']
     assert public_status == False
-    assert channel['owners_id'] == [user['u_id']]
 
 def test_long_name_error():
     clear_database()
     user = register_and_login_user()
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', is_public = True)
+
+def test_member_becomes_owner_and_member():
+    clear_database()
+    user = register_and_login_user()
+    channel = channels_create(user['token'], 'channel', is_public=True)
+    details = channel_details(user['token'], channel['channel_id'])
+
+    assert len(details['owners_members']) == 1
+    assert details['owner_members'][0]['u_id'] == user['id']
+
+    assert len(details['all_members']) == 1
+    assert details['all_members'][0]['u_id'] == user['id']
 
 # Helper function that registers a user and logs them in
 # Returns {u_id, token}
