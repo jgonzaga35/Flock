@@ -1,5 +1,5 @@
 import pytest
-from error import AccessError
+from error import AccessError, InputError
 from database import database, clear_database
 from auth import auth_register, auth_get_user_data_from_id
 from channel import channel_details, formated_user_details_from_user_data
@@ -74,6 +74,11 @@ def test_channel_details_private():
     with pytest.raises(AccessError):
         channel_details(usera['token'], 1)
 
+def test_channel_details_invalid_id():
+    clear_database()
 
-# TODO: test_channel_details invalid token
-# TODO: test_channel_details unknwon channel
+    usera, _ = register_a_and_b()
+
+    # fixme: this should be done with channel create
+    with pytest.raises(InputError):
+        channel_details(usera['token'], 1)
