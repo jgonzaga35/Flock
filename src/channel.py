@@ -8,7 +8,7 @@ def channel_invite(token, channel_id, u_id):
 
 def channel_details(token, channel_id):
     if channel_id not in database['channels']:
-        raise InputError(f"{channel_id} is invalid channel id")
+        raise InputError(f"{channel_id} is invalid channel")
 
     current_user_id = auth_get_current_user_id_from_token(token)
 
@@ -18,11 +18,23 @@ def channel_details(token, channel_id):
     channel = database['channels']
     owners = []
     for ownerid in channel['ownersid']:
-        owners.append(auth_get_user_details_from_id(ownerid))
+        user_data = auth_get_user_details_from_id(ownerid)
+        details = {
+            'name': user_data['name'],
+            'first': user_data['first-name'],
+            'last': user_data['last-name']
+        }
+        owners.append(details)
 
     members = []
     for memberid in channel['membersid']:
-        members.append(auth_get_user_details_from_id(memberid))
+        user_data = auth_get_user_details_from_id(memberid)
+        details = {
+            'name': user_data['name'],
+            'first': user_data['first_name'],
+            'last': user_data['last_name']
+        }
+        members.append(details)
 
     return {
         "name": channel['name'],

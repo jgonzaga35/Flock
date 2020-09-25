@@ -12,7 +12,7 @@ def register_a_and_b():
 
 
 def test_channel_details_basic():
-    # FIXME: clear the database with a fixture
+    # FIXME: this should be done with channels_create
 
     (ida, tokena), (idb, tokenb) = register_a_and_b()
 
