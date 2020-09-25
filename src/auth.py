@@ -1,7 +1,7 @@
+from database import database
 from error import InputError, AccessError
 import re
 
-database = {'users': [], 'channels': [], 'active_tokens': []}
 KEY_USER_ID = 'id'
 
 def auth_login(email, password):
