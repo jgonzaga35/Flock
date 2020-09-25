@@ -6,6 +6,8 @@
 	* Each user has a unique user-id
 	* User handle can only consist of alphanumeric characters
 
+**channel_test**
+
 * channel_join
     * When a user is invited to channel, they can see any previous messages on the channel before they were invited.
     * Every channel has a unique channel-id. Channel-ids are also unique from user-ids and vice versa.
@@ -27,12 +29,14 @@
     * public channels are channels that can be joined by any user.
     * If a user creates a channel, he/she should be in that channel automatically. Therefore, there will be no channels_join operation for that user.
     * The creator of the channel automatically becomes the owner.
+    * Duplicates of channel names are allowed
 
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
     that a messsage has been deleted to other users.
     * You can only remove messages that you have sent.
     * You cannot remove other people's messages.
+
 * message_edit
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
     to notify the other users.
