@@ -1,32 +1,34 @@
 from channels import channels_create
-from database import database
+from database import database, clear_database
 from error import InputError
 from auth import auth_register, auth_login
 import pytest
 
 def test_create_simple():
-    # clear database here
+    clear_database()
     user = register_and_login_user()
     channel = channels_create(user['token'], 'channel', is_public = True)
     channel_id = channel['channel_id']
     assert channel_id == 0
 
 def test_create_public():
-    # clear database here
+    clear_database()
     user = register_and_login_user()
     channel = channels_create(user['token'], 'channel', is_public = True)
-    public_status = channel['is_public']
+    channel_id = channel['channel_id']
+    public_status = database['channels'][channel_id]['is_public']
     assert public_status == True
 
-def test_create_simple_private():
-    # clear database here
+def test_create_private():
+    clear_database()
     user = register_and_login_user()
     channel = channels_create(user['token'], 'channel', is_public = False)
     channel_id = channel['channel_id']
-    assert channel_id == 0
+    public_status = database['channels'][channel_id]['is_public']
+    assert public_status == False
 
 def test_long_name_error():
-    # clear database here
+    clear_database()
     user = register_and_login_user()
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', is_public = True)
