@@ -18,17 +18,9 @@ def test_channel_details_basic():
 
     usera, userb = register_a_and_b()
 
-    # FIXME: this should be done with channels_create
-    id1 = 1
-    database['channels'].append({
-        'name': 'channel1',
-        'id': id1,
-        'is_public': True,
-        'owner_members_id': [usera['u_id']],
-        'all_members_id': [usera['u_id']]
-    })
+    channel_id = channels_create(usera['token'], 'channel1', True)['channel_id']
    
-    details1 = channel_details(usera['token'], id1)
+    details1 = channel_details(usera['token'], channel_id)
     assert details1 == {
         'name': 'channel1',
         'owner_members': [
@@ -48,16 +40,9 @@ def test_channel_details_private():
 
     usera, userb = register_a_and_b()
 
-    # fixme: this should be done with channel create
-    database['channels'].append({
-        'name': 'channel2',
-        'id': 1,
-        'is_public': False,
-        'owner_members_id': [userb['u_id']],
-        'all_members_id': [userb['u_id']]
-    })
+    channel_id = channels_create(userb['token'], 'channel2', False)['channel_id']
 
-    assert channel_details(userb['token'], 1) == {
+    assert channel_details(userb['token'], channel_id) == {
         'name': 'channel2',
         'owner_members': [
             formated_user_details_from_user_data(
@@ -72,7 +57,7 @@ def test_channel_details_private():
     }
 
     with pytest.raises(AccessError):
-        channel_details(usera['token'], 1)
+        channel_details(usera['token'], channel_id)
 
 def test_channel_details_invalid_id():
     clear_database()
