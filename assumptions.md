@@ -30,7 +30,6 @@
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
     that a messsage has been deleted to other users.
     * You can only remove messages that you have sent.
-    * You must be either an admin or owner of the channel to remove a message that you have sent.
     * You cannot remove other people's messages.
 * message_edit
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
