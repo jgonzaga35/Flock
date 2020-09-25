@@ -10,6 +10,8 @@ def test_create_simple():
     channel = channels_create(user['token'], 'channel', is_public = True)
     channel_id = channel['channel_id']
     assert channel_id == 0
+    assert channel['owners_id'] == [user['u_id']]
+    assert channel['members_id'] == [user['u_id']]
 
 def test_channel_name():
     clear_database()
@@ -18,6 +20,7 @@ def test_channel_name():
     channel_id = channel['channel_id']
     channel_name = database['channels'][channel_id]['name']
     assert channel_name == 'channel_name'
+    assert channel['owners_id'] == [user['u_id']]
 
 def test_create_public():
     clear_database()
@@ -26,6 +29,7 @@ def test_create_public():
     channel_id = channel['channel_id']
     public_status = database['channels'][channel_id]['is_public']
     assert public_status == True
+    assert channel['owners_id'] == [user['u_id']]
 
 def test_create_private():
     clear_database()
@@ -34,6 +38,7 @@ def test_create_private():
     channel_id = channel['channel_id']
     public_status = database['channels'][channel_id]['is_public']
     assert public_status == False
+    assert channel['owners_id'] == [user['u_id']]
 
 def test_long_name_error():
     clear_database()
