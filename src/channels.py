@@ -29,6 +29,7 @@ def channels_create(token, name, is_public):
         'name': name,
         'id': channel_num,
         'is_public': is_public,
+        'user_list': [token]
     }
     database['channels'].append(new_channel)
     return {

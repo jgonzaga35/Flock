@@ -6,6 +6,11 @@
 	* Each user has a unique user-id
 	* User handle can only consist of alphanumeric characters
 
+* auth_login
+    * Every time user is logged in, token will be stored in the active_tokens in the database
+
+* auth_login
+    * Every time user is logged out, token will be removed from the activv_tokens in the database
 **channel_test**
 
 * channel_join
