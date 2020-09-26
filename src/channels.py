@@ -2,24 +2,29 @@ from database import database
 from error import InputError
 
 def channels_list(token):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
+    channels = []
+    # TODO: Find a way to determine the user from the token
+    # and use the token to determine which channels are authorised for the user.
+    # at the moment, assume user_id == token
+
+    # For every existing channel:
+    for channel in database['channels']:
+        # Check if the token is valid for the channel
+        # add if valid
+        for user in channel['owner_members_id']:
+            if token == user:
+                channels.append(channel)
+        for user in channel['all_members_id']:
+            if token == user:
+                channels.append(channel)
+        
+    return channels
 
 def channels_listall(token):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
+    channels = []
+    for channel in database['channels']:
+        channels.append(channel)
+    return channels
 
 def channels_create(token, name, is_public):
     if len(name) > 20:
