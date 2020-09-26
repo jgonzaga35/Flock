@@ -1,8 +1,7 @@
-<<<<<<< HEAD
-from channel import channel_messages, channel_addowner, channel_join
-from auth import auth_register, auth_login
+from channel import channel_messages, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
+from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create
-from database import database
+from database import database, clear_database
 from error import InputError, AccessError
 import pytest
 
@@ -48,13 +47,6 @@ def register_and_login_user(email, password, name_first, name_last):
 # Helper function to send 10 messages to a given channel
 # def populate_channel_ten_messages(channel_id):
     # database['channels']
-=======
-import pytest
-from error import AccessError, InputError
-from database import database, clear_database
-from auth import auth_register, auth_get_user_data_from_id
-from channel import channel_details, formated_user_details_from_user_data
-from channels import channels_create
 
 
 def register_a_and_b():
@@ -118,4 +110,3 @@ def test_channel_details_invalid_id():
     # fixme: this should be done with channel create
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
->>>>>>> master
