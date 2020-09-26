@@ -41,21 +41,21 @@ def test_register_success_case():
     result = register_new_account()
 
 # Fail cases for auth_register
-def auth_register_invalid_email():
+def test_auth_register_invalid_email():
     with pytest.raises(InputError) as e:
         auth_register('didntusethis@gmail', '123abcd!@#')
         auth_register('didntusethis.com', '123abcd!@#')
 
-def auth_register_used_email():
+def test_auth_register_used_email():
     result = register_new_account()
     with pytest.raises(InputError) as e:
         auth_register('validemail@gmail.com', '123abcd!@#', 'Peter', 'Li')
 
-def auth_register_weak_password():
+def test_auth_register_weak_password():
     with pytest.raises(InputError) as e:
         auth_register('validemail@gmail.com', 'LOL', 'Peter', 'Li')
 
-def auth_register_wrong_name():
+def test_auth_register_wrong_name():
     with pytest.raises(InputError) as e:
         auth_register('validemail@gmail.com', '123abc!@#', 'dsjfsdkfjsdafklsdjfsdklfjlkasdkflasdjkfjklsdafjklasdkjlflksjadfjklsdakjfjkdsaflkjadslkflkasdklfklkljdsafl', 'Everest')
         auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'asdfjskaldjflsadfjklasdfjaksldfjakjsdhfsjkadhfkjasdhfkjsdhfkjasdfhkjsadhfkjasdhf')
