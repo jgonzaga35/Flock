@@ -1,6 +1,23 @@
 database = {
     'users': [],
-    'channels': [],
+    'channels': [
+        # {
+        #     "id": 1,
+        #     "name": "greatest_channel",
+        #     # the user id of the owners
+        #     "owner_members_id": [1, 2, 3]
+        #     # the user id of all the members (including the owners)
+        #     "all_members_id": [1, 2, 3, 5, 4, 9]
+        #     "is_public": True
+        # },
+        # {
+        #     "id": 2,
+        #     "name": "me myself and I",
+        #     "owner_members_id": [3]
+        #     "all_members_id": [3]
+        #     "is_public": False
+        # }
+    ],
     'active_tokens': []
 }
 
