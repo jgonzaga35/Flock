@@ -20,10 +20,17 @@ def test_messages_negative_start_index():
         assert channel_messages(0, new_channel_ID['channel_id'], -1)
 
 def test_messages_invalid_start_index():
+    clear_database()
+    # Add a user and log them in
+    owner_credentials = register_and_login_user('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
+    owner_id = owner_credentials['u_id']
+    owner_token = owner_credentials['token']
+    
     ''' Start is greater than the total # of messages in channel '''
-    new_channel_ID = channels_create(0, 'new_channel', is_public = True)
+    # Create a channel and fill with messages
+    new_channel_ID = channels_create(owner_token, 'new_channel', is_public = True)
     populate_channel_hundred_messages(new_channel_ID)
-    assert channel_messsages(0, new_channel_ID['channel_id'], 5000) == -1
+    assert channel_messsages(owner_token, new_channel_ID['channel_id'], 5000) == -1
     
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
