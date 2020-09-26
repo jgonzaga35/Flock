@@ -34,6 +34,10 @@ def auth_logout(token):
 def auth_register(email, password, name_first, name_last):
     input_error_checking(email, password, name_first, name_last)
 
+    for user in database['users']:
+        if user['email'] == email:
+            raise InputError("Email has been used.")
+
     u_id = highest_id() + 1
     new_user = {
         'email': email,
