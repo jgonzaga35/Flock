@@ -1,4 +1,4 @@
-from auth import auth_login, auth_logout, auth_register
+from auth import auth_login, auth_logout, auth_register, clear_database
 from error import InputError, AccessError
 import pytest
 
@@ -50,8 +50,8 @@ def test_register_success_case():
 def test_auth_register_invalid_email():
     clear_database()
     with pytest.raises(InputError) as e:
-        auth_register('didntusethis@gmail', '123abcd!@#')
-        auth_register('didntusethis.com', '123abcd!@#')
+        auth_register('didntusethis@gmail', '123abcd!@#', 'Peter', 'Li')
+        auth_register('didntusethis.com', '123abcd!@#', 'Peter', 'Li')
 
 def test_auth_register_used_email():
     clear_database()
