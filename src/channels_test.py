@@ -1,4 +1,5 @@
 from channels import channels_create
+from channel import channel_details
 from database import database, clear_database
 from error import InputError
 from auth import auth_register, auth_login
@@ -40,6 +41,18 @@ def test_long_name_error():
     user = register_and_login_user()
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', is_public = True)
+
+def test_creator_becomes_owner_and_member():
+    clear_database()
+    user = register_and_login_user()
+    channel = channels_create(user['token'], 'channel', is_public=True)
+    details = channel_details(user['token'], channel['channel_id'])
+
+    assert len(details['owner_members']) == 1
+    assert details['owner_members'][0]['u_id'] == user['u_id']
+
+    assert len(details['all_members']) == 1
+    assert details['all_members'][0]['u_id'] == user['u_id']
 
 # Helper function that registers a user and logs them in
 # Returns {u_id, token}
