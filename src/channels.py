@@ -5,7 +5,7 @@ def channels_list(token):
     channels = []
     # TODO: Find a way to determine the user from the token
     # and use the token to determine which channels are authorised for the user.
-    # at the moment, assume user_id == token
+    # at the moment, assume user_id == token...
 
     # For every existing channel:
     for channel in database['channels']:
