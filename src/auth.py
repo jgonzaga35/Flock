@@ -52,6 +52,21 @@ def auth_register(email, password, name_first, name_last):
         'token': token,
     }
 
+
+# helper
+def auth_get_current_user_id_from_token(token):
+    # right now, tokens are just the user ids, so that's just a no-op
+    return token
+
+# helper
+def auth_get_user_data_from_id(id):
+    """ Raises ValueError is the a user with id id doesn't exists """
+    for user in database['users']:
+        if user['id'] == id:
+            return user
+    raise ValueError(f"user with id {id} wasn't found in the database")
+
+
 # Helper function to find the user with the highest id
 def highest_id():
     highest = 0
