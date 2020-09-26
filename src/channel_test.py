@@ -3,6 +3,8 @@ from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create
 from database import database, clear_database
 from error import InputError, AccessError
+from word_list import word_list
+import random
 import pytest
 
 INVALID_CHANNEL_ID = -1
@@ -13,14 +15,15 @@ def test_messages_invalid_channel_ID():
         assert channel_messages(0, INVALID_CHANNEL_ID, 0)
 
 def test_messages_negative_start_index():
-    new_channel_ID = channels_create(0, 'new_channel', 'is_public')
+    new_channel_ID = channels_create(0, 'new_channel',  is_public = True)
     with pytest.raises(InputError):
         assert channel_messages(0, new_channel_ID['channel_id'], -1)
 
 def test_messages_invalid_start_index():
     ''' Start is greater than the total # of messages in channel '''
-    new_channel_ID = channels_create(0, 'new_channel', 'is_public')
-    assert channel_messsages(0, new_channel_ID['channel_id'], 0) == -1
+    new_channel_ID = channels_create(0, 'new_channel', is_public = True)
+    populate_channel_hundred_messages(new_channel_ID)
+    assert channel_messsages(0, new_channel_ID['channel_id'], 5000) == -1
     
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
@@ -44,10 +47,23 @@ def register_and_login_user(email, password, name_first, name_last):
     user_credentials = auth_login('validemailowner@gmail.com', 'validpass@!owner')
     return user_credentials
 
-# Helper function to send 10 messages to a given channel
-# def populate_channel_ten_messages(channel_id):
-    # database['channels']
-
+# Helper function to send 100 messages to a given channel
+def populate_channel_hundred_messages(channel_id):
+    database['channels'][channel_id] = {
+        'id': channel_id,
+        "name": "channel_01",
+        "owner_members_id": [1],
+        "all_members_id": [1],
+        "is_public": True,
+        "messages": [],
+    }
+    
+    # Note: This currently excludes other fields included with the message
+    #       such as: message_id, u_id and time_created
+    for i in range(1,100):
+        index = random.randint(0, len(word_list))
+        message = word_list[index]
+        database['channels'][channel_id]['messages'].append(message)
 
 def register_a_and_b():
     """ Registers sample users """
