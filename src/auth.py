@@ -1,4 +1,4 @@
-from database import database
+from database import database, clear_database
 from error import InputError, AccessError
 import re
 
