@@ -60,13 +60,13 @@ def channel_leave(token, channel_id):
     if channel_id not in range(len(database['channels'])):
         raise InputError('Channel ID is invalid')
 
-    if token not in database['channels'][channel_id]['user_list']:
+    if token not in database['channels'][channel_id]['all_members_id']:
         raise AccessError('User is not in this channel')
     
     #Delete the user's token from that channel
-    for user in database['channels'][channel_id]['user_list']:
+    for user in database['channels'][channel_id]['all_members_id']:
         if token == user:
-           database['channels'][channel_id]['user_list'].remove(token)
+           database['channels'][channel_id]['all_members_id'].remove(token)
 
 def channel_join(token, channel_id):
     if channel_id not in range(len(database['channels'])):
@@ -78,7 +78,7 @@ def channel_join(token, channel_id):
     if not database['channels'][channel_id]['is_public']:
         raise AccessError('Channels is not public')
     
-    database['channels'][channel_id]['user_list'].append(token)
+    database['channels'][channel_id]['all_members_id'].append(token)
 
 def channel_addowner(token, channel_id, u_id):
     return {}
