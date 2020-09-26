@@ -42,7 +42,7 @@ def test_long_name_error():
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', is_public = True)
 
-def test_member_becomes_owner_and_member():
+def test_creator_becomes_owner_and_member():
     clear_database()
     user = register_and_login_user()
     channel = channels_create(user['token'], 'channel', is_public=True)
