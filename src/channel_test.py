@@ -3,7 +3,7 @@ from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create
 from database import database, clear_database
 from error import InputError, AccessError
-from word_list import word_list
+from word_list import *
 import random
 import pytest
 
@@ -15,9 +15,18 @@ def test_messages_invalid_channel_ID():
         assert channel_messages(0, INVALID_CHANNEL_ID, 0)
 
 def test_messages_negative_start_index():
-    new_channel_ID = channels_create(0, 'new_channel',  is_public = True)
+    clear_database()
+    # Add a user and log them in
+    owner_credentials = register_and_login_user('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
+    owner_id = owner_credentials['u_id']
+    owner_token = owner_credentials['token']
+    
+    # Create a channel and fill with messages
+    res = channels_create(owner_token, 'new_channel', is_public = True)
+    new_channel_ID = res['channel_id']
+    populate_channel_hundred_messages(new_channel_ID)
     with pytest.raises(InputError):
-        assert channel_messages(0, new_channel_ID['channel_id'], -1)
+        assert channel_messages(owner_token, new_channel_ID, -1)
 
 def test_messages_invalid_start_index():
     clear_database()
@@ -28,9 +37,11 @@ def test_messages_invalid_start_index():
     
     ''' Start is greater than the total # of messages in channel '''
     # Create a channel and fill with messages
-    new_channel_ID = channels_create(owner_token, 'new_channel', is_public = True)
+    res = channels_create(owner_token, 'new_channel', is_public = True)
+    new_channel_ID = res['channel_id']
     populate_channel_hundred_messages(new_channel_ID)
-    assert channel_messsages(owner_token, new_channel_ID['channel_id'], 5000) == -1
+    with pytest.raises(InputError):
+        assert channel_messages(owner_token, new_channel_ID, 5000) == -1
     
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
@@ -62,13 +73,13 @@ def populate_channel_hundred_messages(channel_id):
         "owner_members_id": [1],
         "all_members_id": [1],
         "is_public": True,
-        "messages": [],
+        "messages": ['a'],
     }
     
     # Note: This currently excludes other fields included with the message
     #       such as: message_id, u_id and time_created
     for i in range(1,100):
-        index = random.randint(0, len(word_list))
+        index = random.randint(0, len(word_list) - 1)
         message = word_list[index]
         database['channels'][channel_id]['messages'].append(message)
 
