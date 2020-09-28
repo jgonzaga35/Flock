@@ -40,8 +40,6 @@ def channel_details(token, channel_id):
         "all_members": members,
     }
 
-# Note this function assumes that channel id corressponds to their
-# index in the database
 def channel_messages(token, channel_id, start):
     # Invalid channel ID
     channel_total = len(database['channels'])
@@ -59,19 +57,23 @@ def channel_messages(token, channel_id, start):
     messages_total = len(database['channels'][channel_id]['messages'])
     if start < 0 or start > messages_total:
         raise InputError
-    elif messages_total < 50:
-        return -1
 
     channel_msg = []
-    i = start
-    while i < start + 50:
-        message = database['channels'][channel_id]['messages']
+    end = start + 50
+    message_count = 0
+    for message in database['channels'][channel_id]['messages']:
         channel_msg.append(message)
+        message_count += 1
+        if message_count == 50:
+            break
+    
+    if message_count < 50:
+        end = -1
     
     return {
         'messages': channel_msg,
         'start': start, 
-        'end': start + 50,
+        'end': end,
     }
 
 def channel_leave(token, channel_id):
