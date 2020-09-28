@@ -1,16 +1,16 @@
 import time
+import pytest
 from auth import auth_register
 from database import clear_database
 from channels import channels_create
 from channel import channel_messages
 from message import message_send
+from error import AccessError
 
 def test_send_one_message():
     clear_database()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
-    userb = auth_register("email@b.com", "averylongpassword", "B", "LastB")
-
     channel_id = channels_create(usera['token'], "channela", is_public=True)['channel_id']
 
     time_before_message_send = time.time()
@@ -24,3 +24,15 @@ def test_send_one_message():
     assert messages[0]['message'] == 'first message'
     assert messages[0]['time_created'] >= time_before_message_send
 
+def test_message_send_not_member():
+    clear_database()
+
+    usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
+    userb = auth_register("email@b.com", "averylongpassword", "b", "LastB")
+    channel_id = channels_create(usera['token'], "channela", is_public=True)['channel_id']
+
+    with pytest.raises(AccessError):
+        message_send(userb['token'], channel_id, 'first message')
+
+
+# TODO: test send message with user join
