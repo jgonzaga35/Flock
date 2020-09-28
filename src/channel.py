@@ -93,7 +93,7 @@ def channel_join(token, channel_id):
     
     for ch in database['channels']:
         if ch['id'] == channel_id:
-            ch['id'].append(current_user_id)
+            ch['all_members_id'].append(current_user_id)
 
 def channel_addowner(token, channel_id, u_id):
     return {}

@@ -17,8 +17,8 @@ def register_a_and_b():
 def test_join_channel_successfully():
     clear_database()
     user_A, user_B = register_a_and_b()
-    channels_create(user_A['token'], "Channel_A", True)
-    channels_create(user_B['token'], 'Channel_B', False)
+    public_channel = channels_create(user_A['token'], "Channel_A", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
 
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
