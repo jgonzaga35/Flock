@@ -25,6 +25,7 @@ def test_join_channel_with_invalid_channel_id():
     clear_database()
     user_A, user_B = register_a_and_b() 
     invalid_channel_id = 233
+    
     with pytest.raises(InputError):
         channel_join(user_B['token'], invalid_channel_id)
 
@@ -46,15 +47,21 @@ def test_leave_channel_successfully():
     channel_leave(user_A['token'], public_channel['channel_id'])
     channel_leave(user_A['token'], private_channal['channel_id'])
     
-def test_inexist_uesr_leave_channel():
+def test_inexist_uesr_leave_channel_private():
     clear_database()
     user_A, user_B= register_a_and_b() 
-    public_channel = channels_create(user_A['token'], 'public_channel', True)      # User A create a public channel and
     private_channel = channels_create(user_A['token'], 'private_channel', False)   # a private channel
     
     with pytest.raises(AccessError):
-        channel_leave(user_B['token'], public_channel['channel_id'])
         channel_leave(user_B['token'], private_channel['channel_id'])
+
+def test_inexist_uesr_leave_channel_public():
+    clear_database()
+    user_A, user_B= register_a_and_b() 
+    public_channel = channels_create(user_A['token'], 'public_channel', True)      # User A create a public channel and
+    
+    with pytest.raises(AccessError):
+        channel_leave(user_B['token'], public_channel['channel_id'])
 
 
 
@@ -64,6 +71,7 @@ def test_channel_leave_channel_id_invalid():
     user_A, user_B = register_a_and_b() 
     channel_id = channels_create(user_A['token'], 'channel_A', True)['channel_id']
     invalid_channel_id = channel_id + 1
+
     with pytest.raises(InputError):
         channel_leave(user_A['token'], invalid_channel_id)
 

@@ -63,8 +63,8 @@ def channel_leave(token, channel_id):
             channel = ch
 
     if channel is None:
-        raise InputError('Channel ID is invalid') # This method of access channel is written by
-                                                  # Matheiu in channel_details, still need t figure out
+        raise InputError('Channel ID is invalid') # This method of accessing channel is written by
+                                                  # Matheiu in channel_details. Still has to figure out
                                                   # whether need to change the channels as list to channel as dictionary
 
     if current_user_id not in channel['all_members_id']:
