@@ -12,15 +12,21 @@ import pytest
 #################################################################################
 def test_messages_invalid_channel_ID():
     clear_database()
-    user = register_and_login_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    user = register_and_login_user(
+        'validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
+    )
     invalid_channel_id = -1
     with pytest.raises(InputError):
         assert channel_messages(user['token'], invalid_channel_id, 0)
 
 def test_messages_user_not_member():
     clear_database()
-    user_01= register_and_login_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
-    user_02 = register_and_login_user('validemail02@gmail.com', 'validpass@!owner02', 'John', 'Smith')
+    user_01= register_and_login_user(
+        'validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
+    )
+    user_02 = register_and_login_user(
+        'validemail02@gmail.com', 'validpass@!owner02', 'John', 'Smith'
+    )
     channel = channels_create(user_01['token'], 'channel_01', is_public = True)
     channel_join(user_01['token'], channel['channel_id'])
     
@@ -75,19 +81,23 @@ def test_messages_user_not_member():
 #         message_send(token, channel_id, message)
 
 # ---------------------------------------------------------------------------------------------
-# Helper function that registers a user and logs them in
 # Returns {u_id, token}
 def register_and_login_user(email, password, name_first, name_last):
     user = auth_register(email, password, name_first, name_last)
-    user_credentials = auth_login(email, password)
-    return user_credentials
+    return user 
 
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
     # Register a owner and two users and logs them in
-    owner_credentials = register_and_login_user('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
-    user_01_credentials = register_and_login_user('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_02_credentials = register_and_login_user('validemail@gmail.com', 'validpass@!02', 'Second', 'User')
+    owner_credentials = register_and_login_user(
+        'validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner'
+    )
+    user_01_credentials = register_and_login_user(
+        'validemail01@gmail.com', 'validpass@!01', 'First', 'User'
+    )
+    user_02_credentials = register_and_login_user(
+        'validemail@gmail.com', 'validpass@!02', 'Second', 'User'
+    )
     
     # Create a channel, with token of owner
     channel_ID = channels_create(owner_credentials['token'], 'channel_01', is_public = True)

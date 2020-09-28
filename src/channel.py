@@ -59,7 +59,7 @@ def channel_messages(token, channel_id, start):
 
     channel_msg = [] # List of channel_messages to be returned
     end = start + 50 # Correct value unless start + 50 overflows latest message
-    message_count = 0 # Counter
+    message_count = 0
     for message in database['channels'][channel_id]['messages']:
         # Searches database and add messages to channel_msg list
         channel_msg.append(message)
