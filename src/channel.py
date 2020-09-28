@@ -54,26 +54,25 @@ def channel_messages(token, channel_id, start):
         raise AccessError
     
     # Invalid start:
-    # Negative start index
-    # Start greater than total number of messages in channel
+    #   Negative start index
+    #   Start greater than total number of messages in channel
     messages_total = len(database['channels'][channel_id]['messages'])
     if start < 0 or start > messages_total:
         raise InputError
+    elif messages_total < 50:
+        return -1
 
+    channel_msg = []
+    i = start
+    while i < start + 50:
+        message = database['channels'][channel_id]['messages']
+        channel_msg.append(message)
     
     return {
-        "messages": [
-            {
-                "message_id": 1,
-                "u_id": 1,
-                "message": "Hello world",
-                "time_created": 1582426789,
-            }
-        ],
-        "start": 0,
-        "end": 50,
+        'messages': channel_msg,
+        'start': start, 
+        'end': start + 50,
     }
-
 
 def channel_leave(token, channel_id):
     return {}
