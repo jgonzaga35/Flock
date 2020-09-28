@@ -48,6 +48,7 @@
 
 * message_send:
     * if the channel doesn't exists, it still raises an AccessError, and not an InputError. It's consistent with the rest of the app, but it's consistent with the spec.
+    * raises any AccessError before any InputError. For example, if an unauthorized user (should raise AccessError) sends a 1200 character long message (should raise InputError), an AccessError will be raised.
 
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate

@@ -31,6 +31,9 @@ def message_send(token, channel_id, message):
             f"user {user_id} needs to be a member of this channel to send a message"
         )
 
+    if len(message) > 1000:
+        raise InputError(f"message too long (length: {len(message)}, max is 1000)")
+
     channel["message_id_head"] += 1
 
     new_message = {
