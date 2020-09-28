@@ -1,48 +1,95 @@
 from channel import channel_messages, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
 from auth import auth_register, auth_login, auth_get_user_data_from_id
-from channels import channels_create
+from channels import channels_create, channels_list
 from database import database, clear_database
 from error import InputError, AccessError
 from word_list import *
 import random
 import pytest
 
-INVALID_CHANNEL_ID = -1
-
-# Note: Tokens are currently User ID for iteration 1
+#################################################################################
+#                       Tests for channel_messages
+#################################################################################
 def test_messages_invalid_channel_ID():
-    with pytest.raises(InputError):
-        assert channel_messages(0, INVALID_CHANNEL_ID, 0)
-
-def test_messages_negative_start_index():
     clear_database()
-    # Add a user and log them in
-    owner_credentials = register_and_login_user('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
-    owner_id = owner_credentials['u_id']
-    owner_token = owner_credentials['token']
+    user = register_and_login_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    invalid_channel_id = -1
+    list_of_channels = channels_list(user['token'])
+    list_of_channel_id = []
+    for channel in list_of_channels:
+        list_of_channels.append(channel['channel_id'])
     
-    # Create a channel and fill with messages
-    res = channels_create(owner_token, 'new_channel', is_public = True)
-    new_channel_ID = res['channel_id']
-    populate_channel_hundred_messages(new_channel_ID)
+    while invalid_channel_id in list_of_channel_id:
+        invalid_channel_id *= 2
+        
     with pytest.raises(InputError):
-        assert channel_messages(owner_token, new_channel_ID, -1)
+        assert channel_messages(user['token'], invalid_channel_id, 0)
 
-def test_messages_invalid_start_index():
+def test_messages_user_not_member():
     clear_database()
-    # Add a user and log them in
-    owner_credentials = register_and_login_user('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
-    owner_id = owner_credentials['u_id']
-    owner_token = owner_credentials['token']
+    user_01= register_and_login_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    user_02 = register_and_login_user('validemail02@gmail.com', 'validpass@!owner02', 'John', 'Smith')
+    channel = channels_create(user_01['token'], 'channel_01', is_public = True)
+    channel_join(user_01['token'], channel['channel_id'])
     
-    ''' Start is greater than the total # of messages in channel '''
-    # Create a channel and fill with messages
-    res = channels_create(owner_token, 'new_channel', is_public = True)
-    new_channel_ID = res['channel_id']
-    populate_channel_hundred_messages(new_channel_ID)
-    with pytest.raises(InputError):
-        assert channel_messages(owner_token, new_channel_ID, 5000) == -1
+    with pytest.raises(AccessError):
+        assert channel_messages(user_02['token'], channel['channel_id'], 0)
     
+# ----------------------------- Add these tests when message_send is implemented ------------------
+# def test_messages_negative_start_index():
+#     clear_database()
+    # # Add a user and log them in
+    # user = register_and_login_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    
+    # # Create a channel and fill with messages
+    # channel = channels_create(user['token'], 'new_channel', is_public = True)
+    # populate_channel_hundred_messages(user['token'], channel['channel_id'])
+#     with pytest.raises(InputError):
+#         assert channel_messages(user['token'], channel['channel_id'], -1)
+
+# def test_messages_simple():
+#     clear_database()
+#     # Add a user and log them in
+#     user = register_and_login_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    
+#     # Create a channel and fill with messages
+#     channel = channels_create(user['token'], 'new_channel', is_public = True)
+#     message_send(user['token'], channel['channel_id]', "Hello World!"])
+#     res = channel_messages(user['token'], channel['channel_id'], 0)
+#     assert res['messages'][0] == {"Hello World!"}
+
+# def test_messages_start_overflow():
+    # clear_database()
+    # user = register_and_login_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    # channel = channels_create(user['token'], 'channel_01', is_public = True)
+    # channel_join(user['token'], channel['channel_id'])
+    # message_send(user['token'], channel['channel_id'], 'Hello World!')
+    # with pytest.raises(InputError):
+    #     assert channel_messages(user['token'], channel['channel_id'], 100)
+
+# def test_messages_start_underflow():
+#     clear_database()
+#     user = register_and_login_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+#     channel = channels_create(user['token'], 'channel_01', is_public = True)
+#     channel_join(user['token'], channel['channel_id'])
+#     message_send(user['token'], channel['channel_id'], 'Hello World!')
+#     assert channel_messages(user['token'], channel['channel_id'], 0) == -1
+
+# # Helper function to send 100 messages to a given channel
+# def populate_channel_hundred_messages(token, channel_id):
+#     for i in range(1,100):
+#         index = random.randint(0, len(word_list) - 1)
+#         message = word_list[index]
+#         message_send(token, channel_id, message)
+
+# ---------------------------------------------------------------------------------------------
+# Helper function that registers a user and logs them in
+# Returns {u_id, token}
+def register_and_login_user(email, password, name_first, name_last):
+    user = auth_register(email, password, name_first, name_last)
+    user_credentials = auth_login(email, password)
+    return user_credentials
+
 # Helper function that creates a sample channel with 3 users (including 1 owner)
 def create_sample_channel():
     # Register a owner and two users and logs them in
@@ -57,31 +104,9 @@ def create_sample_channel():
     channel_join(owner_credentials['token'], channel_ID)
     channel_join(user_01_credentials['token'], channel_ID)
     channel_join(user_02_credentials['token'], channel_ID)
+#################################################################################
 
-# Registers a user and logs them in
-# Returns {u_id, token}
-def register_and_login_user(email, password, name_first, name_last):
-    user = auth_register('validemailowner@gmail.com', 'validpass@!owner', 'Channel', 'Owner')
-    user_credentials = auth_login('validemailowner@gmail.com', 'validpass@!owner')
-    return user_credentials
 
-# Helper function to send 100 messages to a given channel
-def populate_channel_hundred_messages(channel_id):
-    database['channels'][channel_id] = {
-        'id': channel_id,
-        "name": "channel_01",
-        "owner_members_id": [1],
-        "all_members_id": [1],
-        "is_public": True,
-        "messages": ['a'],
-    }
-    
-    # Note: This currently excludes other fields included with the message
-    #       such as: message_id, u_id and time_created
-    for i in range(1,100):
-        index = random.randint(0, len(word_list) - 1)
-        message = word_list[index]
-        database['channels'][channel_id]['messages'].append(message)
 
 def register_a_and_b():
     """ Registers sample users """
