@@ -5,7 +5,7 @@ from database import clear_database
 from channels import channels_create
 from channel import channel_messages
 from message import message_send
-from error import AccessError
+from error import AccessError, InputError
 
 
 def test_send_one_message():
@@ -57,6 +57,23 @@ def test_message_send_access_error():
     with pytest.raises(AccessError):
         message_send(usera["token"], invalid_id, "fourth message")
 
+
+
+def test_send_message_too_long():
+    clear_database()
+
+    usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
+    channel_id = channels_create(usera['token'], "channela", is_public=True)['channel_id']
+
+    # shouldn't cause any problem
+    message_send(usera['token'], channel_id, "a" * 1000)
+
+    with pytest.raises(InputError):
+        message_send(usera['token'], channel_id, "a" * 1001)
+
+    # just to be safe
+    with pytest.raises(InputError):
+        message_send(usera['token'], channel_id, "a" * 1021)
 
 def test_message_send_multiple_messages():
     clear_database()
