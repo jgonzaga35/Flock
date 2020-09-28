@@ -54,9 +54,14 @@ def test_message_send_multiple_messages():
     assert messages[1]['message'] == 'second message'
     assert messages[2]['message'] == 'first message'
 
+    message_ids = []
     for message in messages:
         assert message['u_id'] == usera['id']
         assert message['time_created'] >= time_before_message_send
+
+        # make sure all the ids are unique
+        assert message['message_id'] not in message_ids
+        message_ids.append(message['message_id'])
 
 
 # TODO: test_message_send_member_but_not_owner (need to have channel join, not yet on this branch)
