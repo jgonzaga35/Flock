@@ -1,4 +1,5 @@
-from auth import auth_login, auth_logout, auth_register, clear_database
+from auth import auth_login, auth_logout, auth_register
+from database import clear_database
 from error import InputError, AccessError
 import pytest
 
@@ -40,7 +41,7 @@ def test_logout_success():
     result = register_new_account()
     token = result['token']
     assert auth_logout(token)['is_success'] == True
-    
+
 # Successful cases for auth_register
 def test_register_success_case():
     clear_database()
