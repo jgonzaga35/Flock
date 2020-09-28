@@ -96,7 +96,23 @@ def channel_join(token, channel_id):
             ch['all_members_id'].append(current_user_id)
 
 def channel_addowner(token, channel_id, u_id):
-    return {}
+    # Generate channel that match the channel_id
+    channel =  next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
+    if (channel == None):
+        raise InputError("Channel_id is not valid")
+    
+    if u_id in channel['owner_members_id']:
+        raise InputError("Channel is already in the channel")
+    
+    if u_id not in channel['all_members_id']:
+        raise InputError("User not in the channel")
+
+    if auth_get_current_user_id_from_token(token) not in channel['owner_members_id']:
+        raise AccessError("User is not owner")
+
+    for channel in database['channels']:
+        if channel['id'] == channel_id:
+            channel['owner_members_id'].append(u_id)
 
 
 def channel_removeowner(token, channel_id, u_id):

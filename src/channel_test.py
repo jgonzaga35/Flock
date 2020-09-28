@@ -147,16 +147,17 @@ def test_channel_details_invalid_id():
 def test_add_owner_successfully():
     clear_database()
     user_A, user_B = register_a_and_b()
-    private_channel = channels_create(user_A['token'], "private_channel", False)
-    channel_addowner(user_A['token'], private_channel['channel_id'], user_B['u_id'])
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
 
 def test_add_owner_with_invalid_channel_id():
     clear_database()
     user_A, user_B = register_a_and_b()
     public_channel = channels_create(user_A['token'], "public_channel", True)
-    channel_join(user_A['token'], public_channel)
+    channel_join(user_B['token'], public_channel['channel_id'])
     with pytest.raises(InputError):
-        channel_addowner(user_A['token'], private_channel['channel_id'] + 1, user_B['u_id']) #channel_id + 1 is invalid
+        channel_addowner(user_A['token'], public_channel['channel_id'] + 1, user_B['u_id']) #channel_id + 1 is invalid
 
 def test_add_owner_repeatedly():
     clear_database()
