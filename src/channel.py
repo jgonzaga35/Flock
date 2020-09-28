@@ -2,7 +2,6 @@ from database import database
 from auth import auth_get_current_user_id_from_token, auth_get_user_data_from_id
 from error import InputError, AccessError
 
-
 def channel_invite(token, channel_id, u_id):
     return {}
 
