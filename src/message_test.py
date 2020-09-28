@@ -28,17 +28,34 @@ def test_send_one_message():
     assert messages[0]["time_created"] >= time_before_message_send
 
 
-def test_message_send_not_member():
+def test_message_send_access_error():
     clear_database()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     userb = auth_register("email@b.com", "averylongpassword", "b", "LastB")
-    channel_id = channels_create(usera["token"], "channela", is_public=True)[
+    public_channel_id = channels_create(usera["token"], "channela", is_public=True)[
+        "channel_id"
+    ]
+    private_channel_id = channels_create(usera["token"], "channelb", is_public=False)[
         "channel_id"
     ]
 
     with pytest.raises(AccessError):
-        message_send(userb["token"], channel_id, "first message")
+        message_send(userb["token"], public_channel_id, "first message")
+
+    with pytest.raises(AccessError):
+        message_send(userb["token"], private_channel_id, "second message")
+
+    # generate invalid channel id
+    invalid_id = -1
+    while invalid_id == public_channel_id or invalid_id == private_channel_id:
+        invalid_id -= 1
+
+    with pytest.raises(AccessError):
+        message_send(userb["token"], invalid_id, "third message")
+
+    with pytest.raises(AccessError):
+        message_send(usera["token"], invalid_id, "fourth message")
 
 
 def test_message_send_multiple_messages():
