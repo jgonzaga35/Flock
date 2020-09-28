@@ -1,5 +1,6 @@
-from auth import auth_login, auth_logout, auth_register, clear_database
+from auth import auth_login, auth_logout, auth_register
 from error import InputError, AccessError
+from database import clear_database
 import pytest
 
 def register_new_account():
@@ -15,14 +16,16 @@ def test_login_success_case():
 def test_login_fail_case():
     clear_database()
     result = register_new_account()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_login('didntusethis@gmail.com', '123abcd!@#')  # Never registered
+    with pytest.raises(InputError):
         auth_login('validemail@gmail.com', '123')           # Wrong password
 
 def test_login_invalid_email():
     clear_database()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_login('didntusethis@gmail', '123abcd!@#')
+    with pytest.raises(InputError):
         auth_login('didntusethis.com', '123abcd!@#')
 
 # Tests for auth_logout
@@ -49,23 +52,25 @@ def test_register_success_case():
 # Fail cases for auth_register
 def test_auth_register_invalid_email():
     clear_database()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_register('didntusethis@gmail', '123abcd!@#', 'Peter', 'Li')
+    with pytest.raises(InputError):
         auth_register('didntusethis.com', '123abcd!@#', 'Peter', 'Li')
 
 def test_auth_register_used_email():
     clear_database()
     result = register_new_account()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_register('validemail@gmail.com', '123abcd!@#', 'Peter', 'Li')
 
 def test_auth_register_weak_password():
     clear_database()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_register('validemail@gmail.com', 'LOL', 'Peter', 'Li')
 
 def test_auth_register_wrong_name():
     clear_database()
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         auth_register('validemail@gmail.com', '123abc!@#', 'dsjfsdkfjsdafklsdjfsdklfjlkasdkflasdjkfjklsdafjklasdkjlflksjadfjklsdakjfjkdsaflkjadslkflkasdklfklkljdsafl', 'Everest')
+    with pytest.raises(InputError):
         auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'asdfjskaldjflsadfjklasdfjaksldfjakjsdhfsjkadhfkjasdhfkjsdhfkjasdfhkjsadhfkjasdhf')
