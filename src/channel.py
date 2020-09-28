@@ -17,7 +17,7 @@ def channel_details(token, channel_id):
             channel = ch
 
     if channel is None:
-        raise InputError(f"{channel_id} is invalid channel")
+        raise InputError(f"{channel_id} is invalid channel") 
 
     if current_user_id not in channel['all_members_id']:
         raise AccessError(f"user {current_user_id} not authorized to access this channel")
@@ -56,29 +56,44 @@ def channel_messages(token, channel_id, start):
 
 
 def channel_leave(token, channel_id):
+    channel = None
+    current_user_id = auth_get_current_user_id_from_token(token)
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            channel = ch
 
-    if channel_id not in range(len(database['channels'])):
-        raise InputError('Channel ID is invalid')
+    if channel is None:
+        raise InputError('Channel ID is invalid') # This method of access channel is written by
+                                                  # Matheiu in channel_details, still need t figure out
+                                                  # whether need to change the channels as list to channel as dictionary
 
-    if token not in database['channels'][channel_id]['all_members_id']:
+    if current_user_id not in channel['all_members_id']:
         raise AccessError('User is not in this channel')
     
     #Delete the user's token from that channel
-    for user in database['channels'][channel_id]['all_members_id']:
-        if token == user:
-           database['channels'][channel_id]['all_members_id'].remove(token)
+    for user in channel['all_members_id']:
+        if current_user_id == user:
+           channel['all_members_id'].remove(current_user_id)
 
 def channel_join(token, channel_id):
-    if channel_id not in range(len(database['channels'])):
-        raise InputError('Channel ID is invalid')
+    channel = None
+    current_user_id = auth_get_current_user_id_from_token(token)
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            channel = ch
+
+    if channel is None:
+        raise InputError('Channel ID is invalid') 
     
     if token not in database['active_tokens']:
         raise AccessError('Token is not activated')
 
-    if not database['channels'][channel_id]['is_public']:
-        raise AccessError('Channels is not public')
+    if not channel['is_public']:
+        raise AccessError('Channel is not public')
     
-    database['channels'][channel_id]['all_members_id'].append(token)
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            ch['id'].append(current_user_id)
 
 def channel_addowner(token, channel_id, u_id):
     return {}

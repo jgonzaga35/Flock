@@ -2,7 +2,7 @@ from channel import channel_details, channel_leave, channel_join, channel_addown
 from channels import channels_create
 from auth import auth_login, auth_register, auth_get_user_data_from_id
 from error import InputError, AccessError
-from database import clear_database, database
+from database import clear_database
 import pytest
 
 
@@ -17,10 +17,11 @@ def register_a_and_b():
 def test_join_channel_successfully():
     clear_database()
     user_A, user_B = register_a_and_b()
-    channel = channels_create(user_A['token'], "Channel_A", True)
+    channels_create(user_A['token'], "Channel_A", True)
+    channels_create(user_B['token'], 'Channel_B', False)
 
 # user try to join a channel with invalid channel id
-def test_join_channel_with_invalid_id():
+def test_join_channel_with_invalid_channel_id():
     clear_database()
     user_A, user_B = register_a_and_b() 
     invalid_channel_id = 233
