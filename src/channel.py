@@ -58,15 +58,17 @@ def channel_messages(token, channel_id, start):
     if start < 0 or start > messages_total:
         raise InputError(f'Invalid start value')
 
-    channel_msg = []
-    end = start + 50
-    message_count = 0
+    channel_msg = [] # List of channel_messages to be returned
+    end = start + 50 # Correct value unless start + 50 overflows latest message
+    message_count = 0 # Counter
     for message in database['channels'][channel_id]['messages']:
+        # Searches database and add messages to channel_msg list
         channel_msg.append(message)
         message_count += 1
         if message_count == 50:
             break
     
+    # less than 50 messages from start value to latest message
     if message_count < 50:
         end = -1
     
