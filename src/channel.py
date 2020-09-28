@@ -44,19 +44,19 @@ def channel_messages(token, channel_id, start):
     # Invalid channel ID
     channel_total = len(database['channels'])
     if channel_id < 0 or channel_total < channel_id:
-        raise InputError
+        raise InputError(f'Invalid channel_id: {channel_id}')
     
     # Authorised user not part of channel
     current_user_id = auth_get_current_user_id_from_token(token)
     if current_user_id not in database['channels'][channel_id]['all_members_id']:
-        raise AccessError
+        raise AccessError(f'Authorised user ({current_user_id}) not part of channel ({channel_id})')
     
     # Invalid start:
     #   Negative start index
     #   Start greater than total number of messages in channel
     messages_total = len(database['channels'][channel_id]['messages'])
     if start < 0 or start > messages_total:
-        raise InputError
+        raise InputError(f'Invalid start value')
 
     channel_msg = []
     end = start + 50

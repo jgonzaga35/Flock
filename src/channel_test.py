@@ -3,7 +3,7 @@ from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create, channels_list
 from database import database, clear_database
 from error import InputError, AccessError
-from word_list import *
+from word_list import word_list
 import random
 import pytest
 
@@ -14,14 +14,6 @@ def test_messages_invalid_channel_ID():
     clear_database()
     user = register_and_login_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
     invalid_channel_id = -1
-    list_of_channels = channels_list(user['token'])
-    list_of_channel_id = []
-    for channel in list_of_channels:
-        list_of_channels.append(channel['channel_id'])
-    
-    while invalid_channel_id in list_of_channel_id:
-        invalid_channel_id *= 2
-        
     with pytest.raises(InputError):
         assert channel_messages(user['token'], invalid_channel_id, 0)
 
