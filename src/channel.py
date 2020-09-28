@@ -17,7 +17,7 @@ def channel_details(token, channel_id):
             channel = ch
 
     if channel is None:
-        raise InputError(f"{channel_id} is invalid channel")
+        raise InputError(f"{channel_id} is invalid channel") 
 
     if current_user_id not in channel['all_members_id']:
         raise AccessError(f"user {current_user_id} not authorized to access this channel")
@@ -77,12 +77,44 @@ def channel_messages(token, channel_id, start):
     }
 
 def channel_leave(token, channel_id):
-    return {}
+    channel = None
+    current_user_id = auth_get_current_user_id_from_token(token)
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            channel = ch
 
+    if channel is None:
+        raise InputError('Channel ID is invalid') # This method of accessing channel is written by
+                                                  # Matheiu in channel_details. Still has to figure out
+                                                  # whether need to change the channels as list to channel as dictionary
+
+    if current_user_id not in channel['all_members_id']:
+        raise AccessError('User is not in this channel')
+    
+    #Delete the user's token from that channel
+    for user in channel['all_members_id']:
+        if current_user_id == user:
+           channel['all_members_id'].remove(current_user_id)
 
 def channel_join(token, channel_id):
-    return {}
+    channel = None
+    current_user_id = auth_get_current_user_id_from_token(token)
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            channel = ch
 
+    if channel is None:
+        raise InputError('Channel ID is invalid') 
+    
+    if token not in database['active_tokens']:
+        raise AccessError('Token is not activated')
+
+    if not channel['is_public']:
+        raise AccessError('Channel is not public')
+    
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            ch['all_members_id'].append(current_user_id)
 
 def channel_addowner(token, channel_id, u_id):
     return {}
@@ -98,3 +130,14 @@ def formated_user_details_from_user_data(user_data):
         'name_first': user_data['first_name'],
         'name_last': user_data['last_name']
     }
+
+
+# Helper function
+
+# Eastimate whether channel is in the database
+def is_channel_in_database(channel_id, channels):
+    is_channel_exist = False
+    for channel in channels:
+        if channel['id'] == channel_id:
+            is_channel_exist = True
+    return is_channel_exist
