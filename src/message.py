@@ -16,8 +16,15 @@ def message_send(token, channel_id, message):
             channel = ch
             break
 
+    # the spec says:
+    # AccessError when: the authorised user has not joined the channel they are
+    # trying to post to
+    # and doesn't say anything about what should happen when the channel
+    # doesn't exists. If a channel doesn't exists, then the user definitely
+    # isn't a member of that channel
+
     if channel is None:
-        raise InputError(f"invalid channel id {channel_id}")
+        raise AccessError(f"invalid channel id {channel_id}")
 
     if user_id not in channel["all_members_id"]:
         raise AccessError(
