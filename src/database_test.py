@@ -1,24 +1,32 @@
-from database import database, clear_database
+import pytest
+from database import clear_database
+from error import InputError
+from auth import auth_register, auth_login
+from channels import channels_create, channels_listall
+
 
 def test_database_clear():
     # use some test helpers to populate with some more realistic data
-    database['users'].append(1)
-    database['users'].append(2)
-    database['channels'].append(3)
-    database['channels'].append(4)
-    database['channels'].append(5)
-    database['active_tokens'].append(6)
-    database['active_tokens'].append(7)
+
+    usera = auth_register("hello@gmail.com", "veryverysafe", "safety", "first")
+    userb = auth_register("whaa@gmail.com", "nostress", "safety", "second")
+
+    channels_create(usera['token'], "first_channel", is_public=True)
+    channels_create(userb['token'], "second_channel", is_public=True)
+    channels_create(userb['token'], "p_channel", is_public=False)
 
     clear_database()
 
-    # make sure we still have all of our keys
-    assert "users" in database
-    assert "channels" in database
-    assert "active_tokens" in database
+    # the spec doesn't specifiy which of the InputError and AccessError should
+    # be raised first. This is an implementation detail, and since we are doing
+    # black box testing, we shouldn't rely on that.
+    with pytest.raises(Exception):
+        channel_details(usera['token'], "first_channel")
 
-    for key in database:
-        # make sure it's still a list
-        assert isinstance(database[key], list)
-        # make sure we have a bunch of empty lists
-        assert len(database[key]) == 0
+    assert len(channels_listall(usera['token'])) == 0
+
+    with pytest.raises(InputError):
+        auth_login("hello@gmail.com", "veryverysafe")
+
+    with pytest.raises(InputError):
+        auth_login("whaa@gmail.com", "nostress")
