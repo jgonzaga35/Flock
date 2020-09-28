@@ -29,20 +29,26 @@ def test_login_invalid_email():
         auth_login('didntusethis.com', '123abcd!@#')
 
 # Tests for auth_logout
-def test_logout_fail():
+def test_logout_fail_logout_twise():
     clear_database()
     result = register_new_account()
     token = result['token']
     auth_logout(token)
-    is_success = auth_logout(token)['is_success']
-    assert is_success == False
+
+    assert auth_logout(token)['is_success'] == False
+
+def test_logout_fail_logout_non_exist_user():
+    clear_database()
+    token = "Not Exist"
+
+    assert auth_logout(token)['is_success'] == False
 
 def test_logout_success():
     clear_database()
     result = register_new_account()
     token = result['token']
-    is_success = auth_logout(token)['is_success']
-    assert is_success == True
+    
+    assert auth_logout(token)['is_success'] == True
 
 # Successful cases for auth_register
 def test_register_success_case():
