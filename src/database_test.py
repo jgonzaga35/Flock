@@ -1,5 +1,5 @@
 import pytest
-from database import database, clear_database
+from database import clear_database
 from error import InputError
 from auth import auth_register, auth_login
 from channels import channels_create, channels_listall
