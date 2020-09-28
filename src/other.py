@@ -1,5 +1,7 @@
+from database import clear_database
+
 def clear():
-    pass
+    clear_database()
 
 def users_all(token):
     return {
