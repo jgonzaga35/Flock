@@ -3,7 +3,6 @@ from channel import channel_details,formated_user_details_from_user_data
 from auth import auth_get_user_data_from_id, auth_get_current_user_id_from_token
 from error import InputError
 
-# Helper function that returns {channel_id, name} given the token and channel_id
 def simplify_channel_details(token, channel_id):
     return {
         'channel_id': channel_id,
