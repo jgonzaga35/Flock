@@ -136,12 +136,9 @@ def test_join_channel_successfully():
     public_channel = channels_create(user_A['token'], "Channel_A", True)
     channel_join(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
-    expected_owners_id = [user_A['u_id'], user_B['u_id']]
+    expected_member_ids = [user_A['u_id'], user_B['u_id']]
 
-    for owner in details['all_members']:
-        assert owner['u_id'] in expected_owners_id
-        expected_owners_id.remove(owner['u_id'])
-    assert len(expected_owners_id) == 0
+    assert_contains_users_id(details, expected_member_ids, 'all_members')
 
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
@@ -171,20 +168,14 @@ def test_leave_channel_successfully():
     channel_join(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expected_members_id = [user_A['u_id'], user_B['u_id']]
-    for member in details['all_members']:
-        assert member['u_id'] in expected_members_id 
-        expected_members_id.remove(member['u_id'])
-    assert len(expected_members_id) == 0
+    assert_contains_users_id(details, expected_members_id, 'all_members')
 
     # user_B leave the channel, only user_A left in the channel 
     channel_leave(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expected_members_id = [user_A['u_id']]
-    for member in details['all_members']:
-        assert member['u_id'] in  expected_members_id 
-        expected_members_id.remove(member['u_id'])
-    assert len(expected_members_id) == 0
-    
+    assert_contains_users_id(details, expected_members_id, 'all_members') 
+
 def test_inexist_uesr_leave_channel_private():
     clear_database()
     user_A, user_B= register_a_and_b() 
@@ -266,3 +257,13 @@ def test_channel_details_invalid_id():
     usera, _ = register_a_and_b()
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
+
+# Helper function
+
+# Check whether the user is the owner or member of a channel
+def assert_contains_users_id(channel_details, expected_user_ids, member_or_owner):
+    user_type = member_or_owner
+    for user in channel_details[user_type]:
+        assert user['u_id'] in expected_user_ids
+        expected_user_ids.remove(user['u_id'])
+    assert(len(expected_user_ids) == 0)
