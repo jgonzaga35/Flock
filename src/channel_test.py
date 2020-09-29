@@ -292,11 +292,11 @@ def test_channel_invite_simple():
     }
 
     channel_members_info = channel_details(userb['token'], channel_id)['all_members']
-    assert(usera_info not in channel_members_info)
+    assert usera_info not in channel_members_info
 
     channel_invite(userb['token'], channel_id, usera['u_id'])
     updated_channel_members_info = channel_details(userb['token'], channel_id)['all_members']
-    assert(usera_info in updated_channel_members_info)
+    assert usera_info in updated_channel_members_info
 
 def test_channel_invite_member_already_in_channel():
     clear_database()
@@ -317,5 +317,4 @@ def test_channel_invite_member_already_in_channel():
     for user in channel_members_info:
         if user == usera_info:
             usera_count = usera_count + 1
-
-    assert(usera_count == 1)
+    assert usera_count == 1
