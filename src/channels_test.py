@@ -61,6 +61,7 @@ def register_and_login_user():
     user_01_credentials = auth_login('validemail01@gmail.com', 'validpass@!01')
     return user_01_credentials
 
+# Helper function to convert a channel's details into the correct format {channel_id, name}
 def channel_basic_details(channel_id, name):
     return {
         'channel_id': channel_id,
@@ -123,11 +124,12 @@ def test_channels_list_unauthorised_public():
     user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
     user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
 
-    user_01_channel_id = channels_create(user_01['token'], 'user_01_public_channel', is_public = True)['channel_id']
-    user_02_channel_id = channels_create(user_02['token'], 'user_02_public_channel', is_public = True)['channel_id']
+    user_01_channel_id = channels_create(user_01['token'], 'public_channel_01', is_public = True)['channel_id']
+    user_02_channel_id = channels_create(user_02['token'], 'public_channel_02', is_public = True)['channel_id']
 
-    user_01_authorised_channels = [channel_basic_details(user_01_channel_id, 'user_01_public_channel')]
-    user_02_authorised_channels = [channel_basic_details(user_02_channel_id, 'user_02_public_channel')]
+    user_01_authorised_channels = [channel_basic_details(user_01_channel_id, 'public_channel_01')]
+    user_02_authorised_channels = [channel_basic_details(user_02_channel_id, 'public_channel_02')]
+
     assert(channels_list(user_01['token']) == user_01_authorised_channels)
     assert(channels_list(user_02['token']) == user_02_authorised_channels)
 
@@ -136,11 +138,12 @@ def test_channels_list_unauthorised_private():
     user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
     user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
 
-    user_01_channel_id = channels_create(user_01['token'], 'user_01_private_channel', is_public = False)['channel_id']
-    user_02_channel_id = channels_create(user_02['token'], 'user_02_private_channel', is_public = False)['channel_id']
+    user_01_channel_id = channels_create(user_01['token'], 'private_channel_01', is_public = False)['channel_id']
+    user_02_channel_id = channels_create(user_02['token'], 'private_channel_02', is_public = False)['channel_id']
 
-    user_01_authorised_channels = [channel_basic_details(user_01_channel_id, 'user_01_private_channel')]
-    user_02_authorised_channels = [channel_basic_details(user_02_channel_id, 'user_02_private_channel')]
+    user_01_authorised_channels = [channel_basic_details(user_01_channel_id, 'private_channel_01')]
+    user_02_authorised_channels = [channel_basic_details(user_02_channel_id, 'private_channel_02')]
+
     assert(channels_list(user_01['token']) == user_01_authorised_channels)
     assert(channels_list(user_02['token']) == user_02_authorised_channels)
 
@@ -226,7 +229,7 @@ def test_channels_listall_multiple_users_public():
         channel_ids.append(channels_create(token, name, is_public = True)['channel_id'])
 
     authorised_channels = []
-    for channel_id, name in zip(channel_ids, name):
+    for channel_id, name in zip(channel_ids, names):
         authorised_channels.append(channel_basic_details(channel_id, name))
     
     assert(channels_listall(user_01['token']) == authorised_channels)
@@ -247,7 +250,7 @@ def test_channels_listall_multiple_users_private():
         channel_ids.append(channels_create(token, name, is_public = False)['channel_id'])
 
     authorised_channels = []
-    for channel_id, name in zip(channel_ids, name):
+    for channel_id, name in zip(channel_ids, names):
         authorised_channels.append(channel_basic_details(channel_id, name))
     
     assert(channels_listall(user_01['token']) == authorised_channels)

@@ -3,25 +3,27 @@ from channel import channel_details,formated_user_details_from_user_data
 from auth import auth_get_user_data_from_id, auth_get_current_user_id_from_token
 from error import InputError
 
+# Helper function that returns {channel_id, name} given the token and channel_id
+def simplify_channel_details(token, channel_id):
+    return {
+        'channel_id': channel_id,
+        'name': channel_details(token, channel_id)['name']
+    }
+
 def channels_list(token):
     channels = []
     current_user_id = auth_get_current_user_id_from_token(token)
     for channel in database['channels']:
         for user_id in channel['all_members_id']:
             if current_user_id == user_id: 
-                channels.append(channel_details(token, channel['id']))
+                channels.append(simplify_channel_details(token, channel['id']))
     return channels
 
 def channels_listall(token):
-    #TODO: this function should return a list of all channels
-    # regardless of permissions. How to do this with tokens?? not sure...
     channels = []
     for channel in database['channels']:
-        # Assuming that token = user_id, this picks the first user_id in
-        # the channel so that channel_details() is always passed an authorised token
         authorised_token = channel['all_members_id'][0]
-
-        channels.append(channel_details(authorised_token, channel['id']))
+        channels.append(simplify_channel_details(authorised_token, channel['id']))
     return channels
 
 def channels_create(token, name, is_public):
