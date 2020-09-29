@@ -1,4 +1,4 @@
-from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
+from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data, channel_removeowner
 from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create, channels_list
 from database import clear_database
@@ -386,13 +386,14 @@ def test_remove_owner_by_non_owner():
 # 2: The channel has other member so we pick a random user to be the owner
 # For now, we can not remove the whole channel, so we only check situation 2
 def test_remove_the_only_owner():
+    clear_database()
     user_A, user_B = register_a_and_b()
     public_channel = channels_create(user_A['token'], 'public_channel', True)
     channel_join(user_B['token'], public_channel['channel_id'])
     channel_removeowner(user_A['token'], public_channel['channel_id'], user_A['u_id'])
     details = channel_details(user_B['token'], public_channel['channel_id'])
     expected_owner_ids = [user_B['u_id']]
-    assert_contains_users_id(details['all_owners'], expected_owner_ids)
+    assert_contains_users_id(details['owner_members'], expected_owner_ids)
 
     
 
