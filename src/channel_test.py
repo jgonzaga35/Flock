@@ -1,4 +1,4 @@
-from channel import channel_messages, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
+from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
 from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create, channels_list
 from database import database, clear_database
@@ -251,3 +251,49 @@ def test_channel_details_invalid_id():
     usera, _ = register_a_and_b()
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
+
+def test_channel_invite_invalid_channel_id():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
+    channel_invite(userb['token'], channel_id, usera['u_id'])
+
+    invalid_channel_id = -1
+    with pytest.raises(InputError):
+        assert channel_invite(userb['token'], invalid_channel_id, usera['u_id'])
+
+def test_channel_invite_invalid_user_id():
+    clear_database()
+    user = register_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+    channel_id = channels_create(user['token'], 'userb_channel', False)['channel_id']
+    
+    invalid_user_id = -1
+    with pytest.raises(InputError):
+        assert channel_invite(user['token'], channel_id, invalid_user_id)
+
+def test_channel_invite_from_unauthorised_user():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
+    
+    with pytest.raises(AccessError):
+        assert channel_invite(usera['token'], channel_id, userb['u_id'])
+
+def test_channel_invite_simple():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
+
+    usera_in_userb_channel = False
+    members_in_channels = channel_details(userb['token'], channel_id)['all_members']
+    for member in members_in_channels:
+        assert(member != usera)
+    
+    channel_invite(userb['token'], channel_id, usera['u_id'])
+    updated_members_in_channels = channel_details(userb['token'], channel_id)['all_members']
+    for member in members_in_channels:
+        if (member == usera):
+            usera_in_userb_channel = True
+            break
+    
+    assert(usera_in_userb_channel == True)
