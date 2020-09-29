@@ -19,6 +19,13 @@ def test_join_channel_successfully():
     user_A, user_B = register_a_and_b()
     public_channel = channels_create(user_A['token'], "Channel_A", True)
     channel_join(user_B['token'], public_channel['channel_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expected_owners_id = [user_A['u_id'], user_B['u_id']]
+
+    for owner in details['all_members']:
+        assert owner['u_id'] in expected_owners_id
+        expected_owners_id.remove(owner['u_id'])
+    assert len(expected_owners_id) == 0
 
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
