@@ -10,6 +10,20 @@ import pytest
 #################################################################################
 #                       Tests for channel_messages
 #################################################################################
+def test_messages_no_messages():
+    clear_database()
+    user = register_and_login_user(
+        'validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
+    )
+    channel = channels_create(user['token'], 'channel', is_public = True)
+    messages_in_channel = channel_messages(user['token'], channel['channel_id'], start = 0)
+    
+    assert len(messages_in_channel['messages']) == 0
+    assert messages_in_channel['start'] == 0
+    assert messages_in_channel['end'] == -1
+    
+    
+    
 def test_messages_invalid_channel_ID():
     clear_database()
     user = register_and_login_user(
