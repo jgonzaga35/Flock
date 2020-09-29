@@ -9,6 +9,14 @@ database = {
         #     # the user id of all the members (including the owners)
         #     "all_members_id": [1, 2, 3, 5, 4, 9]
         #     "is_public": True
+        #      "messages": [
+        #           {
+        #               "message_id": 1,
+        #               "u_id": 1,
+        #               "message": "Hello world",
+        #               "time_created": 1582426789,
+        #           }
+        #       ],
         # },
         # {
         #     "id": 2,
@@ -16,6 +24,14 @@ database = {
         #     "owner_members_id": [3]
         #     "all_members_id": [3]
         #     "is_public": False
+        #      "messages": [
+        #           {
+        #               "message_id": 1,
+        #               "u_id": 1,
+        #               "message": "Hello world",
+        #               "time_created": 1582426789,
+        #           }
+        #       ],
         # }
     ],
     'active_tokens': []
