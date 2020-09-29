@@ -272,7 +272,6 @@ def test_channel_invite_invalid_user_id():
     with pytest.raises(InputError):
         assert channel_invite(userb['token'], channel_id, invalid_user_id)
 
-
 def test_channel_invite_from_unauthorised_user():
     clear_database()
     usera, userb = register_a_and_b()
@@ -292,10 +291,31 @@ def test_channel_invite_simple():
         'name_last': auth_get_user_data_from_id(usera['u_id'])['last_name']
     }
 
-    members_in_channels = channel_details(userb['token'], channel_id)['all_members']
-    assert(usera_info not in members_in_channels)
+    channel_members_info = channel_details(userb['token'], channel_id)['all_members']
+    assert(usera_info not in channel_members_info)
 
     channel_invite(userb['token'], channel_id, usera['u_id'])
-    updated_members_in_channels = channel_details(userb['token'], channel_id)['all_members']
-    assert(usera_info in updated_members_in_channels)
+    updated_channel_members_info = channel_details(userb['token'], channel_id)['all_members']
+    assert(usera_info in updated_channel_members_info)
 
+def test_channel_invite_member_already_in_channel():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channel_id = channels_create(userb['token'], 'userb_channel', True)['channel_id']
+
+    usera_info = {
+        'u_id': usera['u_id'],
+        'name_first': auth_get_user_data_from_id(usera['u_id'])['first_name'],
+        'name_last': auth_get_user_data_from_id(usera['u_id'])['last_name']
+    }
+
+    channel_join(usera['token'], channel_id)
+    channel_invite(userb['token'], channel_id, usera['u_id'])
+    channel_members_info = channel_details(userb['token'], channel_id)['all_members']
+
+    usera_count = 0
+    for user in channel_members_info:
+        if user == usera_info:
+            usera_count = usera_count + 1
+
+    assert(usera_count == 1)
