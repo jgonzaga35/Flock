@@ -2,7 +2,6 @@ from database import database
 from auth import auth_get_current_user_id_from_token, auth_get_user_data_from_id
 from error import InputError, AccessError
 
-
 def channel_invite(token, channel_id, u_id):
     return {}
 
@@ -41,19 +40,42 @@ def channel_details(token, channel_id):
     }
 
 def channel_messages(token, channel_id, start):
-    return {
-        "messages": [
-            {
-                "message_id": 1,
-                "u_id": 1,
-                "message": "Hello world",
-                "time_created": 1582426789,
-            }
-        ],
-        "start": 0,
-        "end": 50,
-    }
+    # Invalid channel ID
+    channel_total = len(database['channels'])
+    if channel_id < 0 or channel_total < channel_id:
+        raise InputError(f'Invalid channel_id: {channel_id}')
+    
+    # Authorised user not part of channel
+    current_user_id = auth_get_current_user_id_from_token(token)
+    if current_user_id not in database['channels'][channel_id]['all_members_id']:
+        raise AccessError(f'Authorised user ({current_user_id}) not part of channel ({channel_id})')
+    
+    # Invalid start:
+    #   Negative start index
+    #   Start greater than total number of messages in channel
+    messages_total = len(database['channels'][channel_id]['messages'])
+    if start < 0 or start > messages_total:
+        raise InputError(f'Invalid start value')
 
+    channel_msg = [] # List of channel_messages to be returned
+    end = start + 50 # Correct value unless start + 50 overflows latest message
+    message_count = 0
+    for message in database['channels'][channel_id]['messages']:
+        # Searches database and add messages to channel_msg list
+        channel_msg.append(message)
+        message_count += 1
+        if message_count == 50:
+            break
+    
+    # less than 50 messages from start value to latest message
+    if message_count < 50:
+        end = -1
+    
+    return {
+        'messages': channel_msg,
+        'start': start, 
+        'end': end,
+    }
 
 def channel_leave(token, channel_id):
     channel = None
