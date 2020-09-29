@@ -323,6 +323,7 @@ def test_add_owner_by_non_owner():
     with pytest.raises(AccessError):
         channel_addowner(user_B['token'], public_channel['channel_id'], user_C['u_id']) # user_B who are not owner add common user
                                                                                         # user_C be the owner
+
                                                                                 
 def test_remove_user_successfully():
     clear_database()
@@ -379,6 +380,21 @@ def test_remove_owner_by_non_owner():
     
     with pytest.raises(AccessError):
         channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
+
+# There are two situations when we remove the owner and there is only one owner:
+# 1: The channel only contain the owner itself so the channel should be removed
+# 2: The channel has other member so we pick a random user to be the owner
+# For now, we can not remove the whole channel, so we only check situation 2
+def test_remove_the_only_owner():
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_A['u_id'])
+    details = channel_details(user_B['token'], public_channel['channel_id'])
+    expected_owner_ids = [user_B['u_id']]
+    assert_contains_users_id(details['all_owners'], expected_owner_ids)
+
+    
 
 
 
