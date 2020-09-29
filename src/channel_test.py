@@ -1,4 +1,4 @@
-from channel import channel_details, channel_leave, channel_join, channel_addowner, formated_user_details_from_user_data
+from channel import channel_details, channel_leave, channel_join, channel_addowner, formated_user_details_from_user_data, channel_removeowner
 from channels import channels_create
 from auth import auth_login, auth_register, auth_get_user_data_from_id
 from error import InputError, AccessError
@@ -197,6 +197,62 @@ def test_add_owner_by_non_owner():
     with pytest.raises(AccessError):
         channel_addowner(user_B['token'], public_channel['channel_id'], user_C['u_id']) # user_B who are not owner add common user
                                                                                         # user_C be the owner
+                                                                                
+def test_remove_user_successfully():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+
+    # Add user_B as owner and check whether user_B is in the owner list
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
+    for owner in details['owner_members']:
+        assert owner['u_id'] in expect_owner_in_channel
+        expect_owner_in_channel.remove(owner['u_id'])
+    assert len(expect_owner_in_channel) == 0
+
+    # Remove user_B from owner list and check whether user_B has been removed
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id']]
+    for owner in details['owner_members']:
+        assert owner['u_id'] in expect_owner_in_channel
+        expect_owner_in_channel.remove(owner['u_id'])
+    assert len(expect_owner_in_channel) == 0
+    
+
+def test_remove_owner_with_invalid_channel_id():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+
+    with pytest.raises(InputError):
+        invalid_channel_id = 233
+        channel_removeowner(user_A['token'], invalid_channel_id, user_B['u_id'])
+
+
+def test_remove_owner_to_non_owner():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+
+    with pytest.raises(InputError):
+        channel_removeowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+
+
+def test_remove_owner_by_non_owner():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    
+    with pytest.raises(AccessError):
+        channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
 
 
 
