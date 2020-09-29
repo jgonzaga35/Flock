@@ -1,6 +1,5 @@
 import re
 import os
-import regex
 
 # in english, this regex matches:
 #    not a word character or the beginning of the string, followed by
