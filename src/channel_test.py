@@ -1,7 +1,7 @@
 from channel import channel_messages, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
 from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create, channels_list
-from database import database, clear_database
+from database import clear_database
 from error import InputError, AccessError
 from word_list import word_list
 import random
