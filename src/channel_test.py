@@ -262,6 +262,14 @@ def test_channel_details_invalid_id():
 
 # Check whether the user is the owner or member of a channel
 def assert_contains_users_id(user_details, expected_user_ids):
+    """
+    Checks whether the expected users' id are in the users details list.
+
+    >>> user_details = channel_details(token, channel_id)['all_members']
+    >>> expected_members_id = [usera['u_id'], userb['u_id']]
+    >>> assert_contains_users_id(user_details, expected_members_id)
+    """
+
     for user in user_details:
         assert user['u_id'] in expected_user_ids
         expected_user_ids.remove(user['u_id'])
