@@ -241,9 +241,6 @@ def test_channel_details_private():
 
 def test_channel_details_invalid_id():
     clear_database()
-
     usera, _ = register_a_and_b()
-
-    # fixme: this should be done with channel create
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
