@@ -136,12 +136,9 @@ def test_join_channel_successfully():
     public_channel = channels_create(user_A['token'], "Channel_A", True)
     channel_join(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
-    expected_owners_id = [user_A['u_id'], user_B['u_id']]
+    expected_member_ids = [user_A['u_id'], user_B['u_id']]
 
-    for owner in details['all_members']:
-        assert owner['u_id'] in expected_owners_id
-        expected_owners_id.remove(owner['u_id'])
-    assert len(expected_owners_id) == 0
+    assert_contains_users_id(details['all_members'], expected_member_ids)
 
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
@@ -171,20 +168,14 @@ def test_leave_channel_successfully():
     channel_join(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expected_members_id = [user_A['u_id'], user_B['u_id']]
-    for member in details['all_members']:
-        assert member['u_id'] in expected_members_id 
-        expected_members_id.remove(member['u_id'])
-    assert len(expected_members_id) == 0
+    assert_contains_users_id(details['all_members'], expected_members_id)
 
     # user_B leave the channel, only user_A left in the channel 
     channel_leave(user_B['token'], public_channel['channel_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expected_members_id = [user_A['u_id']]
-    for member in details['all_members']:
-        assert member['u_id'] in  expected_members_id 
-        expected_members_id.remove(member['u_id'])
-    assert len(expected_members_id) == 0
-    
+    assert_contains_users_id(details['all_members'], expected_members_id)
+
 def test_inexist_uesr_leave_channel_private():
     clear_database()
     user_A, user_B= register_a_and_b() 
@@ -267,6 +258,7 @@ def test_channel_details_invalid_id():
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
 
+
 def test_channel_invite_from_unauthorised_user():
     clear_database()
     usera, userb = register_a_and_b()
@@ -313,3 +305,20 @@ def test_channel_invite_member_already_in_channel():
         if user == usera_info:
             usera_count = usera_count + 1
     assert usera_count == 1
+
+# Helper function
+
+# Check whether the user is the owner or member of a channel
+def assert_contains_users_id(user_details, expected_user_ids):
+    """
+    Checks whether the expected users' id are in the users details list.
+
+    >>> user_details = channel_details(token, channel_id)['all_members']
+    >>> expected_members_id = [usera['u_id'], userb['u_id']]
+    >>> assert_contains_users_id(user_details, expected_members_id)
+    """
+
+    for user in user_details:
+        assert user['u_id'] in expected_user_ids
+        expected_user_ids.remove(user['u_id'])
+    assert(len(expected_user_ids) == 0)
