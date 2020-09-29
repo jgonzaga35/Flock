@@ -165,14 +165,17 @@ def test_add_owner_with_invalid_channel_id():
     public_channel = channels_create(user_A['token'], "public_channel", True)
     channel_join(user_B['token'], public_channel['channel_id'])
     with pytest.raises(InputError):
-        channel_addowner(user_A['token'], public_channel['channel_id'] + 1, user_B['u_id']) #channel_id + 1 is invalid
+        invalid_channel_id = 233
+        channel_addowner(user_A['token'], invalid_channel_id, user_B['u_id']) 
 
 def test_add_owner_repeatedly():
     clear_database()
     user_A, user_B = register_a_and_b()
-    private_channel = channels_create(user_A['token'], "private_channel", False)
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
     with pytest.raises(InputError):
-        channel_addowner(user_A['token'], private_channel['channel_id'], user_A['u_id'])
+        channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
 
 def test_add_invalid_user_to_owner():
     clear_database()
@@ -194,6 +197,7 @@ def test_add_owner_by_non_owner():
     with pytest.raises(AccessError):
         channel_addowner(user_B['token'], public_channel['channel_id'], user_C['u_id']) # user_B who are not owner add common user
                                                                                         # user_C be the owner
+
 
 
 if __name__ == '__main__':
