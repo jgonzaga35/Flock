@@ -22,8 +22,6 @@ def test_messages_no_messages():
     assert messages_in_channel['start'] == 0
     assert messages_in_channel['end'] == -1
     
-    
-    
 def test_messages_invalid_channel_ID():
     clear_database()
     user = register_and_login_user(
