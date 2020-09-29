@@ -149,7 +149,15 @@ def test_add_owner_successfully():
     user_A, user_B = register_a_and_b()
     public_channel = channels_create(user_A['token'], "public_channel", True)
     channel_join(user_B['token'], public_channel['channel_id'])
+
+    # user_A add user_B as onwer, gotta check whether user_B is in owner list 
     channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
+    for owner in details['owner_members']:
+        assert owner['u_id'] in expect_owner_in_channel
+        expect_owner_in_channel.remove(owner['u_id'])
+    assert len(expect_owner_in_channel) == 0
 
 def test_add_owner_with_invalid_channel_id():
     clear_database()
