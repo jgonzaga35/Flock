@@ -1,6 +1,6 @@
 from channels import channels_create, channels_list, channels_listall
 from channel import channel_leave, channel_details
-from database import database, clear_database
+from database import clear_database
 from error import InputError, AccessError
 from auth import auth_register, auth_login
 import pytest
