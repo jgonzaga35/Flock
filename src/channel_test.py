@@ -165,10 +165,25 @@ def test_join_channel_without_authority():
 def test_leave_channel_successfully():
     clear_database()
     user_A, user_B = register_a_and_b() 
-    private_channal = channels_create(user_A['token'], 'private_channel', False) #Create private channel
     public_channel = channels_create(user_A['token'], 'public_channel', True)   #Create public channel
-    channel_leave(user_A['token'], public_channel['channel_id'])
-    channel_leave(user_A['token'], private_channal['channel_id'])
+
+    # user_B join the channel, we have two users in the channel now 
+    channel_join(user_B['token'], public_channel['channel_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expected_owners_id = [user_A['u_id'], user_B['u_id']]
+    for owner in details['all_members']:
+        assert owner['u_id'] in expected_owners_id
+        expected_owners_id.remove(owner['u_id'])
+    assert len(expected_owners_id) == 0
+
+    # user_B leave the channel, only user_A left in the channel 
+    channel_leave(user_B['token'], public_channel['channel_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expected_owners_id = [user_A['u_id']]
+    for owner in details['all_members']:
+        assert owner['u_id'] in expected_owners_id
+        expected_owners_id.remove(owner['u_id'])
+    assert len(expected_owners_id) == 0
     
 def test_inexist_uesr_leave_channel_private():
     clear_database()
