@@ -3,6 +3,30 @@ from auth import auth_get_current_user_id_from_token, auth_get_user_data_from_id
 from error import InputError, AccessError
 
 def channel_invite(token, channel_id, u_id):
+    invite_sender_user_id = auth_get_current_user_id_from_token(token)
+
+    valid_user = None
+    for user in database['users']:
+        if user['id'] == u_id:
+            valid_user = user
+        
+    if valid_user is None:
+        raise InputError(f"{u_id} is an invalid user id")
+
+    channel = None
+    for ch in database['channels']:
+        if ch['id'] == channel_id:
+            channel = ch
+
+    if channel is None:
+        raise InputError(f"{channel_id} is invalid channel") 
+
+    if invite_sender_user_id not in channel['all_members_id']:
+        raise AccessError(f"user {invite_sender_user_id} not authorized to invite you to this channel")
+
+    if u_id not in channel['all_members_id']:
+        channel['all_members_id'].append(u_id)
+
     return {}
 
 
