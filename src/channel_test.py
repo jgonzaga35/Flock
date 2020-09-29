@@ -284,16 +284,12 @@ def test_channel_invite_simple():
     usera, userb = register_a_and_b()
     channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
 
-    usera_in_userb_channel = False
     members_in_channels = channel_details(userb['token'], channel_id)['all_members']
-    for member in members_in_channels:
-        assert(member != usera)
+    assert(usera not in members_in_channels)
     
     channel_invite(userb['token'], channel_id, usera['u_id'])
     updated_members_in_channels = channel_details(userb['token'], channel_id)['all_members']
-    for member in members_in_channels:
-        if (member == usera):
-            usera_in_userb_channel = True
-            break
-    
-    assert(usera_in_userb_channel == True)
+    assert(usera in updated_members_in_channels)
+
+
+
