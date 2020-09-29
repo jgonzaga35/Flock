@@ -267,26 +267,6 @@ def test_channel_details_invalid_id():
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
 
-def test_channel_invite_invalid_channel_id():
-    clear_database()
-    usera, userb = register_a_and_b()
-    channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
-    channel_invite(userb['token'], channel_id, usera['u_id'])
-
-    invalid_channel_id = -1
-    with pytest.raises(InputError):
-        assert channel_invite(userb['token'], invalid_channel_id, usera['u_id'])
-
-def test_channel_invite_invalid_user_id():
-    clear_database()
-    usera, userb = register_a_and_b()
-    channel_id = channels_create(userb['token'], 'userb_channel', False)['channel_id']
-    channel_invite(userb['token'], channel_id, usera['u_id'])
-    
-    invalid_user_id = -1
-    with pytest.raises(InputError):
-        assert channel_invite(userb['token'], channel_id, invalid_user_id)
-
 def test_channel_invite_from_unauthorised_user():
     clear_database()
     usera, userb = register_a_and_b()
