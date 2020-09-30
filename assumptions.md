@@ -5,6 +5,7 @@
 	* It's assumed that the length of first/ last name is 1-50 inclusively
 	* Each user has a unique user-id
 	* User handle can only consist of alphanumeric characters
+    * After the registeration of a user, he is logged in automatically
 
 * auth_login
     * Every time when a user is logged in, token will be stored in the active_tokens in the database
