@@ -25,7 +25,7 @@
     * If there is only one user in the channel, that user automatically becomes the owner.
 
 * channel_removeowner
-    * If the owner is the only owner of that channel and been removed, other user in that channel randomly selected to be the next owner.
+    * If the owner is the only owner of that channel and been removed, one of other users in that channel randomly be selected to be the next owner.
     * If the owner is the only member of a channel and been removed, the channel is also removed. For now, there is no way to remove a whole channel. Therefore, we leave the channel without owner in this situation.
 
 * channels_create
