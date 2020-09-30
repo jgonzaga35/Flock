@@ -280,10 +280,7 @@ def test_add_owner_successfully():
     channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
-    for owner in details['owner_members']:
-        assert owner['u_id'] in expect_owner_in_channel
-        expect_owner_in_channel.remove(owner['u_id'])
-    assert len(expect_owner_in_channel) == 0
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
 
 def test_add_owner_with_invalid_channel_id():
     clear_database()
@@ -335,19 +332,13 @@ def test_remove_user_successfully():
     channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
-    for owner in details['owner_members']:
-        assert owner['u_id'] in expect_owner_in_channel
-        expect_owner_in_channel.remove(owner['u_id'])
-    assert len(expect_owner_in_channel) == 0
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
 
     # Remove user_B from owner list and check whether user_B has been removed
     channel_removeowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
     details = channel_details(user_A['token'], public_channel['channel_id'])
     expect_owner_in_channel = [user_A['u_id']]
-    for owner in details['owner_members']:
-        assert owner['u_id'] in expect_owner_in_channel
-        expect_owner_in_channel.remove(owner['u_id'])
-    assert len(expect_owner_in_channel) == 0
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
     
 
 def test_remove_owner_with_invalid_channel_id():
