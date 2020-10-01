@@ -156,9 +156,7 @@ def channel_addowner(token, channel_id, u_id):
     if auth_get_current_user_id_from_token(token) not in channel['owner_members_id']:
         raise AccessError("User is not owner")
 
-    for channel in database['channels']:
-        if channel['id'] == channel_id:
-            channel['owner_members_id'].append(u_id)
+    channel['owner_members_id'].append(u_id)
 
 
 def channel_removeowner(token, channel_id, u_id):
@@ -188,9 +186,7 @@ def channel_removeowner(token, channel_id, u_id):
                     channel['owner_members_id'].append(next_owner_uid)
     
     
-    for channel in database['channels']:
-        if channel['id'] == channel_id:
-            channel['owner_members_id'].remove(u_id)
+    channel['owner_members_id'].remove(u_id)
 
 
 # helper used by channel_create
