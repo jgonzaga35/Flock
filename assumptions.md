@@ -13,9 +13,14 @@
     * Every time when a user is logged out, token will be removed from the active_tokens in the database
 **channel_test**
 
+* channel_invite
+    * When a user is invited to a channel, they can see any previous messages on the channel before they were invited.
+    * Any member in the channel can invite another user into the channel.
+    * Inviting a member who is already in the channel is possible, but has no effect. 
+
 * channel_join
-    * When a user is invited to channel, they can see any previous messages on the channel before they were invited.
-    * Every channel has a unique channel-id. Channel-ids are also unique from user-ids and vice versa.
+    * When a user joins a channel, they can see any previous messages on the channel before they were invited.
+    * Every channel has a unique channel-id. 
 
 * channel_leave
     * When a user leaves a channel, they can no longer access any messages on the channel.
@@ -25,8 +30,7 @@
     * If there is only one user in the channel, that user automatically becomes the owner.
 
 * channel_removeowner
-    * If the owner is removed from a channel, another user in the channel is 
-    randomly selected to be the next owner unless specified.
+    * If the owner is to be removed, the owner must specify who they wish the next owner to be before they can be removed.
     * If the owner is removed from the channel and the owner is the only user in that channel, the channel is also removed.
 
 * channels_create
@@ -34,7 +38,8 @@
     * public channels are channels that can be joined by any user.
     * If a user creates a channel, he/she should be in that channel automatically. Therefore, there will be no channels_join operation for that user.
     * The creator of the channel automatically becomes the owner.
-    * Duplicates of channel names are allowed
+    * Duplicates of channel names are allowed (channel ids are always unique, however)
+    * channel names are at least 1 character long
 
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
