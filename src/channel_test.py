@@ -373,9 +373,9 @@ def test_remove_owner_by_non_owner():
         channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
 
 # There are two situations when we remove the owner and there is only one owner:
-# 1: The channel only contain the owner itself so the channel should be removed
-# 2: The channel has other member so we pick a random user to be the owner
-# For now, we can not remove the whole channel, so we only check situation 2
+# 1: The channel has other member so we pick a random user to be the owner
+# 2: The channel only contain the owner itself so the channel should be removed
+# The two tests below will test these two situation repectively
 def test_remove_the_only_owner():
     clear_database()
     user_A, user_B = register_a_and_b()
@@ -386,9 +386,13 @@ def test_remove_the_only_owner():
     expected_owner_ids = [user_B['u_id']]
     assert_contains_users_id(details['owner_members'], expected_owner_ids)
 
-    
-
-
+def test_remove_owner_with_the_only_member():
+    clear_database()
+    user_A = register_one_user()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_A['u_id'])
+    with pytest.raises(InputError):
+        channel_details(user_A['token'], public_channel['channel_id'])
 
 if __name__ == '__main__':
     test_join_channel_without_authority(fixture_new_user)
