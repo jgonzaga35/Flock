@@ -41,6 +41,9 @@
     * Duplicates of channel names are allowed (channel ids are always unique, however)
     * channel names are at least 1 character long
 
+* channel_remove
+    * For now, this is used as a helper function. It will simply delete the channel from the database without ensuring whether there are users in the channel
+    
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
     that a messsage has been deleted to other users.
