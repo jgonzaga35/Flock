@@ -156,8 +156,33 @@ def formated_user_details_from_user_data(user_data):
         'name_last': user_data['last_name']
     }
 
-
 # Helper function
+
+
+def channel_remove(channel_id):
+    """
+    remove the channel based on its channel_id
+    This is not a official function, use it as a helper
+
+    However, removing channel will change the index of the element in the
+    'channels' list, so there should be no access to channel in the database 
+    directly using channel_id as its index
+    For example:
+
+    Bad access:
+    >>> database['channels'][channel_id]
+
+    Good access:
+    >>> for channel in database['channels']:
+            if channel['id'] == channel_id:
+                do something
+    """
+    for i in range(len(database['channels'])):
+        if database['channels'][i]['id'] == channel_id:
+            del database['channels'][i]
+
+
+
 
 # Eastimate whether channel is in the database
 def is_channel_in_database(channel_id, channels):
