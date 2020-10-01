@@ -184,9 +184,14 @@ def channel_removeowner(token, channel_id, u_id):
             for channel in database['channels']:
                 if channel['id'] == channel_id:
                     channel['owner_members_id'].append(next_owner_uid)
+
     
-    
-    channel['owner_members_id'].remove(u_id)
+    # If there are only one member in the channel(including owner),
+    # remove the whole channel otherwise remove the owner.
+    if (len(channel['all_members_id']) == 1):
+        channel_remove(channel_id)
+    else:
+        channel['owner_members_id'].remove(u_id)
 
 
 # helper used by channel_create
