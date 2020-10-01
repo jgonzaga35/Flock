@@ -1,4 +1,4 @@
-from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data
+from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data, channel_removeowner
 from auth import auth_register, auth_login, auth_get_user_data_from_id
 from channels import channels_create, channels_list
 from database import clear_database
@@ -123,11 +123,23 @@ def create_sample_channel():
 
 
 # register a new user and log in, return the dictionary including u_id and token
+def register_one_user():
+    """ Registers sample users """
+    paira = auth_register("email@a.com", "averylongpassword", "A", "LastA")
+    return paira
+
 def register_a_and_b():
     """ Registers sample users """
     paira = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     pairb = auth_register("email@b.com", "averylongpassword", "B", "LastB")
     return paira, pairb
+
+def register_a_b_and_c():
+    """ Registers sample users """
+    paira = auth_register("email@a.com", "averylongpassword", "A", "LastA")
+    pairb = auth_register("email@b.com", "averylongpassword", "B", "LastB")
+    pairc = auth_register("email@c.com", "averylongpassword", "C", "LastC")
+    return paira, pairb, pairc
 
 # Join the channel successfully
 def test_join_channel_successfully():
@@ -258,6 +270,132 @@ def test_channel_details_invalid_id():
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
 
+def test_add_owner_successfully():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+
+    # user_A add user_B as onwer, gotta check whether user_B is in owner list 
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
+
+def test_add_owner_with_invalid_channel_id():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    with pytest.raises(InputError):
+        invalid_channel_id = 233
+        channel_addowner(user_A['token'], invalid_channel_id, user_B['u_id']) 
+
+def test_add_owner_repeatedly():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    with pytest.raises(InputError):
+        channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+
+def test_add_invalid_user_to_owner():
+    clear_database()
+    user_A = register_one_user()
+    private_channel = channels_create(user_A['token'], "private_channel", False)
+    invalid_uid = 233
+    with pytest.raises(InputError):
+        channel_addowner(user_A['token'], private_channel['channel_id'], invalid_uid)
+
+
+# We assume all of the user are in a public channel
+# One of them are the owner whereas other two are common user in this channel
+def test_add_owner_by_non_owner():
+    clear_database()
+    user_A, user_B, user_C = register_a_b_and_c()
+    public_channel = channels_create(user_A['token'], "public_channel", True) #user_A create the channel and be the owner
+    channel_join(user_C['token'], public_channel['channel_id']) # Other two user join in the channel
+    channel_join(user_B['token'], public_channel['channel_id'])
+    with pytest.raises(AccessError):
+        channel_addowner(user_B['token'], public_channel['channel_id'], user_C['u_id']) # user_B who are not owner add common user
+                                                                                        # user_C be the owner
+
+                                                                                
+def test_remove_user_successfully():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+
+    # Add user_B as owner and check whether user_B is in the owner list
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id'], user_B['u_id']]
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
+
+    # Remove user_B from owner list and check whether user_B has been removed
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+    details = channel_details(user_A['token'], public_channel['channel_id'])
+    expect_owner_in_channel = [user_A['u_id']]
+    assert_contains_users_id(details['owner_members'], expect_owner_in_channel)
+    
+
+def test_remove_owner_with_invalid_channel_id():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_addowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+
+    with pytest.raises(InputError):
+        invalid_channel_id = 233
+        channel_removeowner(user_A['token'], invalid_channel_id, user_B['u_id'])
+
+
+def test_remove_owner_to_non_owner():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], "public_channel", True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+
+    with pytest.raises(InputError):
+        channel_removeowner(user_A['token'], public_channel['channel_id'], user_B['u_id'])
+
+
+def test_remove_owner_by_non_owner():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    
+    with pytest.raises(AccessError):
+        channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
+
+# There are two situations when we remove the owner and there is only one owner:
+# 1: The channel has other member so we pick a random user to be the owner
+# 2: The channel only contain the owner itself so the channel should be removed
+# The two tests below will test these two situation repectively
+def test_remove_the_only_owner():
+    clear_database()
+    user_A, user_B = register_a_and_b()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_join(user_B['token'], public_channel['channel_id'])
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_A['u_id'])
+    details = channel_details(user_B['token'], public_channel['channel_id'])
+    expected_owner_ids = [user_B['u_id']]
+    assert_contains_users_id(details['owner_members'], expected_owner_ids)
+
+def test_remove_owner_with_the_only_member():
+    clear_database()
+    user_A = register_one_user()
+    public_channel = channels_create(user_A['token'], 'public_channel', True)
+    channel_removeowner(user_A['token'], public_channel['channel_id'], user_A['u_id'])
+    with pytest.raises(InputError):
+        channel_details(user_A['token'], public_channel['channel_id'])
+
+if __name__ == '__main__':
+    test_join_channel_without_authority(fixture_new_user)
 
 def test_channel_invite_from_unauthorised_user():
     clear_database()

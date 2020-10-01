@@ -30,8 +30,8 @@
     * If there is only one user in the channel, that user automatically becomes the owner.
 
 * channel_removeowner
-    * If the owner is to be removed, the owner must specify who they wish the next owner to be before they can be removed.
-    * If the owner is removed from the channel and the owner is the only user in that channel, the channel is also removed.
+    * If the owner is the only owner of that channel and been removed, one of other users in that channel randomly be selected to be the next owner.
+    * If the owner is the only member of a channel and been removed, the channel is also removed. For now, there is no way to remove a whole channel. Therefore, we leave the channel without owner in this situation.
 
 * channels_create
     * private channels are channels that cannot be joined unless the user is an admin.
