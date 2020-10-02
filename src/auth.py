@@ -8,19 +8,20 @@ def auth_login(email, password):
     for user in database['users']:
         if user['email'] == email:
             if user['password'] == password:
-                # Check if the user has been logged in, if so, return the same active token
                 u_id = user['id']
-                for active_token in database['active_tokens']:
-                    if auth_get_current_user_id_from_token(active_token) == u_id:
-                        return active_token
+                # Check if the user has been logged in, if so, return the same active token
+                active_token = next((exist_token for exist_token in database['active_tokens'] \
+                    if auth_get_current_user_id_from_token(exist_token) == u_id), None)
 
                 # If the user is not logged in, append a new token
-                token = u_id
-                database['active_tokens'].append(token)
+                if active_token == None:
+                    token = u_id
+                    database['active_tokens'].append(token)
+                    active_token = token
 
                 return {
                     'u_id': u_id,
-                    'token': token,
+                    'token': active_token,
                 }
             else:
                 raise InputError("Wrong password.")
