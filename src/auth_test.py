@@ -12,6 +12,13 @@ def test_login_success_case():
     result = register_new_account()
     auth_login('validemail@gmail.com', '123abc!@#')
 
+def test_login_double_login():
+    clear_database()
+    result = register_new_account()
+    token1 = auth_login('validemail@gmail.com', '123abc!@#')['token']
+    token2 = auth_login('validemail@gmail.com', '123abc!@#')['token']
+    assert token1 == token2
+
 # Fail cases for auth_login
 def test_login_fail_case():
     clear_database()
