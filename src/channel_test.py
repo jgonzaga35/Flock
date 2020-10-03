@@ -204,9 +204,6 @@ def test_inexist_uesr_leave_channel_public():
     with pytest.raises(AccessError):
         channel_leave(user_B['token'], public_channel['channel_id'])
 
-
-
-
 def test_channel_leave_channel_id_invalid():
     clear_database()
     user_A, user_B = register_a_and_b() 
@@ -215,8 +212,6 @@ def test_channel_leave_channel_id_invalid():
 
     with pytest.raises(InputError):
         channel_leave(user_A['token'], invalid_channel_id)
-
-
 
 def test_channel_details_basic():
     clear_database()
