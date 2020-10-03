@@ -1,6 +1,6 @@
-from database import database, clear_database
-from error import InputError, AccessError
 import re
+from database import database
+from error import InputError
 
 def auth_login(email, password):
     check_email(email)
@@ -16,8 +16,8 @@ def auth_login(email, password):
                     'u_id': u_id,
                     'token': token,
                 }
-            else:
-                raise InputError("Wrong password.")
+
+            raise InputError("Wrong password.")
     raise InputError("User doesn't exist.")
 
 def auth_logout(token):
@@ -63,12 +63,12 @@ def auth_get_current_user_id_from_token(token):
     return token
 
 # helper
-def auth_get_user_data_from_id(id):
+def auth_get_user_data_from_id(user_id):
     """ Raises ValueError is the a user with id id doesn't exists """
     for user in database['users']:
-        if user['id'] == id:
+        if user['id'] == user_id:
             return user
-    raise ValueError(f"user with id {id} wasn't found in the database")
+    raise ValueError(f"user with id {user_id} wasn't found in the database")
 
 
 # Helper function to find the user with the highest id
@@ -82,10 +82,9 @@ def highest_id():
 # Helper function for validating an Email
 def check_email(email):
     regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if(re.search(regex,email)):
+    if re.search(regex, email):
         return
-    else:
-        raise InputError("Email inputted is invalid.")
+    raise InputError("Email inputted is invalid.")
 
 # Helper function to check register info.
 def input_error_checking(email, password, name_first, name_last):

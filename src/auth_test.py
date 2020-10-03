@@ -1,7 +1,7 @@
+import pytest
 from auth import auth_login, auth_logout, auth_register
 from database import clear_database
-from error import InputError, AccessError
-import pytest
+from error import InputError
 
 def register_new_account():
     return auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -9,13 +9,13 @@ def register_new_account():
 # Successful cases for auth_login
 def test_login_success_case():
     clear_database()
-    result = register_new_account()
+    register_new_account()
     auth_login('validemail@gmail.com', '123abc!@#')
 
 # Fail cases for auth_login
 def test_login_fail_case():
     clear_database()
-    result = register_new_account()
+    register_new_account()
     with pytest.raises(InputError):
         auth_login('didntusethis@gmail.com', '123abcd!@#')  # Never registered
     with pytest.raises(InputError):
@@ -50,7 +50,7 @@ def test_logout_success():
 # Successful cases for auth_register
 def test_register_success_case():
     clear_database()
-    result = register_new_account()
+    register_new_account()
 
 # Fail cases for auth_register
 def test_auth_register_invalid_email():
@@ -62,7 +62,7 @@ def test_auth_register_invalid_email():
 
 def test_auth_register_used_email():
     clear_database()
-    result = register_new_account()
+    register_new_account()
     with pytest.raises(InputError):
         auth_register('validemail@gmail.com', '123abcd!@#', 'Peter', 'Li')
 
