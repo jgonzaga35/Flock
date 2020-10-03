@@ -144,13 +144,13 @@ def channel_join(token, channel_id):
 
 def channel_addowner(token, channel_id, u_id):
     # Generate channel that match the channel_id
-    channel =  next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
-    if channel == None: 
+    channel = next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
+    if channel == None:
         raise InputError("Channel_id is not valid")
-    
+
     if u_id in channel['owner_members_id']:
         raise InputError("Channel is already in the channel")
-    
+
     if u_id not in channel['all_members_id']:
         raise InputError("User not in the channel")
 
@@ -163,11 +163,11 @@ def channel_addowner(token, channel_id, u_id):
 def channel_removeowner(token, channel_id, u_id):
     """
     When there is only one owner in the channel and this owner is removed,
-    there should be another user in this room randomly became the owner. 
+    there should be another user in this room randomly became the owner.
     """
     # Generate the channel which match the channel_id
-    channel =  next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
-    user_who_remove_others_uid = auth_get_current_user_id_from_token(token) 
+    channel = next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
+    user_who_remove_others_uid = auth_get_current_user_id_from_token(token)
     if channel == None:
         raise InputError("Channel_id is not valid")
 
@@ -186,10 +186,10 @@ def channel_removeowner(token, channel_id, u_id):
                 if channel['id'] == channel_id:
                     channel['owner_members_id'].append(next_owner_uid)
 
-    
+
     # If there are only one member in the channel(including owner),
     # remove the whole channel otherwise remove the owner.
-    if (len(channel['all_members_id']) == 1):
+    if len(channel['all_members_id']) == 1:
         channel_remove(channel_id)
     else:
         channel['owner_members_id'].remove(u_id)
@@ -212,7 +212,7 @@ def channel_remove(channel_id):
     This is not a official function, use it as a helper
 
     However, removing channel will change the index of the element in the
-    'channels' list, so there should be no access to channel in the database 
+    'channels' list, so there should be no access to channel in the database
     directly using channel_id as its index
     For example:
 
