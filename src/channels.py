@@ -34,6 +34,9 @@ def channels_create(token, name, is_public):
     if len(name) > 20:
         raise InputError(f'{name!r} is more than 20 characters long')
 
+    if name == "":
+        name = "new_channel"
+
     creator_data = auth_get_user_data_from_id(auth_get_current_user_id_from_token(token))
 
     channel_num = len(database['channels'])

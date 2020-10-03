@@ -143,11 +143,57 @@ def channel_join(token, channel_id):
             channel['all_members_id'].append(current_user_id)
 
 def channel_addowner(token, channel_id, u_id):
-    return {}
+    # Generate channel that match the channel_id
+    channel =  next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
+    if channel == None: 
+        raise InputError("Channel_id is not valid")
+    
+    if u_id in channel['owner_members_id']:
+        raise InputError("Channel is already in the channel")
+    
+    if u_id not in channel['all_members_id']:
+        raise InputError("User not in the channel")
+
+    if auth_get_current_user_id_from_token(token) not in channel['owner_members_id']:
+        raise AccessError("User is not owner")
+
+    channel['owner_members_id'].append(u_id)
 
 
 def channel_removeowner(token, channel_id, u_id):
-    return {}
+    """
+    When there is only one owner in the channel and this owner is removed,
+    there should be another user in this room randomly became the owner. 
+    """
+    # Generate the channel which match the channel_id
+    channel =  next((channel for channel in database['channels'] if channel["id"] == channel_id), None)
+    user_who_remove_others_uid = auth_get_current_user_id_from_token(token) 
+    if channel == None:
+        raise InputError("Channel_id is not valid")
+
+    if u_id not in channel['owner_members_id']:
+        raise InputError("User is not a owner, can not be removed")
+
+    if user_who_remove_others_uid not in channel['owner_members_id']:
+        raise AccessError("User is not authorized")
+
+    # If the owner is the only owner in the channel
+    if len(channel['owner_members_id']) == 1:
+        # Generate a user to become the owner
+        next_owner_uid = next((user for user in channel['all_members_id'] if user != user_who_remove_others_uid), None)
+        if next_owner_uid != None:
+            for channel in database['channels']:
+                if channel['id'] == channel_id:
+                    channel['owner_members_id'].append(next_owner_uid)
+
+    
+    # If there are only one member in the channel(including owner),
+    # remove the whole channel otherwise remove the owner.
+    if (len(channel['all_members_id']) == 1):
+        channel_remove(channel_id)
+    else:
+        channel['owner_members_id'].remove(u_id)
+
 
 # helper used by channel_create
 def formated_user_details_from_user_data(user_data):
@@ -157,8 +203,33 @@ def formated_user_details_from_user_data(user_data):
         'name_last': user_data['last_name']
     }
 
-
 # Helper function
+
+
+def channel_remove(channel_id):
+    """
+    remove the channel based on its channel_id
+    This is not a official function, use it as a helper
+
+    However, removing channel will change the index of the element in the
+    'channels' list, so there should be no access to channel in the database 
+    directly using channel_id as its index
+    For example:
+
+    Bad access:
+    >>> database['channels'][channel_id]
+
+    Good access:
+    >>> for channel in database['channels']:
+            if channel['id'] == channel_id:
+                do something
+    """
+    for i in range(len(database['channels'])):
+        if database['channels'][i]['id'] == channel_id:
+            del database['channels'][i]
+
+
+
 
 # Eastimate whether channel is in the database
 def is_channel_in_database(channel_id, channels):

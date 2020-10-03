@@ -31,6 +31,15 @@ def test_long_name_error():
     with pytest.raises(InputError):
         channels_create(user['token'], 'channel name longer than twenty char', True)
 
+def test_empty_name():
+    clear_database()
+
+    user = auth_register("email@a.com", "averylongpassword", "first", "last")
+    channel_id = channels_create(user['token'], "", is_public=True)['channel_id']
+    details = channel_details(user['token'], channel_id)
+    assert details['name'] == 'new_channel'
+
+
 def test_creator_becomes_owner_and_member():
     clear_database()
     user = register_and_login_user()
