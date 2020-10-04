@@ -1,6 +1,6 @@
 import re
 from database import database
-from error import InputError
+from error import InputError, AccessError
 
 def auth_login(email, password):
     check_email(email)
@@ -59,7 +59,10 @@ def auth_register(email, password, name_first, name_last):
 
 # helper
 def auth_get_current_user_id_from_token(token):
-    # right now, tokens are just the user ids, so that's just a no-op
+    # right now, tokens are just the user ids
+    if token not in database['active_tokens']:
+        raise AccessError("token is invalid")
+
     return token
 
 # helper
