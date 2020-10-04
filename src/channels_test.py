@@ -5,6 +5,11 @@ from database import clear_database
 from error import InputError, AccessError
 from auth import auth_register, auth_login
 
+def test_create_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channels_create(-1, "channel name", is_public=False)
+
 def test_create_simple():
     clear_database()
     user = register_and_login_user()

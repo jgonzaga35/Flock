@@ -44,6 +44,11 @@ def test_messages_user_not_member():
     
     with pytest.raises(AccessError):
         assert channel_messages(user_02['token'], channel['channel_id'], 0)
+
+def test_messages_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_messages(-1, 0, 0)
     
 # ----------------------------- Add these tests when message_send is implemented ------------------
 # def test_messages_negative_start_index():
@@ -141,6 +146,11 @@ def register_a_b_and_c():
     pairc = auth_register("email@c.com", "averylongpassword", "C", "LastC")
     return paira, pairb, pairc
 
+def test_join_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_join(-1, 0)
+
 # Join the channel successfully
 def test_join_channel_successfully():
     clear_database()
@@ -169,6 +179,11 @@ def test_join_channel_without_authority():
     
     with pytest.raises(AccessError):
         channel_join(user_B['token'], channel['channel_id'])
+
+def test_leave_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_leave(-1, 0)
     
 # user successfully leave the channel
 def test_leave_channel_successfully():
@@ -204,7 +219,7 @@ def test_inexist_uesr_leave_channel_public():
     with pytest.raises(AccessError):
         channel_leave(user_B['token'], public_channel['channel_id'])
 
-def test_channel_leave_channel_id_invalid():
+def test_leave_channel_id_invalid():
     clear_database()
     user_A, user_B = register_a_and_b() 
     channel_id = channels_create(user_A['token'], 'channel_A', True)['channel_id']
@@ -212,6 +227,11 @@ def test_channel_leave_channel_id_invalid():
 
     with pytest.raises(InputError):
         channel_leave(user_A['token'], invalid_channel_id)
+
+def test_channel_details_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_details(-1, 0)
 
 def test_channel_details_basic():
     clear_database()
@@ -265,6 +285,16 @@ def test_channel_details_invalid_id():
     with pytest.raises(InputError):
         channel_details(usera['token'], 1)
 
+def test_add_owner_invalid_id():
+    clear_database()
+    usera = auth_register('email@test.com', 'somepasswordgoodenough', 'first', 'last')
+    userb = auth_register('emailb@test.com', 'somepasswordgoodenough', 'first', 'last')
+    channel_id = channels_create(usera['token'], 'channel_name', is_public=True)['channel_id']
+    channel_join(userb['token'], channel_id)
+
+    with pytest.raises(AccessError):
+        channel_addowner(-1, channel_id, userb['u_id'])
+
 def test_add_owner_successfully():
     clear_database()
     user_A, user_B = register_a_and_b()
@@ -316,7 +346,11 @@ def test_add_owner_by_non_owner():
         channel_addowner(user_B['token'], public_channel['channel_id'], user_C['u_id']) # user_B who are not owner add common user
                                                                                         # user_C be the owner
 
-                                                                                
+def test_remove_owner_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_removeowner(-1, 0, 0)
+
 def test_remove_user_successfully():
     clear_database()
     user_A, user_B = register_a_and_b()
@@ -399,6 +433,11 @@ def test_channel_invite_from_unauthorised_user():
     
     with pytest.raises(AccessError):
         assert channel_invite(usera['token'], channel_id, userb['u_id'])
+
+def test_channel_invite_invalid_token():
+    clear_database()
+    with pytest.raises(AccessError):
+        channel_invite(-1, 0, 0)
 
 def test_channel_invite_simple():
     clear_database()
