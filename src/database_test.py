@@ -3,6 +3,7 @@ from database import clear_database
 from error import InputError
 from auth import auth_register, auth_login
 from channels import channels_create, channels_listall
+from channel import channel_details
 
 
 def test_database_clear():
@@ -23,10 +24,15 @@ def test_database_clear():
     with pytest.raises(Exception):
         channel_details(usera['token'], "first_channel")
 
-    assert len(channels_listall(usera['token'])) == 0
+    with pytest.raises(Exception):
+        channels_listall(usera['token'])
+
+    #assert len(channels_listall(usera['token'])) == 0
 
     with pytest.raises(InputError):
         auth_login("hello@gmail.com", "veryverysafe")
 
     with pytest.raises(InputError):
         auth_login("whaa@gmail.com", "nostress")
+
+test_database_clear()

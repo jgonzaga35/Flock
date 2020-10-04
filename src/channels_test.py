@@ -1,9 +1,9 @@
+import pytest
 from channels import channels_create, channels_list, channels_listall
-from channel import channel_leave, channel_details
-from database import database, clear_database
+from channel import channel_details
+from database import clear_database
 from error import InputError, AccessError
 from auth import auth_register, auth_login
-import pytest
 
 def test_create_simple():
     clear_database()
@@ -59,6 +59,17 @@ def register_and_login_user():
     user_01_credentials = auth_login('validemail01@gmail.com', 'validpass@!01')
     return user_01_credentials
 
+def test_channels_list_invalid_token():
+    clear_database()
+    user = register_and_login_user()
+    token = user['token']
+    name = 'channel'  
+    channels_create(token, name, is_public=True)['channel_id']
+    invalid_token = -1
+    
+    with pytest.raises(AccessError):
+        assert channels_list(invalid_token)
+
 def test_channels_list_public():
     clear_database()
     user = register_and_login_user()
@@ -113,44 +124,55 @@ def register_and_login_multiple_users(email, password, first_name, last_name):
 def test_channels_list_unauthorised_multiple_public():
     clear_database()
 
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
-    user_03 = register_and_login_multiple_users('validemail03@gmail.com', 'validpass@!03', 'Third', 'User')
-    user_01_channel_id = channels_create(user_01['token'], 'channel1', is_public=True)['channel_id']
-    user_02_channel_id = channels_create(user_02['token'], 'channel2', is_public=True)['channel_id']
-    user_03_channel_id = channels_create(user_03['token'], 'channel3', is_public=True)['channel_id']
+    user_01 = register_and_login_multiple_users('01@gmail.com', 'validpass@!01', 'First', 'User')
+    user_02 = register_and_login_multiple_users('02@gmail.com', 'valpass@!02', 'Second', 'User')
+    user_03 = register_and_login_multiple_users('03@gmail.com', 'valpass@!03', 'Third', 'User')
+    channel_id_01 = channels_create(user_01['token'], 'channel1', is_public=True)['channel_id']
+    channel_id_02 = channels_create(user_02['token'], 'channel2', is_public=True)['channel_id']
+    channel_id_03 = channels_create(user_03['token'], 'channel3', is_public=True)['channel_id']
 
-    assert channels_list(user_01['token']) == [{'channel_id': user_01_channel_id, 'name': 'channel1'}]
-    assert channels_list(user_02['token']) == [{'channel_id': user_02_channel_id, 'name': 'channel2'}]
-    assert channels_list(user_03['token']) == [{'channel_id': user_03_channel_id, 'name': 'channel3'}]
+    assert channels_list(user_01['token']) == [{'channel_id': channel_id_01, 'name': 'channel1'}]
+    assert channels_list(user_02['token']) == [{'channel_id': channel_id_02, 'name': 'channel2'}]
+    assert channels_list(user_03['token']) == [{'channel_id': channel_id_03, 'name': 'channel3'}]
 
 def test_channels_list_unauthorised_multiple_private():
     clear_database()
 
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
-    user_03 = register_and_login_multiple_users('validemail03@gmail.com', 'validpass@!03', 'Third', 'User')
-    user_01_channel_id = channels_create(user_01['token'], 'channel1', is_public=False)['channel_id']
-    user_02_channel_id = channels_create(user_02['token'], 'channel2', is_public=False)['channel_id']
-    user_03_channel_id = channels_create(user_03['token'], 'channel3', is_public=False)['channel_id']
+    user_01 = register_and_login_multiple_users('01@gmail.com', 'validpass@!01', 'First', 'User')
+    user_02 = register_and_login_multiple_users('02@gmail.com', 'validpass@!02', 'Second', 'User')
+    user_03 = register_and_login_multiple_users('03@gmail.com', 'validpass@!03', 'Third', 'User')
+    channel_id_01 = channels_create(user_01['token'], 'channel1', is_public=False)['channel_id']
+    channel_id_02 = channels_create(user_02['token'], 'channel2', is_public=False)['channel_id']
+    channel_id_03 = channels_create(user_03['token'], 'channel3', is_public=False)['channel_id']
 
-    assert channels_list(user_01['token']) == [{'channel_id': user_01_channel_id, 'name': 'channel1'}]
-    assert channels_list(user_02['token']) == [{'channel_id': user_02_channel_id, 'name': 'channel2'}]
-    assert channels_list(user_03['token']) == [{'channel_id': user_03_channel_id, 'name': 'channel3'}]
+    assert channels_list(user_01['token']) == [{'channel_id': channel_id_01, 'name': 'channel1'}]
+    assert channels_list(user_02['token']) == [{'channel_id': channel_id_02, 'name': 'channel2'}]
+    assert channels_list(user_03['token']) == [{'channel_id': channel_id_03, 'name': 'channel3'}]
 
 def test_channels_list_empty():
     clear_database()
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    assert(channels_list(user_01['token']) == [])
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
+    assert channels_list(user_01['token']) == []
+
+def test_channels_listall_invalid_token():
+    clear_database()
+    user = register_and_login_user()
+    token = user['token']
+    name = 'channel'  
+    channels_create(token, name, is_public=True)['channel_id']
+    invalid_token = -1
+    
+    with pytest.raises(AccessError):
+        assert channels_listall(invalid_token)
 
 def test_channels_listall_empty():
     clear_database()
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')  
-    assert(channels_listall(user_01['token']) == [])
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
+    assert channels_listall(user_01['token']) == []
 
 def test_channels_listall_public():
     clear_database()
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
     token = user_01['token']
 
     channel_ids = []
@@ -161,11 +183,11 @@ def test_channels_listall_public():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({'channel_id': channel_id, 'name': name})
-    assert(channels_listall(token) == authorised_channels)
+    assert channels_listall(token) == authorised_channels
 
 def test_channels_listall_private():
     clear_database()
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
     token = user_01['token']
 
     channel_ids = []
@@ -176,15 +198,15 @@ def test_channels_listall_private():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({'channel_id': channel_id, 'name': name})
-    assert(channels_listall(token) == authorised_channels)
+    assert channels_listall(token) == authorised_channels
 
 def test_channels_listall_multiple_users_public():
     clear_database()
 
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
-    user_03 = register_and_login_multiple_users('validemail03@gmail.com', 'validpass@!03', 'Third', 'User')
-    
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
+    user_02 = register_and_login_multiple_users('email02@gmail.com', 'pass@!02', 'Second', 'User')
+    user_03 = register_and_login_multiple_users('email03@gmail.com', 'pass@!03', 'Third', 'User')
+
     tokens = [user_01['token'], user_02['token'], user_03['token']]
     channel_ids = []
     names = ['private_channel_01', 'private_channel_02', 'private_channel_03']
@@ -194,18 +216,18 @@ def test_channels_listall_multiple_users_public():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({'channel_id': channel_id, 'name': name})
-    
-    assert(channels_listall(user_01['token']) == authorised_channels)
-    assert(channels_listall(user_02['token']) == authorised_channels)
-    assert(channels_listall(user_03['token']) == authorised_channels)
+
+    assert channels_listall(user_01['token']) == authorised_channels
+    assert channels_listall(user_02['token']) == authorised_channels
+    assert channels_listall(user_03['token']) == authorised_channels
 
 def test_channels_listall_multiple_users_private():
     clear_database()
 
-    user_01 = register_and_login_multiple_users('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_02 = register_and_login_multiple_users('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
-    user_03 = register_and_login_multiple_users('validemail03@gmail.com', 'validpass@!03', 'Third', 'User')
-    
+    user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
+    user_02 = register_and_login_multiple_users('email02@gmail.com', 'pass@!02', 'Second', 'User')
+    user_03 = register_and_login_multiple_users('email03@gmail.com', 'pass@!03', 'Third', 'User')
+
     tokens = [user_01['token'], user_02['token'], user_03['token']]
     channel_ids = []
     names = ['private_channel_01', 'private_channel_02', 'private_channel_03']
@@ -215,7 +237,8 @@ def test_channels_listall_multiple_users_private():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({'channel_id': channel_id, 'name': name})
+
+    assert channels_listall(user_01['token']) == authorised_channels
+    assert channels_listall(user_02['token']) == authorised_channels
+    assert channels_listall(user_03['token']) == authorised_channels
     
-    assert(channels_listall(user_01['token']) == authorised_channels)
-    assert(channels_listall(user_02['token']) == authorised_channels)
-    assert(channels_listall(user_03['token']) == authorised_channels)
