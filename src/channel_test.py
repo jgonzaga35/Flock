@@ -423,9 +423,6 @@ def test_remove_owner_with_the_only_member():
     with pytest.raises(InputError):
         channel_details(user_A['token'], public_channel['channel_id'])
 
-if __name__ == '__main__':
-    test_join_channel_without_authority(fixture_new_user)
-
 def test_channel_invite_from_unauthorised_user():
     clear_database()
     usera, userb = register_a_and_b()
