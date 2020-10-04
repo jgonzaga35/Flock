@@ -59,6 +59,17 @@ def register_and_login_user():
     user_01_credentials = auth_login('validemail01@gmail.com', 'validpass@!01')
     return user_01_credentials
 
+def test_channels_list_invalid_token():
+    clear_database()
+    user = register_and_login_user()
+    token = user['token']
+    name = 'channel'  
+    channels_create(token, name, is_public=True)['channel_id']
+    invalid_token = -1
+    
+    with pytest.raises(AccessError):
+        assert channels_list(invalid_token)
+
 def test_channels_list_public():
     clear_database()
     user = register_and_login_user()
@@ -142,6 +153,17 @@ def test_channels_list_empty():
     clear_database()
     user_01 = register_and_login_multiple_users('email01@gmail.com', 'pass@!01', 'First', 'User')
     assert channels_list(user_01['token']) == []
+
+def test_channels_listall_invalid_token():
+    clear_database()
+    user = register_and_login_user()
+    token = user['token']
+    name = 'channel'  
+    channels_create(token, name, is_public=True)['channel_id']
+    invalid_token = -1
+    
+    with pytest.raises(AccessError):
+        assert channels_listall(invalid_token)
 
 def test_channels_listall_empty():
     clear_database()
