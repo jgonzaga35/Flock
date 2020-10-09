@@ -165,6 +165,31 @@ def test_join_invalid_token():
     with pytest.raises(AccessError):
         channel_join(-1, 0)
 
+def test_channel_join_multiple_channels():
+    clear_database()
+    usera, userb, userc = register_a_b_and_c()
+    channel_id_a = channels_create(usera['token'], 'channela', is_public=True)['channel_id']
+    channel_id_b = channels_create(userb['token'], 'channelb', is_public=True)['channel_id']
+    channel_id_c = channels_create(userc['token'], 'channelc', is_public=True)['channel_id']
+
+    channel_join(usera['token'], channel_id_b)
+    channel_join(usera['token'], channel_id_c)
+    channel_join(userb['token'], channel_id_c)
+
+    # usera should be able to get all the details since the channels are public
+    detailsa = channel_details(usera['token'], channel_id_a)
+    detailsb = channel_details(usera['token'], channel_id_b)
+    detailsc = channel_details(usera['token'], channel_id_c)
+
+    # there should still be only one owner
+    assert_contains_users_id(detailsa['owner_members'], [usera['u_id']])
+    assert_contains_users_id(detailsb['owner_members'], [userb['u_id']])
+    assert_contains_users_id(detailsc['owner_members'], [userc['u_id']])
+
+    assert_contains_users_id(detailsa['all_members'], [usera['u_id']])
+    assert_contains_users_id(detailsb['all_members'], [usera['u_id'], userb['u_id']])
+    assert_contains_users_id(detailsc['all_members'], [usera['u_id'], userb['u_id'], userc['u_id']])
+
 # Join the channel successfully
 def test_join_channel_successfully():
     clear_database()
