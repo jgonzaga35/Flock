@@ -500,6 +500,13 @@ def test_channel_invite_multiple_channels():
     assert_contains_users_id(detailsb['all_members'], [userb['u_id']])
     assert_contains_users_id(detailsb['owner_members'], [userb['u_id']])
 
+def test_channel_invite_invalid_channel_id():
+    clear_database()
+    usera, userb = register_a_and_b()
+
+    with pytest.raises(InputError):
+        channel_invite(usera['token'], channel_id=-1, u_id=userb['u_id'])
+
 # Helper function
 
 # Check whether the user is the owner or member of a channel
