@@ -9,8 +9,10 @@ def register_new_account():
 # Successful cases for auth_login
 def test_login_success_case():
     clear_database()
-    register_new_account()
-    auth_login('validemail@gmail.com', '123abc!@#')
+    first = register_new_account()
+    assert auth_logout(first['token'])['is_success'] == True
+    # when we register a new account, the user logged in
+    assert auth_login('validemail@gmail.com', '123abc!@#')['u_id'] == first['u_id']
 
 def test_login_double_login():
     clear_database()
