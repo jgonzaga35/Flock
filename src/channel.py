@@ -230,11 +230,3 @@ def channel_remove(channel_id):
 
 
 
-
-# Eastimate whether channel is in the database
-def is_channel_in_database(channel_id, channels):
-    is_channel_exist = False
-    for channel in channels:
-        if channel['id'] == channel_id:
-            is_channel_exist = True
-    return is_channel_exist
