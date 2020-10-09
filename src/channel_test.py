@@ -533,7 +533,9 @@ def assert_contains_users_id(user_details, expected_user_ids):
     >>> assert_contains_users_id(user_details, expected_members_id)
     """
 
+    assert len(user_details) == len(expected_user_ids), f"expect {len(expected_user_ids)} users, but got {len(user_details)}"
+
     for user in user_details:
-        assert user['u_id'] in expected_user_ids
+        assert user['u_id'] in expected_user_ids, f"channel contains unexpected user {user['u_id']}"
         expected_user_ids.remove(user['u_id'])
-    assert(len(expected_user_ids) == 0)
+    assert len(expected_user_ids) == 0, f"users ${expected_user_ids} where not found in the channel"
