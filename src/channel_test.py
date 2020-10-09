@@ -31,6 +31,20 @@ def test_messages_invalid_channel_ID():
     with pytest.raises(InputError):
         assert channel_messages(user['token'], invalid_channel_id, 0)
 
+def test_channel_messages_invalid_start():
+    clear_database()
+    user = register_user(
+        'validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
+    )
+
+    channel_id = channels_create(user['token'], 'channel', is_public=True)['channel_id']
+
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel_id, start=-1)
+
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel_id, start=1)
+
 def test_messages_user_not_member():
     clear_database()
     user_01= register_user(
