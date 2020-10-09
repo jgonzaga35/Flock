@@ -483,6 +483,23 @@ def test_channel_invite_member_already_in_channel():
             usera_count = usera_count + 1
     assert usera_count == 1
 
+def test_channel_invite_multiple_channels():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channela = channels_create(usera['token'], 'usera_ch', is_public=False)
+    channelb = channels_create(userb['token'], 'userb_ch', is_public=False)
+
+    channel_invite(usera['token'], channela['channel_id'], userb['u_id'])
+
+    detailsa = channel_details(usera['token'], channela['channel_id'])
+    detailsb = channel_details(userb['token'], channelb['channel_id'])
+
+    assert_contains_users_id(detailsa['all_members'], [usera['u_id'], userb['u_id']])
+    assert_contains_users_id(detailsa['owner_members'], [usera['u_id']])
+
+    assert_contains_users_id(detailsb['all_members'], [userb['u_id']])
+    assert_contains_users_id(detailsb['owner_members'], [userb['u_id']])
+
 # Helper function
 
 # Check whether the user is the owner or member of a channel
