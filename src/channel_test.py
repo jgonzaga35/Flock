@@ -440,6 +440,25 @@ def test_remove_owner_by_non_owner():
     with pytest.raises(AccessError):
         channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
 
+
+def test_channel_removeowner_multiple_channels():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channela = channels_create(usera['token'], 'a', is_public=True)['channel_id']
+    channelb = channels_create(userb['token'], 'b', is_public=True)['channel_id']
+
+    channel_join(usera['token'], channelb)
+    channel_addowner(userb['token'], channelb, usera['u_id'])
+    channel_removeowner(userb['token'], channelb, userb['u_id'])
+    channel_removeowner(usera['token'], channelb, usera['u_id'])
+
+    # (comment from Mathieu)
+    # THIS BREAKS! Because channel_remove is broken (October 10)
+    # you can remove this comment, and uncoment the line below once #71 is closed
+
+    # channel_removeowner(usera['token'], channela, usera['u_id'])
+
+
 # There are two situations when we remove the owner and there is only one owner:
 # 1: The channel has other member so we pick a random user to be the owner
 # 2: The channel only contain the owner itself so the channel should be removed
