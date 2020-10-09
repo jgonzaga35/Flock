@@ -431,6 +431,14 @@ def test_channel_invite_from_unauthorised_user():
     with pytest.raises(AccessError):
         assert channel_invite(usera['token'], channel_id, userb['u_id'])
 
+def test_channel_invite_invalid_id():
+    clear_database()
+    user = auth_register("emaila@gmail.com", "passwordasdfasdf", "hello", "world")
+    channel_id = channels_create(user['token'], 'ch', is_public=False)['channel_id']
+
+    with pytest.raises(InputError):
+        channel_invite(user['token'], channel_id, u_id=-1)
+
 def test_channel_invite_invalid_token():
     clear_database()
     with pytest.raises(AccessError):
