@@ -204,7 +204,7 @@ def test_join_channel_successfully():
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
     clear_database()
-    user_A, user_B = register_a_and_b() 
+    user_B = register_one_user() 
     invalid_channel_id = 233
     
     with pytest.raises(InputError):
@@ -260,7 +260,7 @@ def test_inexist_uesr_leave_channel_public():
 
 def test_leave_channel_id_invalid():
     clear_database()
-    user_A, user_B = register_a_and_b() 
+    user_A = register_one_user() 
     channel_id = channels_create(user_A['token'], 'channel_A', True)['channel_id']
     invalid_channel_id = channel_id + 1
 
@@ -275,7 +275,7 @@ def test_channel_details_invalid_token():
 def test_channel_details_basic():
     clear_database()
 
-    usera, userb = register_a_and_b()
+    usera = register_one_user()
 
     channel_id = channels_create(usera['token'], 'channel1', True)['channel_id']
    
