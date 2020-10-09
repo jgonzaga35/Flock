@@ -11,6 +11,8 @@
 
 * auth_login
     * Every time when a user is logged out, token will be removed from the active_tokens in the database
+    * If a user try to login multiple times, they will receive the same token instead of a newly generated one
+
 **channel_test**
 
 * channel_invite

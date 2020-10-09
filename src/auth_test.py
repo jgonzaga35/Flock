@@ -12,6 +12,16 @@ def test_login_success_case():
     register_new_account()
     auth_login('validemail@gmail.com', '123abc!@#')
 
+def test_login_double_login():
+    clear_database()
+    result = register_new_account()
+    token1 = auth_login('validemail@gmail.com', '123abc!@#')['token']
+    token2 = auth_login('validemail@gmail.com', '123abc!@#')['token']
+    assert token1 == token2
+    auth_logout(token1)
+    # A user shouldn't be logout twice just because they log in twice
+    assert auth_logout(token2)['is_success'] == False
+
 # Fail cases for auth_login
 def test_login_fail_case():
     clear_database()
