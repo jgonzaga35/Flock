@@ -132,9 +132,6 @@ def channel_join(token, channel_id):
     if target_channel is None:
         raise InputError('Channel ID is invalid')
 
-    if token not in database['active_tokens']:
-        raise AccessError('Token is not activated')
-
     if not target_channel['is_public']:
         raise AccessError('Channel is not public')
 
