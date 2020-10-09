@@ -5,6 +5,10 @@ source =
     .
     src
 omit =
-    test_*.py
-    *_test.py
+    .venv/*
+    src/test_*.py
+    src/*_test.py
     src/server.py
+    src/message.py
+    src/other.py
+    src/user.py
