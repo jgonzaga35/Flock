@@ -34,5 +34,3 @@ def test_database_clear():
 
     with pytest.raises(InputError):
         auth_login("whaa@gmail.com", "nostress")
-
-test_database_clear()
