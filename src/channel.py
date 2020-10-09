@@ -228,9 +228,9 @@ def channel_remove(channel_id):
             if channel['id'] == channel_id:
                 do something
     """
-    for i in range(len(database['channels'])):
-        if database['channels'][i]['id'] == channel_id:
-            del database['channels'][i]
 
-
+    # the [:] is me showing off. I can think of two options:
+    # database['channels'] = list(filter(...)) # allocates a new list for sure
+    # database['channels'][:] = filter(...)    # has a chance of writing the list in place, maybe without reallocating
+    database['channels'][:] = filter(lambda channel: channel['id'] != channel_id, database['channels'])
 
