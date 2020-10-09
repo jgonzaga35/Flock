@@ -452,11 +452,7 @@ def test_channel_removeowner_multiple_channels():
     channel_removeowner(userb['token'], channelb, userb['u_id'])
     channel_removeowner(usera['token'], channelb, usera['u_id'])
 
-    # (comment from Mathieu)
-    # THIS BREAKS! Because channel_remove is broken (October 10)
-    # you can remove this comment, and uncoment the line below once #71 is closed
-
-    # channel_removeowner(usera['token'], channela, usera['u_id'])
+    channel_removeowner(usera['token'], channela, usera['u_id'])
 
 
 # There are two situations when we remove the owner and there is only one owner:
