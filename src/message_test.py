@@ -4,56 +4,99 @@ from database import clear_database
 from auth import auth_register
 from channels import channels_create
 
+from test_helpers import url, register_n_users
+
 from error import AccessError
 import pytest
+import requests
 
 INVALID_MESSAGE_ID = -1
 
 ###############################################################################
 #                           Tests for message_send                            #
 ###############################################################################
-def test_send_non_existenet_user():
-    clear_database()
-    user = register_and_login_user()
+def test_send_non_existenet_user(url):
+    user = register_n_users(1)
     # Create a new channel
-    channel = channels_create(user['token'], 'channel_01', is_public=True)
-    message = message_send(user['token'], channel['channel_id'], 'new message')
+    channel_params = {
+        'token': user['token'],
+        'name': 'channel_01',
+        'is_public': True,
+    }
+    channel = requests.post(url + 'channels/create', json=channel_params)
     
-    with pytest.raises(AccessError):
-        assert message_edit(user['token'] + 1, message['message_id'], 'try editing')
+    # User sends a message
+    message_params = {
+        'token': user['token'],
+        'channel_id': channel['channel_id'],
+        'message': 'test message',
+    }
+    message = requests.post(url + 'message/send', json=message_params)
+    
+    # Non-existent user tries to edit the message
+    message_edit = {
+        'token': user['token'] + 1,
+        'message': message['message_id'],
+        'message': 'try editing',
+    }
+    r = requests.post(url + 'message/edit', json=message_edit)
+    
+    assert r.status_code == 403
     
 def test_send_invalid_message_id():
-    clear_database()
-    user = register_and_login_user()
+    user = register_n_users(1)
     # Create a new channel
-    channel = channels_create(user['token'], 'channel_01', is_public=True)
-    message = message_send(user['token'], channel['channel_id'], 'new message')
+    channel_params = {
+        'token': user['token'],
+        'name': 'channel_01',
+        'is_public': True,
+    }
+    channel = requests.post(url + 'channels/create', json=channel_params)
     
-    with pytest.raises(AccessError):
-        assert message_edit(user['token'], INVALID_MESSAGE_ID, 'try editing')
+    # User sends a message
+    message_params = {
+        'token': user['token'],
+        'channel_id': channel['channel_id'],
+        'message': 'test message',
+    }
+    message = requests.post(url + 'message/send', json=message_params)
+    
+    # User tries to edit message with an invalid message id
+    message_edit = {
+        'token': user['token'] + 1,
+        'message': INVALID_MESSAGE_ID,
+        'message': 'try editing',
+    }
+    r = requests.post(url + 'message/edit', json=message_edit)
+    
+    assert r.status_code == 403
 
 # User editing a message is not authorised to edit it
 def test_send_unauthorised_user():
-    clear_database()
-    user_01 = register_and_login_user()
-    user_02 = register_and_login_user_2()
+    user01, user02 = register_n_users(2)
     
     # Create a new channel
-    channel = channels_create(user['token'], 'channel_01', is_public=True)
-    message = message_send(user_01['token'], channel['channel_id'], 'new message')
+    channel_params = {
+        'token': user['token'],
+        'name': 'channel_01',
+        'is_public': True,
+    }
+    channel = requests.post(url + 'channels/create', json=channel_params)
     
-    with pytest.raises(AccessError):
-        assert message_edit(user_02['token'], message['message_id'], 'try editing')
-
-
-# Helper functions which registers a user and logs them in
-# Return {u_id, token}
-def register_and_login_user():
-    auth_register('validemail01@gmail.com', 'validpass@!01', 'First', 'User')
-    user_01_credentials = auth_login('validemail01@gmail.com', 'validpass@!01')
-    return user_01_credentials
-
-def register_and_login_user_2():
-    auth_register('validemail02@gmail.com', 'validpass@!02', 'Second', 'User')
-    user_02_credentials = auth_login('validemail02@gmail.com', 'validpass@!02')
-    return user_02_credentials
+    # User 1 sends a message
+    message_params = {
+        'token': user01['token'],
+        'channel_id': channel['channel_id'],
+        'message': 'test message',
+    }
+    message = requests.post(url + 'message/send', json=message_params)
+    
+    # User 2 tries to edit the message
+    message_edit = {
+        'token': user02['token'],
+        'message': message['message_id'],
+        'message': 'try editing',
+    }
+    r = requests.post(url + 'message/edit', json=message_edit)
+    
+    assert r.status_code == 403
