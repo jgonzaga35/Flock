@@ -13,14 +13,6 @@ def channels_list(token):
     channels = []
     current_user_id = auth_get_current_user_id_from_token(token)
 
-    valid_user = False
-    for user in database['users']:
-        if current_user_id == user['id']:
-            valid_user = True
-    
-    if valid_user == False:
-        raise AccessError(f"The token {token} is invalid")
-    
     for channel in database['channels']:
         for user_id in channel['all_members_id']:
             if current_user_id == user_id:
@@ -29,16 +21,9 @@ def channels_list(token):
 
 def channels_listall(token):
     channels = []
-    current_user_id = auth_get_current_user_id_from_token(token)
+    # makes sure the user is valid
+    auth_get_current_user_id_from_token(token)
     
-    valid_user = False
-    for user in database['users']:
-        if current_user_id == user['id']:
-            valid_user = True
-    
-    if valid_user == False:
-        raise AccessError(f"The token {token} is invalid")
-
     for channel in database['channels']:
         authorised_token = channel['all_members_id'][0]
         channels.append(simplify_channel_details(authorised_token, channel['id']))

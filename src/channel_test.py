@@ -31,6 +31,20 @@ def test_messages_invalid_channel_ID():
     with pytest.raises(InputError):
         assert channel_messages(user['token'], invalid_channel_id, 0)
 
+def test_channel_messages_invalid_start():
+    clear_database()
+    user = register_user(
+        'validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
+    )
+
+    channel_id = channels_create(user['token'], 'channel', is_public=True)['channel_id']
+
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel_id, start=-1)
+
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel_id, start=1)
+
 def test_messages_user_not_member():
     clear_database()
     user_01= register_user(
@@ -151,6 +165,31 @@ def test_join_invalid_token():
     with pytest.raises(AccessError):
         channel_join(-1, 0)
 
+def test_channel_join_multiple_channels():
+    clear_database()
+    usera, userb, userc = register_a_b_and_c()
+    channel_id_a = channels_create(usera['token'], 'channela', is_public=True)['channel_id']
+    channel_id_b = channels_create(userb['token'], 'channelb', is_public=True)['channel_id']
+    channel_id_c = channels_create(userc['token'], 'channelc', is_public=True)['channel_id']
+
+    channel_join(usera['token'], channel_id_b)
+    channel_join(usera['token'], channel_id_c)
+    channel_join(userb['token'], channel_id_c)
+
+    # usera should be able to get all the details since the channels are public
+    detailsa = channel_details(usera['token'], channel_id_a)
+    detailsb = channel_details(usera['token'], channel_id_b)
+    detailsc = channel_details(usera['token'], channel_id_c)
+
+    # there should still be only one owner
+    assert_contains_users_id(detailsa['owner_members'], [usera['u_id']])
+    assert_contains_users_id(detailsb['owner_members'], [userb['u_id']])
+    assert_contains_users_id(detailsc['owner_members'], [userc['u_id']])
+
+    assert_contains_users_id(detailsa['all_members'], [usera['u_id']])
+    assert_contains_users_id(detailsb['all_members'], [usera['u_id'], userb['u_id']])
+    assert_contains_users_id(detailsc['all_members'], [usera['u_id'], userb['u_id'], userc['u_id']])
+
 # Join the channel successfully
 def test_join_channel_successfully():
     clear_database()
@@ -165,7 +204,7 @@ def test_join_channel_successfully():
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
     clear_database()
-    user_A, user_B = register_a_and_b() 
+    user_B = register_one_user() 
     invalid_channel_id = 233
     
     with pytest.raises(InputError):
@@ -221,7 +260,7 @@ def test_inexist_uesr_leave_channel_public():
 
 def test_leave_channel_id_invalid():
     clear_database()
-    user_A, user_B = register_a_and_b() 
+    user_A = register_one_user() 
     channel_id = channels_create(user_A['token'], 'channel_A', True)['channel_id']
     invalid_channel_id = channel_id + 1
 
@@ -236,7 +275,7 @@ def test_channel_details_invalid_token():
 def test_channel_details_basic():
     clear_database()
 
-    usera, userb = register_a_and_b()
+    usera = register_one_user()
 
     channel_id = channels_create(usera['token'], 'channel1', True)['channel_id']
    
@@ -401,6 +440,21 @@ def test_remove_owner_by_non_owner():
     with pytest.raises(AccessError):
         channel_removeowner(user_B['token'], public_channel['channel_id'], user_A['u_id'])
 
+
+def test_channel_removeowner_multiple_channels():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channela = channels_create(usera['token'], 'a', is_public=True)['channel_id']
+    channelb = channels_create(userb['token'], 'b', is_public=True)['channel_id']
+
+    channel_join(usera['token'], channelb)
+    channel_addowner(userb['token'], channelb, usera['u_id'])
+    channel_removeowner(userb['token'], channelb, userb['u_id'])
+    channel_removeowner(usera['token'], channelb, usera['u_id'])
+
+    channel_removeowner(usera['token'], channela, usera['u_id'])
+
+
 # There are two situations when we remove the owner and there is only one owner:
 # 1: The channel has other member so we pick a random user to be the owner
 # 2: The channel only contain the owner itself so the channel should be removed
@@ -430,6 +484,14 @@ def test_channel_invite_from_unauthorised_user():
     
     with pytest.raises(AccessError):
         assert channel_invite(usera['token'], channel_id, userb['u_id'])
+
+def test_channel_invite_invalid_id():
+    clear_database()
+    user = auth_register("emaila@gmail.com", "passwordasdfasdf", "hello", "world")
+    channel_id = channels_create(user['token'], 'ch', is_public=False)['channel_id']
+
+    with pytest.raises(InputError):
+        channel_invite(user['token'], channel_id, u_id=-1)
 
 def test_channel_invite_invalid_token():
     clear_database()
@@ -475,6 +537,30 @@ def test_channel_invite_member_already_in_channel():
             usera_count = usera_count + 1
     assert usera_count == 1
 
+def test_channel_invite_multiple_channels():
+    clear_database()
+    usera, userb = register_a_and_b()
+    channela = channels_create(usera['token'], 'usera_ch', is_public=False)
+    channelb = channels_create(userb['token'], 'userb_ch', is_public=False)
+
+    channel_invite(usera['token'], channela['channel_id'], userb['u_id'])
+
+    detailsa = channel_details(usera['token'], channela['channel_id'])
+    detailsb = channel_details(userb['token'], channelb['channel_id'])
+
+    assert_contains_users_id(detailsa['all_members'], [usera['u_id'], userb['u_id']])
+    assert_contains_users_id(detailsa['owner_members'], [usera['u_id']])
+
+    assert_contains_users_id(detailsb['all_members'], [userb['u_id']])
+    assert_contains_users_id(detailsb['owner_members'], [userb['u_id']])
+
+def test_channel_invite_invalid_channel_id():
+    clear_database()
+    usera, userb = register_a_and_b()
+
+    with pytest.raises(InputError):
+        channel_invite(usera['token'], channel_id=-1, u_id=userb['u_id'])
+
 # Helper function
 
 # Check whether the user is the owner or member of a channel
@@ -487,7 +573,9 @@ def assert_contains_users_id(user_details, expected_user_ids):
     >>> assert_contains_users_id(user_details, expected_members_id)
     """
 
+    assert len(user_details) == len(expected_user_ids), f"expect {len(expected_user_ids)} users, but got {len(user_details)}"
+
     for user in user_details:
-        assert user['u_id'] in expected_user_ids
+        assert user['u_id'] in expected_user_ids, f"channel contains unexpected user {user['u_id']}"
         expected_user_ids.remove(user['u_id'])
-    assert(len(expected_user_ids) == 0)
+    assert len(expected_user_ids) == 0, f"users ${expected_user_ids} where not found in the channel"
