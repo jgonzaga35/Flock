@@ -58,3 +58,7 @@
     * You are only able to edit messages that you have sent.
     * You do not have to be an admin or owner of the channel to edit your message.
 
+**message**
+
+* message_edit
+    * Owner of the flock and owner of the channel can edit any message
