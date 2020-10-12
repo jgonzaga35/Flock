@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from channel import (
     channel_messages,
     channel_invite,
@@ -8,6 +9,11 @@ from channel import (
     formated_user_details_from_user_data,
     channel_removeowner,
 )
+=======
+import time
+from channel import channel_messages, channel_invite, channel_leave, channel_addowner, channel_join, channel_details, formated_user_details_from_user_data, channel_removeowner
+from message import message_send
+>>>>>>> message_send: test a lot of messages
 from auth import auth_get_user_data_from_id
 from channels import channels_create, channels_list
 from database import clear_database
@@ -72,51 +78,77 @@ def test_messages_invalid_token():
 
 
 # ----------------------------- Add these tests when message_send is implemented ------------------
-# def test_messages_negative_start_index():
-#     clear_database()
-# # Add a user and log them in
-# user = register_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+def test_messages_negative_start_index():
+    clear_database()
+    # Add a user and log them in
+    user = register_n_users(1)
+    
+    # Create a channel and fill with messages
+    channel = channels_create(user['token'], 'new_channel', is_public = True)
+    populate_channel_hundred_messages(user['token'], channel['channel_id'])
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel['channel_id'], -1)
 
-# # Create a channel and fill with messages
-# channel = channels_create(user['token'], 'new_channel', is_public = True)
-# populate_channel_hundred_messages(user['token'], channel['channel_id'])
-#     with pytest.raises(InputError):
-#         assert channel_messages(user['token'], channel['channel_id'], -1)
+def test_messages_simple():
+    clear_database()
+    # Add a user and log them in
+    user = register_n_users(1)
+    
+    # Create a channel and fill with messages
+    channel = channels_create(user['token'], 'new_channel', is_public = True)
+    message_send(user['token'], channel['channel_id'], "Hello World!")
+    res = channel_messages(user['token'], channel['channel_id'], 0)
+    assert res['messages'][0]['message'] == "Hello World!"
 
-# def test_messages_simple():
-#     clear_database()
-#     # Add a user and log them in
-#     user = register_user('validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
+def test_messages_start_overflow():
+    clear_database()
+    user = register_n_users(1)
+    channel = channels_create(user['token'], 'channel_01', is_public = True)
+    channel_join(user['token'], channel['channel_id'])
+    message_send(user['token'], channel['channel_id'], 'Hello World!')
+    with pytest.raises(InputError):
+        assert channel_messages(user['token'], channel['channel_id'], 100)
 
-#     # Create a channel and fill with messages
-#     channel = channels_create(user['token'], 'new_channel', is_public = True)
-#     message_send(user['token'], channel['channel_id]', "Hello World!"])
-#     res = channel_messages(user['token'], channel['channel_id'], 0)
-#     assert res['messages'][0] == {"Hello World!"}
+def test_messages_start_underflow():
+    clear_database()
+    user = register_n_users(1)
 
-# def test_messages_start_overflow():
-# clear_database()
-# user = register_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
-# channel = channels_create(user['token'], 'channel_01', is_public = True)
-# channel_join(user['token'], channel['channel_id'])
-# message_send(user['token'], channel['channel_id'], 'Hello World!')
-# with pytest.raises(InputError):
-#     assert channel_messages(user['token'], channel['channel_id'], 100)
+    channel = channels_create(user['token'], 'channel_01', is_public = True)
+    channel_join(user['token'], channel['channel_id'])
+    message_send(user['token'], channel['channel_id'], 'Hello World!')
+    assert channel_messages(user['token'], channel['channel_id'], 0)['end'] == -1
 
-# def test_messages_start_underflow():
-#     clear_database()
-#     user = register_user('validemail01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith')
-#     channel = channels_create(user['token'], 'channel_01', is_public = True)
-#     channel_join(user['token'], channel['channel_id'])
-#     message_send(user['token'], channel['channel_id'], 'Hello World!')
-#     assert channel_messages(user['token'], channel['channel_id'], 0) == -1
+def test_channel_message_a_lot_of_message():
+    seed = time.time()
+    print(seed)
+    random.seed(seed)
 
-# # Helper function to send 100 messages to a given channel
-# def populate_channel_hundred_messages(token, channel_id):
-#     for i in range(1,100):
-#         index = random.randint(0, len(word_list) - 1)
-#         message = word_list[index]
-#         message_send(token, channel_id, message)
+    clear_database()
+    usera, userb, userc = register_n_users(3)
+    channel_id = channels_create(usera['token'], 'channel', is_public=True)['channel_id']
+
+    channel_join(userb['token'], channel_id)
+    channel_join(userc['token'], channel_id)
+
+    for _ in range(340):
+        token = random.choice([usera, userb, userc])['token']
+        word = random.choice(word_list)
+        message_send(token, channel_id, word)
+
+    assert channel_messages(userb['token'], channel_id, 5) == channel_messages(userc['token'], channel_id, 5)
+    assert channel_messages(userb['token'], channel_id, 5) == channel_messages(usera['token'], channel_id, 5)
+
+    assert channel_messages(userb['token'], channel_id, 330)['start'] == 330
+    assert channel_messages(userb['token'], channel_id, 330)['end'] == -1
+    assert channel_messages(userb['token'], channel_id, 330) == channel_messages(userc['token'], channel_id, 330)
+
+
+# Helper function to send 100 messages to a given channel
+def populate_channel_hundred_messages(token, channel_id):
+    for i in range(1,100):
+        index = random.randint(0, len(word_list) - 1)
+        message = word_list[index]
+        message_send(token, channel_id, message)
 
 # ---------------------------------------------------------------------------------------------
 
