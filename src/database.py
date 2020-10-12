@@ -1,7 +1,9 @@
 database = {
     "users": [],
-    "channels": [
-        # {
+    # id_heads are only ever incremented, they are used to generate ids
+    "channels_id_head": 1,
+    "channels": {
+        # id: {
         #     "id": 1,
         #     "name": "greatest_channel",
         #     # the user id of the owners
@@ -18,22 +20,7 @@ database = {
         #           }
         #       ],
         # },
-        # {
-        #     "id": 2,
-        #     "name": "me myself and I",
-        #     "owner_members_id": [3]
-        #     "all_members_id": [3]
-        #     "is_public": False
-        #      "messages": [
-        #           {
-        #               "message_id": 1,
-        #               "u_id": 1,
-        #               "message": "Hello world",
-        #               "time_created": 1582426789,
-        #           }
-        #       ],
-        # }
-    ],
+    },
     "active_tokens": [],
 }
 

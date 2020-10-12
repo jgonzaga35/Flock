@@ -15,7 +15,7 @@ def channels_list(token):
     channels = []
     current_user_id = auth_get_current_user_id_from_token(token)
 
-    for channel in database["channels"]:
+    for channel in database["channels"].values():
         for user_id in channel["all_members_id"]:
             if current_user_id == user_id:
                 channels.append(simplify_channel_details(token, channel["id"]))
@@ -27,7 +27,7 @@ def channels_listall(token):
     # makes sure the user is valid
     auth_get_current_user_id_from_token(token)
 
-    for channel in database["channels"]:
+    for channel in database["channels"].values():
         authorised_token = channel["all_members_id"][0]
         channels.append(simplify_channel_details(authorised_token, channel["id"]))
     return channels
@@ -44,16 +44,16 @@ def channels_create(token, name, is_public):
         auth_get_current_user_id_from_token(token)
     )
 
-    channel_num = len(database["channels"])
+    id = database["channels_id_head"]
     new_channel = {
+        "id": id,
         "name": name,
-        "id": channel_num,
         "is_public": is_public,
         "owner_members_id": [creator_data["id"]],
         "all_members_id": [creator_data["id"]],
         "messages": [],
     }
-
-    database["channels"].append(new_channel)
+    database["channels"][id] = new_channel
+    database["channels_id_head"] += 1
 
     return {"channel_id": new_channel["id"]}
