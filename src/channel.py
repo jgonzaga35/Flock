@@ -6,18 +6,9 @@ from error import InputError, AccessError
 def channel_invite(token, channel_id, u_id):
     inviter_user_id = auth_get_current_user_id_from_token(token)
 
-<<<<<<< HEAD
-    valid_user = None
-    for user in database["users"]:
-        if user["id"] == u_id:
-            valid_user = user
-
-    if valid_user is None:
-=======
     try:
-        database['users'][u_id]
+        database["users"][u_id]
     except KeyError:
->>>>>>> database['users'] is now dict of id => user
         raise InputError(f"{u_id} is an invalid user id")
 
     channel = get_channel_from_id(channel_id)
@@ -37,9 +28,6 @@ def channel_details(token, channel_id):
     current_user_id = auth_get_current_user_id_from_token(token)
 
     channel = get_channel_from_id(channel_id)
-
-    if channel is None:
-        raise InputError(f"{channel_id} is invalid channel")
 
     if current_user_id not in channel["all_members_id"]:
         raise AccessError(
@@ -113,9 +101,6 @@ def channel_messages(token, channel_id, start):
 def channel_leave(token, channel_id):
     current_user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
-
-    if channel is None:
-        raise InputError("Channel ID is invalid")
 
     if current_user_id not in channel["all_members_id"]:
         raise AccessError("User is not in this channel")
