@@ -77,10 +77,12 @@ def channel_messages(token, channel_id, start):
     # can't black box test this YET, so coverage isn't happy.
 
     message_count = 0
-
-    for message in database['channels'][channel_id]['messages']:
+    i = start
+    while i < len(database['channels'][channel_id]['messages']):
+        message = database['channels'][channel_id]['messages'][i]
         # Searches database and add messages to channel_msg list
         channel_msg.append(message)
+        i += 1
         message_count += 1
         if message_count == 50:
             break
@@ -88,8 +90,6 @@ def channel_messages(token, channel_id, start):
     # less than 50 messages from start value to latest message
     if message_count < 50:
         end = -1
-
-    end = -1
 
     return {
         "messages": channel_msg,
