@@ -1,5 +1,6 @@
 database = {
-    "users": [],
+    "users": {},
+    "users_id_head": 1,
     # id_heads are only ever incremented, they are used to generate ids
     "channels_id_head": 1,
     "channels": {

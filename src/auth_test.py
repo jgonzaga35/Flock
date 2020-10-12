@@ -116,5 +116,5 @@ def test_auth_register_wrong_name():
 
 def test_auth_helper_user_data_from_invalid_id():
     clear_database()
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         auth_get_user_data_from_id(user_id=-1)
