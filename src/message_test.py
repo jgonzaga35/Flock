@@ -139,7 +139,7 @@ def test_edit_owner(url):
 
 
 def test_edit_empty_string(url):
-    # Tests that a message is deleted is edit is empty string
+    # Tests that a message is deleted is edit if empty string
     user = register_n_users(1)
 
     # Create a new channel
