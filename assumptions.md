@@ -62,3 +62,4 @@
 
 * message_edit
     * Owner of the flock and owner of the channel can edit any message
+    * A message that is deleted (empty string) cannot be edited
