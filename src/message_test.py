@@ -1,4 +1,3 @@
-from database import clear_database
 from test_helpers import url, register_n_users
 
 from error import AccessError
