@@ -1,5 +1,5 @@
 import pytest
-from auth import auth_login, auth_logout, auth_register
+from auth import auth_login, auth_logout, auth_register, auth_get_user_data_from_id
 from database import clear_database
 from error import InputError
 
@@ -9,12 +9,14 @@ def register_new_account():
 # Successful cases for auth_login
 def test_login_success_case():
     clear_database()
-    register_new_account()
-    auth_login('validemail@gmail.com', '123abc!@#')
+    first = register_new_account()
+    assert auth_logout(first['token'])['is_success'] == True
+    # when we register a new account, the user logged in
+    assert auth_login('validemail@gmail.com', '123abc!@#')['u_id'] == first['u_id']
 
 def test_login_double_login():
     clear_database()
-    result = register_new_account()
+    register_new_account()
     token1 = auth_login('validemail@gmail.com', '123abc!@#')['token']
     token2 = auth_login('validemail@gmail.com', '123abc!@#')['token']
     assert token1 == token2
@@ -87,3 +89,8 @@ def test_auth_register_wrong_name():
         auth_register('validemail@gmail.com', '123abc!@#', 'dsjfsdkfjsdafklsdjfsdklfjlkasdkflasdjkfjklsdafjklasdkjlflksjadfjklsdakjfjkdsaflkjadslkflkasdklfklkljdsafl', 'Everest')
     with pytest.raises(InputError):
         auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'asdfjskaldjflsadfjklasdfjaksldfjakjsdhfsjkadhfkjasdhfkjsdhfkjasdfhkjsadhfkjasdhf')
+
+def test_auth_helper_user_data_from_invalid_id():
+    clear_database()
+    with pytest.raises(ValueError):
+        auth_get_user_data_from_id(user_id=-1)

@@ -45,7 +45,8 @@ def auth_register(email, password, name_first, name_last):
         if user['email'] == email:
             raise InputError("Email has been used.")
 
-    u_id = highest_id() + 1
+    # finds the highest user id
+    u_id = max(database['users'], key=lambda user: user['id'], default={'id': 0})['id'] + 1
     new_user = {
         'email': email,
         'password': password,
@@ -80,14 +81,6 @@ def auth_get_user_data_from_id(user_id):
             return user
     raise ValueError(f"user with id {user_id} wasn't found in the database")
 
-
-# Helper function to find the user with the highest id
-def highest_id():
-    highest = 0
-    for user in database['users']:
-        if user['id'] > highest:
-            highest = user['id']
-    return highest
 
 # Helper function for validating an Email
 def check_email(email):
