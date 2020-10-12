@@ -62,9 +62,9 @@ def test_remove_invald_message_id(url):
         "message_id": INVALID_MESSAGE_ID
     }
     
-    # Ensure access error raised
+    # Ensure input error raised
     r = requests.delete(url + "message/remove", json=message_remove_params)
-    assert r.status_code == 403
+    assert r.status_code == 422
 
 
 # User removing a message is not authorised to remove it
