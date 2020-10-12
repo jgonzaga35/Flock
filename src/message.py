@@ -5,9 +5,6 @@ from error import AccessError, InputError
 
 
 def message_send(token, channel_id, message):
-    if token not in database["active_tokens"]:
-        raise AccessError("not logged in")
-
     user_id = auth_get_current_user_id_from_token(token)
 
     channel = None
