@@ -138,6 +138,9 @@ def test_channel_message_a_lot_of_message():
     assert channel_messages(userb['token'], channel_id, 5) == channel_messages(userc['token'], channel_id, 5)
     assert channel_messages(userb['token'], channel_id, 5) == channel_messages(usera['token'], channel_id, 5)
 
+    assert channel_messages(userb['token'], channel_id, 5)['start'] == 5
+    assert channel_messages(userb['token'], channel_id, 5)['end'] == 55
+
     assert channel_messages(userb['token'], channel_id, 330)['start'] == 330
     assert channel_messages(userb['token'], channel_id, 330)['end'] == -1
     assert channel_messages(userb['token'], channel_id, 330) == channel_messages(userc['token'], channel_id, 330)
