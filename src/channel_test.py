@@ -30,9 +30,7 @@ def test_messages_invalid_channel_ID():
 
 def test_channel_messages_invalid_start():
     clear_database()
-    user = register_user(
-        'validemailowner01@gmail.com', 'validpass@!owner01', 'Bob', 'Smith'
-    )
+    user = register_n_users(1)
 
     channel_id = channels_create(user['token'], 'channel', is_public=True)['channel_id']
 
@@ -114,7 +112,7 @@ def test_join_invalid_token():
 
 def test_channel_join_multiple_channels():
     clear_database()
-    usera, userb, userc = register_a_b_and_c()
+    usera, userb, userc = register_n_users(3)
     channel_id_a = channels_create(usera['token'], 'channela', is_public=True)['channel_id']
     channel_id_b = channels_create(userb['token'], 'channelb', is_public=True)['channel_id']
     channel_id_c = channels_create(userc['token'], 'channelc', is_public=True)['channel_id']
@@ -389,7 +387,7 @@ def test_remove_owner_by_non_owner():
 
 def test_channel_removeowner_multiple_channels():
     clear_database()
-    usera, userb = register_a_and_b()
+    usera, userb = register_n_users(2)
     channela = channels_create(usera['token'], 'a', is_public=True)['channel_id']
     channelb = channels_create(userb['token'], 'b', is_public=True)['channel_id']
 
@@ -433,7 +431,7 @@ def test_channel_invite_from_unauthorised_user():
 
 def test_channel_invite_invalid_id():
     clear_database()
-    user = auth_register("emaila@gmail.com", "passwordasdfasdf", "hello", "world")
+    user = register_n_users(1)
     channel_id = channels_create(user['token'], 'ch', is_public=False)['channel_id']
 
     with pytest.raises(InputError):
@@ -485,7 +483,7 @@ def test_channel_invite_member_already_in_channel():
 
 def test_channel_invite_multiple_channels():
     clear_database()
-    usera, userb = register_a_and_b()
+    usera, userb = register_n_users(2)
     channela = channels_create(usera['token'], 'usera_ch', is_public=False)
     channelb = channels_create(userb['token'], 'userb_ch', is_public=False)
 
@@ -502,7 +500,7 @@ def test_channel_invite_multiple_channels():
 
 def test_channel_invite_invalid_channel_id():
     clear_database()
-    usera, userb = register_a_and_b()
+    usera, userb = register_n_users(2)
 
     with pytest.raises(InputError):
         channel_invite(usera['token'], channel_id=-1, u_id=userb['u_id'])
