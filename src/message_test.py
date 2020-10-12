@@ -131,8 +131,8 @@ def test_edit_owner():
     # Confirm that message was edited successfully, returns {messages, start, end}
     channel_messages_params = {
         'token': user01['token'],
-        'channel_id': channel['channel_id']
-        'start': 0
+        'channel_id': channel['channel_id'],
+        'start': 0,
     }
     
     assert channel_messages_params['messages'][0] == 'try editing'
