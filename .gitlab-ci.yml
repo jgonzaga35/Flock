@@ -33,11 +33,6 @@ pylint:
 black:
   stage: checks
   script:
-    - uname -a
-    # - pip3 install black
-    # - python3 -m black --check .
-
-black2:
-  stage: checks
-  script:
-    - cat /proc/cpuinfo
+    - pip install regex
+    - pip3 install black
+    - python3 -m black --check .
