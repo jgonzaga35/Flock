@@ -33,6 +33,8 @@ pylint:
 black:
   stage: checks
   script:
-    - pip install regex
+    - uname -a
+    - wget https://files.pythonhosted.org/packages/c6/d4/0cfc341b58b40ad52b648affc7c1eb6aa75140230dc14e92a39a79706eed/regex-2020.10.11-cp37-cp37m-manylinux2010_x86_64.whl
+    - pip install ./regex-2020.10.11-cp37-cp37m-manylinux2010_x86_64.whl
     - pip3 install black
     - python3 -m black --check .
