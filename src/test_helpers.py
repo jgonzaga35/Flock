@@ -13,6 +13,12 @@ def register_n_users(num_users):
     >>> single = register_n_users(1)
     >>> usera, userb = register_n_users(2)
     >>> usera, userb, userc = register_n_users(3)
+    
+    Returned user format:
+    >>> {
+        'token': 
+        'u_id':
+    }
     """
     assert isinstance(num_users, int)
 
