@@ -1,6 +1,6 @@
 database = {
-    'users': [],
-    'channels': [
+    "users": [],
+    "channels": [
         # {
         #     "id": 1,
         #     "name": "greatest_channel",
@@ -34,11 +34,11 @@ database = {
         #       ],
         # }
     ],
-    'active_tokens': []
+    "active_tokens": [],
 }
 
+
 def clear_database():
-    database['users'].clear()
-    database['channels'].clear()
-    database['active_tokens'].clear()
-    
+    database["users"].clear()
+    database["channels"].clear()
+    database["active_tokens"].clear()

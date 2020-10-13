@@ -5,6 +5,7 @@ from auth import auth_register
 from subprocess import Popen, PIPE
 from time import sleep
 
+
 def register_n_users(num_users):
     """
     Usage
@@ -18,7 +19,12 @@ def register_n_users(num_users):
     users = []
     for i in range(num_users):
         users.append(
-            auth_register(f"email{i}@gmail.com", f"passwordthatislongenough{i}", f"first{i}", f"last{i}")
+            auth_register(
+                f"email{i}@gmail.com",
+                f"passwordthatislongenough{i}",
+                f"first{i}",
+                f"last{i}",
+            )
         )
 
     if len(users) == 1:
@@ -29,11 +35,12 @@ def register_n_users(num_users):
 
     return users
 
+
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
 @pytest.fixture
 def url():
-    url_re = re.compile(r' \* Running on ([^ ]*)')
+    url_re = re.compile(r" \* Running on ([^ ]*)")
     server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())

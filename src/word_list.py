@@ -3,13 +3,13 @@
 # This list contains only part of the larger database
 # The author of the repo states:
 # "
-# While searching for a list of english words (for an auto-complete tutorial) 
-# I found: http://stackoverflow.com/questions/2213607/how-to-get-english-language-word-database 
+# While searching for a list of english words (for an auto-complete tutorial)
+# I found: http://stackoverflow.com/questions/2213607/how-to-get-english-language-word-database
 # which refers to http://www.infochimps.com/datasets/word-list-350000-simple-english-words-excel-readable (archived).
 # ... Copyright still belongs to them.
 # "
 
-# This file is used to generate random messages for testing in the 
+# This file is used to generate random messages for testing in the
 # channel_test.py file
 
 
