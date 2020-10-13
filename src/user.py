@@ -1,13 +1,20 @@
+from database import database
+from error import InputError, AccessError
+
+
 def user_profile(token, u_id):
-    return {
-        "user": {
-            "u_id": 1,
-            "email": "cs1531@cse.unsw.edu.au",
-            "name_first": "Hayden",
-            "name_last": "Jacobs",
-            "handle_str": "hjacobs",
-        },
-    }
+
+    # Ensure token is valid
+    if not token in database["active_tokens"]:
+        raise AccessError(f"{token} is not a valid token")
+
+    # Ensure u_id is valid and get the user information from database
+    try:
+        user = database["users"][u_id]
+    except KeyError:
+        raise InputError(f"{u_id} is not a valid user id")
+
+    return user
 
 
 def user_profile_setname(token, name_first, name_last):
