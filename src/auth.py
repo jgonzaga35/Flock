@@ -6,7 +6,7 @@ from error import InputError, AccessError
 def auth_login(email, password):
     check_email(email)
 
-    for user in database["users"]:
+    for user in database["users"].values():
         if user["email"] == email:
             if user["password"] == password:
                 u_id = user["id"]
@@ -50,14 +50,12 @@ def auth_logout(token):
 def auth_register(email, password, name_first, name_last):
     input_error_checking(email, password, name_first, name_last)
 
-    for user in database["users"]:
+    for user in database["users"].values():
         if user["email"] == email:
             raise InputError("Email has been used.")
 
     # finds the highest user id
-    u_id = (
-        max(database["users"], key=lambda user: user["id"], default={"id": 0})["id"] + 1
-    )
+    u_id = database["users_id_head"]
     new_user = {
         "email": email,
         "password": password,
@@ -67,7 +65,8 @@ def auth_register(email, password, name_first, name_last):
     }
     token = u_id
 
-    database["users"].append(new_user)
+    database["users"][u_id] = new_user
+    database["users_id_head"] += 1
     database["active_tokens"].append(token)
 
     return {
@@ -87,11 +86,9 @@ def auth_get_current_user_id_from_token(token):
 
 # helper
 def auth_get_user_data_from_id(user_id):
-    """ Raises ValueError is the a user with id id doesn't exists """
-    for user in database["users"]:
-        if user["id"] == user_id:
-            return user
-    raise ValueError(f"user with id {user_id} wasn't found in the database")
+    """Raises KeyError is the a user with id id doesn't exists. It should
+    never happen, because only valid id should be generated from tokens"""
+    return database["users"][user_id]
 
 
 # Helper function for validating an Email
