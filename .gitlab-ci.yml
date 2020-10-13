@@ -29,3 +29,8 @@ pylint:
   stage: checks
   script:
     - find . -type f -name "*.py" | xargs pylint
+
+black:
+  stage: checks
+  script:
+    - black --check .
