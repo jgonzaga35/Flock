@@ -51,29 +51,31 @@ def test_message_send_access_error():
     while invalid_id == public_channel_id or invalid_id == private_channel_id:
         invalid_id -= 1
 
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         message_send(userb["token"], invalid_id, "third message")
 
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         message_send(usera["token"], invalid_id, "fourth message")
-
 
 
 def test_send_message_too_long():
     clear_database()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
-    channel_id = channels_create(usera['token'], "channela", is_public=True)['channel_id']
+    channel_id = channels_create(usera["token"], "channela", is_public=True)[
+        "channel_id"
+    ]
 
     # shouldn't cause any problem
-    message_send(usera['token'], channel_id, "a" * 1000)
+    message_send(usera["token"], channel_id, "a" * 1000)
 
     with pytest.raises(InputError):
-        message_send(usera['token'], channel_id, "a" * 1001)
+        message_send(usera["token"], channel_id, "a" * 1001)
 
     # just to be safe
     with pytest.raises(InputError):
-        message_send(usera['token'], channel_id, "a" * 1021)
+        message_send(usera["token"], channel_id, "a" * 1021)
+
 
 def test_message_send_multiple_messages():
     clear_database()
@@ -108,15 +110,13 @@ def test_message_send_multiple_messages():
 
 
 # TODO: test_message_send_member_but_not_owner (need to have channel join, not yet on this branch)
-<<<<<<< HEAD
 # TODO: test_message_send_multiple_members (need channel_join)
-=======
-# TODO: test_message_send_multiple_members (need channel_join) 
+
 
 def test_message_remove():
     # just to make coverage happy
     message_remove(-1, -1)
 
+
 def test_message_edit():
     message_edit(-1, -1, -1)
->>>>>>> message: add simple tests to make coverage happy

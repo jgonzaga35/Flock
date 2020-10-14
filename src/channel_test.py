@@ -14,6 +14,7 @@ from channels import channels_create, channels_list
 from database import clear_database
 from error import InputError, AccessError
 from word_list import word_list
+import time
 import random
 import pytest
 from test_helpers import register_n_users
@@ -155,7 +156,7 @@ def test_channel_message_a_lot_of_message():
 
 # Helper function to send 100 messages to a given channel
 def populate_channel_hundred_messages(token, channel_id):
-    for i in range(1, 100):
+    for _ in range(1, 100):
         index = random.randint(0, len(word_list) - 1)
         message = word_list[index]
         message_send(token, channel_id, message)
