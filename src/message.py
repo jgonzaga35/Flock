@@ -22,8 +22,8 @@ def message_remove(token, message_id):
     # Check message exists in database
     message_exists = 0
     for ch in database["channels"]:
-        for msg in database['channels'][ch]["messages"]:
-            if database['channels'][ch]['messages'][msg]["message_id"] == message_id:
+        for m in ch['messages']:
+            if m["message_id"] == message_id:
                 message_exists = 1
 
     if message_exists == 0:
