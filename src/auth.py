@@ -1,6 +1,8 @@
 import re
 from database import database
 from error import InputError, AccessError
+'''To encryt user password'''
+from hashlib import sha256
 
 
 def auth_login(email, password):
@@ -8,7 +10,7 @@ def auth_login(email, password):
 
     for user in database["users"].values():
         if user["email"] == email:
-            if user["password"] == password:
+            if user["password"] == encrypt(password):
                 u_id = user["id"]
                 # Check if the user has been logged in, if so, return the same active token
                 active_token = next(
@@ -58,7 +60,7 @@ def auth_register(email, password, name_first, name_last):
     u_id = database["users_id_head"]
     new_user = {
         "email": email,
-        "password": password,
+        "password": encrypt(password),
         "first_name": name_first,
         "last_name": name_last,
         "id": u_id,
@@ -111,3 +113,8 @@ def input_error_checking(email, password, name_first, name_last):
 
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
+
+# Helper function to encrypt user password and return the hex representation
+def encrypt(password):
+    '''Return the encrypted form of the user password'''
+    return sha256(password.encode()).hexdigest()
