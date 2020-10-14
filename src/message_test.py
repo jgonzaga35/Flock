@@ -2,7 +2,7 @@ from message import message_remove, message_send
 from channel import channel_messages
 from channels import channels_create, channels_list
 from test_helpers import register_n_users
-from database import clear_database
+from database import database, clear_database
 
 import pytest
 from error import AccessError, InputError
@@ -51,34 +51,25 @@ def test_remove_unauthorised_user():
         message_remove(user02["token"], message["message_id"])
 
 
-# # Test that the owner of the channel can remove any message
-# def test_remove_owner_permissions():
-#     clear_database()
-#     user01, user02 = register_n_users(2)
+# Test that the owner of the channel can remove any message
+def test_remove_owner_permissions():
+    clear_database()
+    user01, user02 = register_n_users(2)
 
-#     # Create a new channel with user01 as admin
-#     channel = channels_create(user01['token'], 'channel', is_public=True)
+    # Create a new channel with user01 as admin
+    channel = channels_create(user01["token"], "channel", is_public=True)
 
-#     message = message_send(user02['token'], channel['channel_id'], 'test message')
-#     message_remove(user01['token'], message['message_id'])
-#     channel_messages = channel_messages(user01['token'], channel['channel_id'], 0)
-#     pass
-#     # How do I check whether the removed message is actually removed?
-#     # I can check for the actual message:
-#     #       assert 'test message' in channel_messages['messages']
-#     # but this won't work - what if another user sent the same message?
-#     # i.e. two identical message were present in the channel
-#     #
-#     # Since the output of channel_messages doesn't contain the channel_id,
-#     # I can't check that the message was actually removed without
-#     # doing white-box testing
+    message = message_send(user02["token"], channel["channel_id"], "test message")
+    message_remove(user01["token"], message["message_id"])
+    assert message["message_id"] not in database["channels"]["channel_id"]["messages"]
+
 
 def test_remove_message_non_existent():
     clear_database()
     user = register_n_users(1)
-    channel = channels_create(user['token'], 'channel', is_public=True)
-    message = message_send(user['token'], channel['channel_id'], 'test message')
-    message_remove(user['token'], message['message_id'])
-    
+    channel = channels_create(user["token"], "channel", is_public=True)
+    message = message_send(user["token"], channel["channel_id"], "test message")
+    message_remove(user["token"], message["message_id"])
+
     with pytest.raises(InputError):
-        message_remove(user['token'], message['message_id'])
+        message_remove(user["token"], message["message_id"])
