@@ -120,4 +120,4 @@ def jwt_encode(user_info):
 
 # Helper function to decode jwt
 def jwt_decode(token):
-    return decode(token.encode('utf-8'), TOKEN_SECRET_KEY, algorithm = ['HS256'])
+    return decode(token.encode('utf-8'), TOKEN_SECRET_KEY, algorithms = ['HS256'])
