@@ -3,7 +3,6 @@ from user import user_profile
 from error import InputError, AccessError
 import pytest
 from database import clear_database
-
 from auth import auth_register
 
 
@@ -14,6 +13,8 @@ def test_user_profile_successful():
     #                 passworkd: passwordthatislongenough1
     #                 first name: first1
     #                 last name: last1
+
+    # We compare the profile above to the returned result.
     userProfile = user_profile(user["token"], user["u_id"])
     assert userProfile["email"] == "email0@gmail.com"
     assert userProfile["first_name"] == "first0"
