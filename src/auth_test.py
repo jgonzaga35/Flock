@@ -123,4 +123,4 @@ def test_auth_helper_user_data_from_invalid_id():
 def test_encrypt():
     test_password = ["abc123456", "LOLGGNOOB", "123abc!@#"]
     for password in test_password:
-        assert encrypt(password) == sha256(password.encode()).hexdigest
+        assert encrypt(password) == sha256(password.encode()).hexdigest()
