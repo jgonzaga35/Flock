@@ -17,7 +17,7 @@ def test_remove_invalid_user_token(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
     
     # User sends a message
     message_params = {
@@ -25,7 +25,7 @@ def test_remove_invalid_user_token(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = reqeusts.post(url +  "message/send", json=message_params)
+    message = reqeusts.post(url +  "message/send", json=message_params).json()
     
     # Non-existent user tries to remove the message
     # TODO Ensure token implementation is correct
@@ -46,7 +46,7 @@ def test_remove_invald_message_id(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
     
     # User sends a message
     message_params = {
@@ -54,7 +54,7 @@ def test_remove_invald_message_id(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url +  "message/send", json=message_params)
+    message = requests.post(url +  "message/send", json=message_params).json()
     
     # User tries to edit message with invalid message id
     message_remove_params = {
@@ -77,7 +77,7 @@ def test_remove_unauthorised_user(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # User 1 sends a message
     message_params = {
@@ -85,7 +85,7 @@ def test_remove_unauthorised_user(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # User 2 tries to remove message from User 1
     message_remove_params = {
@@ -106,7 +106,7 @@ def test_remove_owner(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # User 2 sends a message
     message_params = {
@@ -114,7 +114,7 @@ def test_remove_owner(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # User01 (admin) removes it
     message_remove_params = {
