@@ -62,7 +62,7 @@ def auth_register(email, password, name_first, name_last):
         "first_name": name_first,
         "last_name": name_last,
         "id": u_id,
-        "handle": generate_handle(name_first, name_last, str(u_id))
+        "handle": generate_handle(name_first, name_last, str(u_id)),
     }
     token = u_id
 
@@ -91,6 +91,7 @@ def auth_get_user_data_from_id(user_id):
     never happen, because only valid id should be generated from tokens"""
     return database["users"][user_id]
 
+
 # Helper function for validating an Email
 def check_email(email):
     regex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
@@ -112,16 +113,21 @@ def input_error_checking(email, password, name_first, name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
 
-# Helper function to generate
+
+# Helper function to generate handle for a user
 def generate_handle(first_name, last_name, u_id):
-    handle = (first_name.lower() + last_name.lower())
+    handle = first_name.lower() + last_name.lower()
     if len(handle) > 20:
         handle = handle[:20]
-    
-    l = [user["handle"] for user in database["users"].values() if user["handle"] == handle]
+
+    l = [
+        user["handle"]
+        for user in database["users"].values()
+        if user["handle"] == handle
+    ]
     if len(l) != 0:
         if len(handle) + len(u_id) > 20:
-            handle = handle[:(20 - len(u_id))] + u_id
+            handle = handle[: (20 - len(u_id))] + u_id
         else:
             handle = handle + u_id
     return handle
