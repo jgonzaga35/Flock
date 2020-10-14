@@ -119,8 +119,16 @@ def test_messages_start_underflow():
 
 
 def test_channel_message_a_lot_of_message():
+    """
+    This test uses randomness. That means that running this test twice will
+    not do the exact same thing, so sometimes it might fail, sometimes not.
+
+    If it does, then pytest will print out the seed. Copy it, and then give it
+    to random.seed (below). Like this, the random module will always generate
+    the same sequence of random number, and you can debug the failing test case.
+    """
     seed = time.time()
-    print(seed)
+    print("seed", seed)
     random.seed(seed)
 
     clear_database()
@@ -132,11 +140,13 @@ def test_channel_message_a_lot_of_message():
     channel_join(userb["token"], channel_id)
     channel_join(userc["token"], channel_id)
 
+    # generate random messages
     for _ in range(340):
         token = random.choice([usera, userb, userc])["token"]
         word = random.choice(word_list)
         message_send(token, channel_id, word)
 
+    # make sure that usera, userb and userc all get the same messages
     assert channel_messages(userb["token"], channel_id, 5) == channel_messages(
         userc["token"], channel_id, 5
     )
@@ -144,14 +154,27 @@ def test_channel_message_a_lot_of_message():
         usera["token"], channel_id, 5
     )
 
+    # makes sure all of the message are sorted by date (newer first)
+    #    messages[0] should be newer than messages[1]
+    #    => messages[0]['time_created'] > messages[1]['time_created']
+    messages = channel_messages(userc["token"], channel_id, random.randint(0, 340))[
+        "messages"
+    ]
+    prev_msg_time = None
+    for message in messages:
+        if prev_msg_time is None:
+            prev_msg_time = message["time_created"]
+        else:
+            assert prev_msg_time >= message["time_created"]
+            prev_msg_time = message["time_created"]
+
+    # makes sure that start and end make sense when we can load 50 messages
     assert channel_messages(userb["token"], channel_id, 5)["start"] == 5
     assert channel_messages(userb["token"], channel_id, 5)["end"] == 55
 
+    # make sure that start and end make sense when we can't load 50 messages
     assert channel_messages(userb["token"], channel_id, 330)["start"] == 330
     assert channel_messages(userb["token"], channel_id, 330)["end"] == -1
-    assert channel_messages(userb["token"], channel_id, 330) == channel_messages(
-        userc["token"], channel_id, 330
-    )
 
 
 # Helper function to send 100 messages to a given channel
