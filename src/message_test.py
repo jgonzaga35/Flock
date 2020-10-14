@@ -17,19 +17,20 @@ def test_edit_non_existenet_user(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
+    print(channel)
     # User sends a message
     message_params = {
         "token": user["token"],
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # Non-existent user tries to edit the message
     message_edit = {
         "token": user["token"] + 1,
-        "message": message["message_id"],
+        "message": message["message_id"],.json()
         "message": "try editing",
     }
     r = requests.post(url + "message/edit", json=message_edit)
@@ -45,7 +46,7 @@ def test_edit_invalid_message_id(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # User sends a message
     message_params = {
@@ -53,7 +54,7 @@ def test_edit_invalid_message_id(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # User tries to edit message with an invalid message id
     message_edit = {
@@ -76,7 +77,7 @@ def test_edit_unauthorised_user(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # User 1 sends a message
     message_params = {
@@ -84,7 +85,7 @@ def test_edit_unauthorised_user(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # User 2 tries to edit the message
     message_edit = {
@@ -107,7 +108,7 @@ def test_edit_owner(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # User 2 sends a message
     message_params = {
@@ -115,7 +116,7 @@ def test_edit_owner(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # User01 (admin) edits it
     message_edit = {
@@ -148,7 +149,7 @@ def test_edit_empty_string(url):
         "name": "channel_01",
         "is_public": True,
     }
-    channel = requests.post(url + "channels/create", json=channel_params)
+    channel = requests.post(url + "channels/create", json=channel_params).json()
 
     # Send message
     message_params = {
@@ -156,7 +157,7 @@ def test_edit_empty_string(url):
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    message = requests.post(url + "message/send", json=message_params)
+    message = requests.post(url + "message/send", json=message_params).json()
 
     # Edit message with empty string
     message_edit = {
