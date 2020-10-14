@@ -1,7 +1,8 @@
 import pytest
-from auth import auth_login, auth_logout, auth_register, auth_get_user_data_from_id
+from auth import auth_login, auth_logout, auth_register, auth_get_user_data_from_id, encrypt
 from database import clear_database
 from error import InputError
+from hashlib import sha256
 
 
 def register_new_account():
@@ -118,3 +119,8 @@ def test_auth_helper_user_data_from_invalid_id():
     clear_database()
     with pytest.raises(KeyError):
         auth_get_user_data_from_id(user_id=-1)
+
+def test_encrypt():
+    test_password = ["abc123456", "LOLGGNOOB", "123abc!@#"]
+    for password in test_password:
+        assert encrypt(password) == sha256(password.encode()).hexdigest
