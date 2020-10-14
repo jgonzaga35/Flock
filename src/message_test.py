@@ -22,7 +22,7 @@ def test_remove_invalid_user_token():
     message = message_send(user["token"], channel["channel_id"], "test message")
     # Non-existent user tries to remove the message
     with pytest.raises(AccessError):
-        message_remove(INVALID_USER_TOKEN, message["message_id"])
+        assert message_remove(INVALID_USER_TOKEN, message["message_id"])
 
 
 def test_remove_invalid_message_id():
@@ -33,9 +33,9 @@ def test_remove_invalid_message_id():
     channel = channels_create(user["token"], "channel01", is_public=True)
     # User sends a message
     message = message_send(user["token"], channel["channel_id"], "test message")
-    # user tries to remove emssage with invalid message id
-    with pytest.raises(AccessError):
-        message_remove(user["token"], INVALID_MESSAGE_ID)
+    # User tries to remove message with an invalid message id
+    with pytest.raises(InputError):
+        assert message_remove(user["token"], INVALID_MESSAGE_ID)
 
 
 # User tries to remove a message that they are not authorised to remove
