@@ -3,12 +3,9 @@ from json import dumps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from error import InputError
-<<<<<<< HEAD
 from auth import auth_login, auth_logout, auth_register
 from other import clear
-=======
 from channels import channels_create
->>>>>>> implement channels_create web handler
 
 
 def defaultHandler(err):
@@ -44,6 +41,7 @@ def echo():
 def delete():
     clear()
 
+
 # Auth_functions
 @APP.route("/auth/login", methods=["POST"])
 def login():
@@ -66,11 +64,14 @@ def register():
         )
     )
 
+
 @APP.route("/channels/create", methods=["POST"])
 def channels_create_handler():
-    token = request.args["token"]
-    name = request.args["name"]
-    is_public = request.args["is_public"]
+    data = request.get_json()
+
+    token = data["token"]
+    name = data["name"]
+    is_public = data["is_public"]
 
     return jsonify(channels_create(token, name, is_public))
 
