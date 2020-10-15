@@ -1,7 +1,8 @@
 import re
 from database import database
 from error import InputError, AccessError
-'''To encryt user password'''
+
+"""To encryt user password"""
 from hashlib import sha256
 
 
@@ -132,13 +133,16 @@ def generate_handle(first_name, last_name, u_id):
             handle = handle + u_id
     return handle
 
+
 # Helper function to check whether the handle exist already
 def is_handle_already_used(handle):
-    for user in database['users'].values():
-        if user['handle'] == handle:
+    for user in database["users"].values():
+        if user["handle"] == handle:
             return True
     return False
+
+
 # Helper function to encrypt user password and return the hex representation
 def encrypt(password):
-    '''Return the encrypted form of the user password'''
+    """Return the encrypted form of the user password"""
     return sha256(password.encode()).hexdigest()
