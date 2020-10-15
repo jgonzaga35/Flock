@@ -57,14 +57,11 @@ def message_remove(token, message_id):
 
     # Get list of channels that the user is a part of
     user_id = auth_get_current_user_id_from_token(token)
-    channels_user_is_in = channels_list(token)
-    user_channel_id_list = [
-        channels_user_is_in["channel_id"] for x in channels_user_is_in
-    ]
+    user_channel_id_list = [x["channel_id"] for x in channels_list(token)]
 
     # Remove message if user is authorised
     for ch in user_channel_id_list:
-        for msg in database["channels"][ch]["messages"].values():
+        for msg in database["channels"][ch].values()["messages"].values():
             if msg["message_id"] == message_id and (
                 msg["u_id"] == user_id or (user_id in database['channels'][ch]["owner_members_id"].values())
             ):
