@@ -51,6 +51,7 @@
     that a messsage has been deleted to other users.
     * You can only remove messages that you have sent.
     * You cannot remove other people's messages.
+    * Every message has a unique ID - including messages that are deleted (i.e. a deleted message and an active message cannot have the same ID)
 
 * message_edit
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
