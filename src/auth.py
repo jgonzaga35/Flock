@@ -126,7 +126,7 @@ def generate_handle(first_name, last_name, u_id):
     if len(handle) > 20:
         handle = handle[:20]
 
-    if is_handle_already_user(handle):
+    if is_handle_already_used(handle):
         if len(handle) + len(u_id) > 20:
             handle = handle[: (20 - len(u_id))] + u_id
         else:
