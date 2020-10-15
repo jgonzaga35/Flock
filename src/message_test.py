@@ -81,7 +81,7 @@ def test_remove_owner_channel_permissions():
     channel02 = channels_create(user02["token"], "channel02", is_public=True)
     channel_join(user03["token"], channel02["channel_id"])
 
-    message = message_send(user02["token"], channel02["channel_id"], "test message")
+    message = message_send(user03["token"], channel02["channel_id"], "test message")
     message_remove(user02["token"], message["message_id"])
 
     assert message["message_id"] not in [
