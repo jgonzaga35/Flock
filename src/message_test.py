@@ -70,23 +70,25 @@ def test_remove_owner_flock_permissions():
         for x in database["channels"][channel["channel_id"]]["messages"].values()
     ]
 
+
 # Test that the owner of a channel can remove any message
 def test_remove_owner_channel_permissions():
     clear_database()
     user01, user02, user03 = register_n_users(3)
-    
+
     channel01 = channels_create(user01["token"], "channel", is_public=True)
     channel02 = channels_create(user02["token"], "channel", is_public=True)
-    channel_join(user03['token'], channel02['channel_id'])
-    
-    message = message_send(user02['token'], channel02['channel_id'], 'test message')
-    message_remove(user02['token'], message['message_id'])
-    
-    assert message['message_id'] not in [
+    channel_join(user03["token"], channel02["channel_id"])
+
+    message = message_send(user02["token"], channel02["channel_id"], "test message")
+    message_remove(user02["token"], message["message_id"])
+
+    assert message["message_id"] not in [
         x["message_id"]
         for x in database["channels"][channel02["channel_id"]]["messages"].values()
     ]
-    
+
+
 # Sending an empty messsage - waiting until this is clarified
 # def test_remove_send_empty_message():
 #     clear_database()
@@ -107,7 +109,7 @@ def test_remove_message_non_existent():
 
     with pytest.raises(InputError):
         message_remove(user["token"], message["message_id"])
-        
+
 
 def test_remove_continuous_send():
     clear_database()
@@ -117,16 +119,17 @@ def test_remove_continuous_send():
     ]
 
     for i in range(1, 50):
-        message = message_send(user['token'], channel_id, 'message ' + str(i))
-        message_remove(user['token'], message['message_id'])
-    
-    assert channel_messages(user['token'], channel_id, 0)['end'] == -1
-    assert bool(channel_messages(user['token'], channel_id, 0)['messages']) == False
+        message = message_send(user["token"], channel_id, "message " + str(i))
+        message_remove(user["token"], message["message_id"])
+
+    assert channel_messages(user["token"], channel_id, 0)["end"] == -1
+    assert bool(channel_messages(user["token"], channel_id, 0)["messages"]) == False
 
 
 ##################################################################################
 #                           Tests for message_send                               #
 ##################################################################################
+
 
 def test_send_one_message():
     clear_database()

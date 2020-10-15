@@ -6,6 +6,7 @@ from channels import channels_list
 import time
 from error import AccessError, InputError
 
+
 def message_send(token, channel_id, message):
     user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
