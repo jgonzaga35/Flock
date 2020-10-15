@@ -1,7 +1,8 @@
 import re
 from database import database
 from error import InputError, AccessError
-'''To encryt user password'''
+
+"""To encryt user password"""
 from hashlib import sha256
 
 
@@ -64,6 +65,7 @@ def auth_register(email, password, name_first, name_last):
         "first_name": name_first,
         "last_name": name_last,
         "id": u_id,
+        "handle": generate_handle(name_first, name_last, u_id),
     }
     token = u_id
 
@@ -114,7 +116,33 @@ def input_error_checking(email, password, name_first, name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
 
+
+# Helper function to generate handle for a user
+def generate_handle(first_name, last_name, u_id):
+    u_id = str(u_id)
+    assert len(u_id) < 20
+
+    handle = first_name.lower() + last_name.lower()
+    if len(handle) > 20:
+        handle = handle[:20]
+
+    if is_handle_already_used(handle):
+        if len(handle) + len(u_id) > 20:
+            handle = handle[: (20 - len(u_id))] + u_id
+        else:
+            handle = handle + u_id
+    return handle
+
+
+# Helper function to check whether the handle exist already
+def is_handle_already_used(handle):
+    for user in database["users"].values():
+        if user["handle"] == handle:
+            return True
+    return False
+
+
 # Helper function to encrypt user password and return the hex representation
 def encrypt(password):
-    '''Return the encrypted form of the user password'''
+    """Return the encrypted form of the user password"""
     return sha256(password.encode()).hexdigest()
