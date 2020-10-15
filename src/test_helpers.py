@@ -41,9 +41,8 @@ def get_user_details(user):
         "email": user["email"],
         "name_first": user["first_name"],
         "name_last": user["last_name"],
-        #"handle_str" = user["handle"]
+        #"handle_str" = user["handle"] not implemented yet!
     }
-
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.

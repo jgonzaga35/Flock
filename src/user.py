@@ -1,3 +1,16 @@
+from auth import auth_get_current_user_id_from_token
+from database import database
+
+
+def get_user_details(user):
+    return {
+        "u_id": user["id"],
+        "email": user["email"],
+        "name_first": user["first_name"],
+        "name_last": user["last_name"],
+        #"handle_str" = user["handle"] not implemented yet!
+    }
+
 def user_profile(token, u_id):
     return {
         "user": {
@@ -23,4 +36,14 @@ def user_profile_sethandle(token, handle_str):
 
 
 def users_all(token):
-    return {}
+    users = []
+
+    # authenticate user
+    current_user_id = auth_get_current_user_id_from_token(token)
+
+    for user in database["users"].values():
+        user_info = get_user_details(user) 
+        users.append(user_info)
+
+    return users
+    
