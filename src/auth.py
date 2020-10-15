@@ -6,6 +6,7 @@ from hashlib import sha256
 
 TOKEN_SECRET_KEY = "COMP1531"
 
+
 def auth_login(email, password):
     check_email(email)
 
@@ -116,13 +117,16 @@ def input_error_checking(email, password, name_first, name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
 
+
 # Helper function that returns encoded jwt
 def jwt_encode(user_info):
-    return encode(user_info, TOKEN_SECRET_KEY, algorithm = 'HS256').decode('utf-8')
+    return encode(user_info, TOKEN_SECRET_KEY, algorithm="HS256").decode("utf-8")
+
 
 # Helper function to decode jwt
 def jwt_decode(token):
-    return decode(token.encode('utf-8'), TOKEN_SECRET_KEY, algorithms = ['HS256'])
+    return decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
+
 
 # Helper function to generate handle for a user
 def generate_handle(first_name, last_name, u_id):
