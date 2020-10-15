@@ -32,7 +32,7 @@ def test_remove_invalid_message_id():
     # Create a new channel
     channel = channels_create(user["token"], "channel01", is_public=True)
     # User sends a message
-    message = message_send(user["token"], channel["channel_id"], "test message")
+    message_send(user["token"], channel["channel_id"], "test message")
     # User tries to remove message with an invalid message id (doesn't exist)
     with pytest.raises(InputError):
         assert message_remove(user["token"], INVALID_MESSAGE_ID)
