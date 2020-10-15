@@ -9,7 +9,7 @@ VALID_LOGIN_INFO = {"email": "validemail@gmail.com", "password": "123abc!@#"}
 
 def register_new_account(url):
     return requests.post(
-        url + "auth/register",
+        url + "/auth/register",
         json={
             "email": "validemail@gmail.com",
             "password": "123abc!@#",
@@ -21,7 +21,7 @@ def register_new_account(url):
 
 def test_login_success_case(url):
     requests.delete(url + "clear")
-    user1 = register_new_account()
+    user1 = register_new_account(url)
     # when we register a new account, the user is logged in
     assert (
         requests.post(url + "auth/logout", json={"token":user1["token"]}).json()["is_success"]
@@ -35,7 +35,7 @@ def test_login_success_case(url):
 
 def test_login_double_login(url):
     requests.delete(url + "clear")
-    register_new_account()
+    register_new_account(url)
     # when we register a new account, the user is logged in
     token1 = requests.post(url + "auth/login", json=VALID_LOGIN_INFO).json()["token"]
     token2 = requests.post(url + "auth/login", json=VALID_LOGIN_INFO).json()["token"]
@@ -59,12 +59,12 @@ def test_login_invalid_email(url):
 
 def test_login_wrong_password(url):
     requests.delete(url + "clear")
-    register_new_account()
+    register_new_account(url)
     with pytest.raises(InputError):
         requests.post(url + "auth/login", json={"email": "validemail@gmail.com", "password": "123"})
 
 
 def test_login_never_registered(url):
     requests.delete(url + "clear")
-    with pytest.raises(InputError):
-        requests.post(url + "auth/login", json={"email": "didntusethis@gmail.com", "password": "123abcd!@#"})
+    r = requests.post(url + "auth/login", json={"email": "didntusethis@gmail.com", "password": "123abcd!@#"})
+    assert r.status_code == 400
