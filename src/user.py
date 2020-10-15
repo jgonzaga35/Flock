@@ -112,7 +112,6 @@ def isNameLengthOK(name, min, max):
         return True
     else:
         return False
-    return {}
 
 
 def get_user_details(user):
