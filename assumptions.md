@@ -52,6 +52,7 @@
     * You can only remove messages that you have sent.
     * You cannot remove other people's messages.
     * Every message has a unique ID - including messages that are deleted (i.e. a deleted message and an active message cannot have the same ID)
+    * An input error also occurs when a message id does not exist (as well as occuring when it no longer exists)
 
 * message_edit
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
