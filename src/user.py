@@ -83,6 +83,19 @@ def user_profile_sethandle(token, handle_str):
     user["handle"] = handle_str
 
 
+def users_all(token):
+    users = []
+
+    # authenticate user
+    auth_get_current_user_id_from_token(token)
+
+    for user in database["users"].values():
+        user_info = get_user_details(user)
+        users.append(user_info)
+
+    return users
+
+
 # --------------------helper function--------------------
 def isNameLengthOK(name, min, max):
     """
@@ -99,3 +112,14 @@ def isNameLengthOK(name, min, max):
         return True
     else:
         return False
+    return {}
+
+
+def get_user_details(user):
+    return {
+        "u_id": user["id"],
+        "email": user["email"],
+        "name_first": user["first_name"],
+        "name_last": user["last_name"],
+        "handle_str": user["handle"],
+    }

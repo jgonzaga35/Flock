@@ -70,31 +70,22 @@ def channel_messages(token, channel_id, start):
     if start < 0 or start > messages_total:
         raise InputError("Invalid start value")
 
-    channel_msg = []  # List of channel_messages to be returned
-    end = start + 50  # Correct value unless start + 50 overflows latest message
-
-    # comment this out for now because we don't have message_send yet, so we
-    # can't black box test this YET, so coverage isn't happy.
-
-    # message_count = 0
-
-    # for message in database['channels'][channel_id]['messages']:
-    #     # Searches database and add messages to channel_msg list
-    #     channel_msg.append(message)
-    #     message_count += 1
-    #     if message_count == 50:
-    #         break
-
-    # # less than 50 messages from start value to latest message
-    # if message_count < 50:
-    #     end = -1
-
-    end = -1
+    # some unreadable-smart-looking python code to make please my ego. sorted
+    # sorts each messages according to the "time_created" key we reverse
+    # because we want the newest message first (newer means bigger timestamp)
+    # then, [start:start+50] takes a slice of a list. start is included,
+    # start+50 is excluded, so it gives exactly 50 elements at most. If
+    # start+50 >= len(messages), then python handles everything nicely and just
+    # gives back a smaller slice.
+    channel_messages = sorted(
+        channel["messages"].values(), key=lambda msg: msg["time_created"], reverse=True
+    )[start : start + 50]
 
     return {
-        "messages": channel_msg,
+        "messages": channel_messages,
         "start": start,
-        "end": end,
+        # showing off again...
+        "end": -1 if len(channel_messages) < 50 else start + 50,
     }
 
 
