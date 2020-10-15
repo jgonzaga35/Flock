@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
 from auth import auth_login, auth_logout, auth_register
+from other import clear
 
 
 def defaultHandler(err):
@@ -34,21 +35,24 @@ def echo():
         raise InputError(description='Cannot echo "echo"')
     return dumps({"data": data})
 
+@APP.route("/clear", methods=["DELETE"])
+def delete():
+    clear()
 
 # Auth_functions
-@APP.route("/auth/login", method=["POST"])
+@APP.route("/auth/login", methods=["POST"])
 def login():
     data = request.get_json()
     return dumps(auth_login(data["email"], data["password"]))
 
 
-@APP.route("/auth/logout", method=["POST"])
+@APP.route("/auth/logout", methods=["POST"])
 def logout():
     data = request.get_json()
     return dumps(auth_logout(data["token"]))
 
 
-@APP.route("/auth/register", method=["POST"])
+@APP.route("/auth/register", methods=["POST"])
 def register():
     data = request.get_json()
     return dumps(
