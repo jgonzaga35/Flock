@@ -14,6 +14,12 @@ def register_n_users(num_users):
     >>> single = register_n_users(1)
     >>> usera, userb = register_n_users(2)
     >>> usera, userb, userc = register_n_users(3)
+
+    Returned user format:
+    >>> {
+        'token':
+        'u_id':
+    }
     """
     assert isinstance(num_users, int)
 
@@ -36,6 +42,7 @@ def register_n_users(num_users):
 
     return users
 
+
 def get_user_details_from_user_id(user_id):
 
     for user in database["users"].values():
@@ -48,8 +55,9 @@ def get_user_details_from_user_id(user_id):
         "email": current_user["email"],
         "name_first": current_user["first_name"],
         "name_last": current_user["last_name"],
-        "handle_str": current_user["handle"]
+        "handle_str": current_user["handle"],
     }
+
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.

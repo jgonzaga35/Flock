@@ -10,4 +10,4 @@ omit =
     src/*_test.py
     src/server.py
     src/other.py
-    src/user.py
+    
