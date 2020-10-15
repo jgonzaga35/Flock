@@ -7,7 +7,7 @@ from error import AccessError, InputError
 VALID_LOGIN_INFO = {"email": "validemail@gmail.com", "password": "123abc!@#"}
 
 
-def register_new_account():
+def register_new_account(url):
     return requests.post(
         url + "auth/register",
         json={
@@ -19,7 +19,7 @@ def register_new_account():
     ).json()
 
 
-def test_login_success_case():
+def test_login_success_case(url):
     requests.delete(url + "clear")
     user1 = register_new_account()
     # when we register a new account, the user is logged in
@@ -33,7 +33,7 @@ def test_login_success_case():
     )
 
 
-def test_login_double_login():
+def test_login_double_login(url):
     requests.delete(url + "clear")
     register_new_account()
     # when we register a new account, the user is logged in
