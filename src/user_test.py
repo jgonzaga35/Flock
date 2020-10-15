@@ -83,7 +83,7 @@ def test_setname_lastname_too_long():
     user_a = register_n_users(1)
     with pytest.raises(InputError):
         # set user name to Erichahaha... JOJO
-        # first name is too long
+        # last name is too long
         user_profile_setname(
             user_a["token"],
             "Eric",

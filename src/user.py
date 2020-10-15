@@ -15,8 +15,8 @@ def user_profile(token, u_id):
     }
     """
     # Ensure token is valid
-    if not token in database["active_tokens"]:
-        raise AccessError(f"{token} is not a valid token")
+    # This function below has error handling built inside
+    auth_get_current_user_id_from_token(token)
 
     # Ensure u_id is valid and get the user information from database
     try:
