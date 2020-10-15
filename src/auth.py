@@ -2,6 +2,7 @@ import re
 from database import database
 from error import InputError, AccessError
 from jwt import encode, decode
+from hashlib import sha256
 
 TOKEN_SECRET_KEY = "COMP1531"
 
@@ -10,7 +11,7 @@ def auth_login(email, password):
 
     for user in database["users"].values():
         if user["email"] == email:
-            if user["password"] == password:
+            if user["password"] == encrypt(password):
                 u_id = user["id"]
                 # Check if the user has been logged in, if so, return the same active token
                 active_token = next(
@@ -60,10 +61,11 @@ def auth_register(email, password, name_first, name_last):
     u_id = database["users_id_head"]
     new_user = {
         "email": email,
-        "password": password,
+        "password": encrypt(password),
         "first_name": name_first,
         "last_name": name_last,
         "id": u_id,
+        "handle": generate_handle(name_first, name_last, u_id),
     }
     token = jwt_encode(new_user)
 
@@ -121,3 +123,33 @@ def jwt_encode(user_info):
 # Helper function to decode jwt
 def jwt_decode(token):
     return decode(token.encode('utf-8'), TOKEN_SECRET_KEY, algorithms = ['HS256'])
+
+# Helper function to generate handle for a user
+def generate_handle(first_name, last_name, u_id):
+    u_id = str(u_id)
+    assert len(u_id) < 20
+
+    handle = first_name.lower() + last_name.lower()
+    if len(handle) > 20:
+        handle = handle[:20]
+
+    if is_handle_already_used(handle):
+        if len(handle) + len(u_id) > 20:
+            handle = handle[: (20 - len(u_id))] + u_id
+        else:
+            handle = handle + u_id
+    return handle
+
+
+# Helper function to check whether the handle exist already
+def is_handle_already_used(handle):
+    for user in database["users"].values():
+        if user["handle"] == handle:
+            return True
+    return False
+
+
+# Helper function to encrypt user password and return the hex representation
+def encrypt(password):
+    """Return the encrypted form of the user password"""
+    return sha256(password.encode()).hexdigest()
