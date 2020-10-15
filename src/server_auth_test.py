@@ -191,4 +191,4 @@ def test_auth_register_wrong_name(url):
         },
     )
     assert r1.status_code == 400
-    assert r1.status_code == 400
+    assert r2.status_code == 400
