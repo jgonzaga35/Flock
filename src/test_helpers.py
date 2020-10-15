@@ -35,6 +35,15 @@ def register_n_users(num_users):
 
     return users
 
+def get_user_details(user):
+    return {
+        "u_id": user["id"],
+        "email": user["email"],
+        "name_first": user["first_name"],
+        "name_last": user["last_name"],
+        #"handle_str" = user["handle"]
+    }
+
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.

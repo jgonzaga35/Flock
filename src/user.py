@@ -20,3 +20,7 @@ def user_profile_setemail(token, email):
 
 def user_profile_sethandle(token, handle_str):
     return {}
+
+
+def users_all(token):
+    return {}
