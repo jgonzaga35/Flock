@@ -3,6 +3,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
+from auth import auth_login, auth_logout, auth_register
 
 
 def defaultHandler(err):
@@ -33,6 +34,22 @@ def echo():
         raise InputError(description='Cannot echo "echo"')
     return dumps({"data": data})
 
+
+# Auth_functions
+@APP.route("auth/login", method=["POST"])
+def login():
+    data = request.get_json()
+    return dumps(auth_login(data["email"], data["password"]))
+
+@APP.route("auth/logout", method=["POST"])
+def logout():
+    data = request.get_json()
+    return dumps(auth_logout(data["token"]))
+
+@APP.route("auth/register", method=["POST"])
+def register():
+    data = request.get_json()
+    return dumps(auth_register(data["email"], data["password"], data["name_first"], data["name_last"]))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
