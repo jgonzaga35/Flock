@@ -130,6 +130,7 @@ def test_handle():
     id4 = auth_register(
         "validemail4@gmail.com", "123abcd!@#", "Taeyeon", "KimKimKimKimKimKim"
     )["u_id"]
+    id5 = auth_register("validemail5@gmail.com", "123abcd!@#", "Yoona", "Lim")["u_id"]
 
     assert "peterli" == auth_get_user_data_from_id(id1)["handle"]
     assert "yoonalim" == auth_get_user_data_from_id(id2)["handle"]
@@ -138,3 +139,4 @@ def test_handle():
         "taeyeonkimkimkimkimk"[: (20 - len(str(id4)))] + str(id4)
         == auth_get_user_data_from_id(id4)["handle"]
     )
+    assert "yoonalim" + str(id5) == auth_get_user_data_from_id(id5)["handle"]
