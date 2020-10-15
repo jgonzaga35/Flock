@@ -22,12 +22,16 @@ def user_profile_setname(token, name_first, name_last):
 
     # raises AccessError if token is not active
     u_id = auth_get_current_user_id_from_token(token)
-    if isNameTooLong(name_first) or isNameTooLong(name_last):
-        raise InputError("Name is too long")
+
+    # If user's first name or last name is more than 50 characters
+    if not isNameLengthOK(name_first, 1, 50):
+        raise InputError(f"{name_first} is illegal")
+    if not isNameLengthOK(name_last, 1, 50):
+        raise InputError(f"{name_last} is illegal")
 
     user = database["users"][u_id]
-    user["first_name"] = name_first
-    user["last_name"] = name_last
+    user['first_name'] = name_first
+    user['last_name'] = name_last
 
 
 def user_profile_setemail(token, email):
@@ -43,18 +47,30 @@ def user_profile_setemail(token, email):
 
 
 def user_profile_sethandle(token, handle_str):
-    return {}
+    
+    # raises AccessError if token is not active
+    u_id = auth_get_current_user_id_from_token(token)
 
+    # raises InputError if handleis not illegal 
+    if not isNameLengthOK(handle_str, 3, 20):
+        raise InputError(f'length of {handle_str} is illegal')
 
+    user = database['users'][u_id]
+    user['handle'] = handle_str
+    
 # --------------------helper function--------------------
-def isNameTooLong(name):
+def isNameLengthOK(name, min, max):
     """
-    Take a single last name or first name as input
+    Ensure the length of a name is right
+    Input:
+    >>> name: target name
+    >>> min: minimum length of name
+    >>> max: maximum length of name
 
-    If name is too long, return True
+    If name is not illegal, return True
     If length of name is good, return False
     """
-    if len(name) >= 50:
+    if len(name) < max or len(name) > min:
         return True
     else:
         return False
