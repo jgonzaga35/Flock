@@ -41,7 +41,7 @@
     * If a user creates a channel, he/she should be in that channel automatically. Therefore, there will be no channels_join operation for that user.
     * The creator of the channel automatically becomes the owner.
     * Duplicates of channel names are allowed (channel ids are always unique, however)
-    * channel names are at least 1 character long
+    * channel names are at least 1 character long (if one tries to create a channel with a empty name, the channel will be called 'new_channel')
 
 * channel_remove
     * For now, this is used as a helper function. It will simply delete the channel from the database without ensuring whether there are users in the channel
