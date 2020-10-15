@@ -3,6 +3,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
+from other import clear
 
 
 def defaultHandler(err):
@@ -33,6 +34,9 @@ def echo():
         raise InputError(description='Cannot echo "echo"')
     return dumps({"data": data})
 
+@APP.route("/clear", methods=["DELETE"])
+def delete():
+    clear()
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port

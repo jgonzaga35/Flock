@@ -1,7 +1,8 @@
 import pytest
-from auth import auth_login, auth_logout, auth_register, auth_get_user_data_from_id
+from auth import auth_login, auth_logout, auth_register, auth_get_user_data_from_id, encrypt
 from database import clear_database
 from error import InputError
+from hashlib import sha256
 
 
 def register_new_account():
@@ -118,3 +119,25 @@ def test_auth_helper_user_data_from_invalid_id():
     clear_database()
     with pytest.raises(KeyError):
         auth_get_user_data_from_id(user_id=-1)
+
+
+def test_handle():
+    clear_database()
+    id1 = auth_register("validemail1@gmail.com", "123abcd!@#", "Peter", "Li")["u_id"]
+    id2 = auth_register("validemail2@gmail.com", "123abcd!@#", "Yoona", "Lim")["u_id"]
+    id3 = auth_register(
+        "validemail3@gmail.com", "123abcd!@#", "Taeyeon", "KimKimKimKimKimKim"
+    )["u_id"]
+    id4 = auth_register(
+        "validemail4@gmail.com", "123abcd!@#", "Taeyeon", "KimKimKimKimKimKim"
+    )["u_id"]
+    id5 = auth_register("validemail5@gmail.com", "123abcd!@#", "Yoona", "Lim")["u_id"]
+
+    assert "peterli" == auth_get_user_data_from_id(id1)["handle"]
+    assert "yoonalim" == auth_get_user_data_from_id(id2)["handle"]
+    assert "taeyeonkimkimkimkimk" == auth_get_user_data_from_id(id3)["handle"]
+    assert (
+        "taeyeonkimkimkimkimk"[: (20 - len(str(id4)))] + str(id4)
+        == auth_get_user_data_from_id(id4)["handle"]
+    )
+    assert "yoonalim" + str(id5) == auth_get_user_data_from_id(id5)["handle"]

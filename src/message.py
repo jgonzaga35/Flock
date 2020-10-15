@@ -1,12 +1,10 @@
 from database import database
 from auth import auth_get_current_user_id_from_token
+from channel import get_channel_from_id
 from channels import channels_list
 
-from error import AccessError, InputError
-
-from channel import get_channel_from_id
 import time
-
+from error import AccessError, InputError
 
 def message_send(token, channel_id, message):
     user_id = auth_get_current_user_id_from_token(token)
@@ -22,7 +20,7 @@ def message_send(token, channel_id, message):
             f"No one is going to read a {len(message)} character long message!"
         )
 
-    message_id = database["message_id_head"]
+    message_id = database["messages_id_head"]
 
     channel["messages"][message_id] = {
         "message_id": message_id,
@@ -31,7 +29,7 @@ def message_send(token, channel_id, message):
         "time_created": time.time(),
     }
 
-    database["message_id_head"] += 1
+    database["messages_id_head"] += 1
 
     return {"message_id": message_id}
 
