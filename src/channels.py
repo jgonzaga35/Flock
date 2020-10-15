@@ -4,10 +4,10 @@ from auth import auth_get_user_data_from_id, auth_get_current_user_id_from_token
 from error import AccessError, InputError
 
 
-def simplify_channel_details(token, channel_id):
+def get_channel_id_and_name(channel):
     return {
-        "channel_id": channel_id,
-        "name": channel_details(token, channel_id)["name"],
+        "channel_id": channel["id"],
+        "name": channel["name"],
     }
 
 
@@ -16,9 +16,10 @@ def channels_list(token):
     current_user_id = auth_get_current_user_id_from_token(token)
 
     for channel in database["channels"].values():
-        for user_id in channel["all_members_id"]:
-            if current_user_id == user_id:
-                channels.append(simplify_channel_details(token, channel["id"]))
+        if current_user_id in channel["all_members_id"]:
+            channel_info = get_channel_id_and_name(channel)
+            channels.append(channel_info)
+
     return channels
 
 
@@ -28,8 +29,9 @@ def channels_listall(token):
     auth_get_current_user_id_from_token(token)
 
     for channel in database["channels"].values():
-        authorised_token = channel["all_members_id"][0]
-        channels.append(simplify_channel_details(authorised_token, channel["id"]))
+        channel_info = get_channel_id_and_name(channel)
+        channels.append(channel_info)
+
     return channels
 
 
