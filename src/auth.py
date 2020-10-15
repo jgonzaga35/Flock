@@ -133,7 +133,7 @@ def generate_handle(first_name, last_name, u_id):
     return handle
 
 # Helper function to check whether the handle exist already
-def is_handle_already_user(handle):
+def is_handle_already_used(handle):
     for user in database['users'].values():
         if user['handle'] == handle:
             return True
