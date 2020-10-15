@@ -7,6 +7,7 @@ from error import AccessError, InputError
 from channel import get_channel_from_id
 import time
 
+
 def message_send(token, channel_id, message):
     user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
@@ -35,7 +36,6 @@ def message_send(token, channel_id, message):
     return {"message_id": message_id}
 
 
-
 def message_remove(token, message_id):
     """
     Given a message_id for a message, this message is removed from the channel
@@ -47,8 +47,7 @@ def message_remove(token, message_id):
     # Check message exists in database
     message_exists = 0
     for ch in database["channels"].values():
-        print(ch)
-        for m in ch['messages'].values():
+        for m in ch["messages"].values():
             if m["message_id"] == message_id:
                 message_exists = 1
 
@@ -61,11 +60,12 @@ def message_remove(token, message_id):
 
     # Remove message if user is authorised
     for ch in user_channel_id_list:
-        for msg in database["channels"][ch].values()["messages"].values():
+        for msg in database["channels"][ch]["messages"].values():
             if msg["message_id"] == message_id and (
-                msg["u_id"] == user_id or (user_id in database['channels'][ch]["owner_members_id"].values())
+                msg["u_id"] == user_id
+                or (user_id in database["channels"][ch]["owner_members_id"])
             ):
-                del msg
+                del database["channels"][ch]["messages"][message_id]
                 return {}
 
     # Unauthorised to remove message

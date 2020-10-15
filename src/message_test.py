@@ -58,10 +58,14 @@ def test_remove_owner_permissions():
 
     # Create a new channel with user01 as admin
     channel = channels_create(user01["token"], "channel", is_public=True)
-    channel_join(user02['token'], channel['channel_id'])
+    channel_join(user02["token"], channel["channel_id"])
+
     message = message_send(user02["token"], channel["channel_id"], "test message")
     message_remove(user01["token"], message["message_id"])
-    assert message["message_id"] not in database["channels"]["channel_id"]["messages"]
+    assert message["message_id"] not in [
+        x["message_id"]
+        for x in database["channels"][channel["channel_id"]]["messages"].values()
+    ]
 
 
 def test_remove_message_non_existent():
