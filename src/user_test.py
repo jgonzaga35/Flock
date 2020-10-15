@@ -12,7 +12,7 @@ def test_users_all_single():
 
     all_users = users_all(user["token"])
     all_users_info = []
-    all_users_info.append(get_user_details(user))
+    all_users_info.append(get_user_details_from_user_id(user["u_id"]))
 
     assert all_users == all_users_info
 
