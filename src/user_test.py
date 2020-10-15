@@ -1,5 +1,10 @@
 from test_helpers import register_n_users
-from user import user_profile, user_profile_setname, user_profile_setemail
+from user import (
+    user_profile,
+    user_profile_setname,
+    user_profile_setemail,
+    user_profile_sethandle,
+)
 from error import InputError, AccessError
 import pytest
 from database import clear_database, database
@@ -100,7 +105,7 @@ def test_setname_invalid_token():
 def test_setemail_successful():
     clear_database()
     user = register_n_users(1)  # return a user which has profile below:
-    #                 email: email1@gmail.com",
+    #                 email: email1@gmail.com"
 
     user_profile_setemail(user["token"], "newemail@gmail.com")
     assert database["users"][user["u_id"]]["email"] == "newemail@gmail.com"
@@ -116,7 +121,54 @@ def test_set_illegal_email():
 def test_invalid_token_access():
     clear_database()
     user = register_n_users(1)  # return a user which has profile below:
-    #                 email: email1@gmail.com",
+    #                 email: email1@gmail.com"
     invalid_token = "HAHA"
     with pytest.raises(AccessError):
         user_profile_setemail(invalid_token, "newemail@gmail.com")
+
+
+# ----------------------------user_profile_sethandle----------------------------
+def test_sethandle_successful():
+    clear_database()
+    user = register_n_users(1)
+
+    # Set a new handle name as JOJOKING
+    user_profile_sethandle(user["token"], "JOJOKING")
+    assert database["users"][user["u_id"]]["handle"] == "JOJOKING"
+
+
+def test_handle_too_long():
+    clear_database()
+    user = register_n_users(1)
+
+    # set a long handle name
+    with pytest.raises(InputError):
+        user_profile_sethandle(user["token"], "Whymynamesolonghahahahhahahaha")
+
+
+def test_handle_too_short():
+    clear_database()
+    user = register_n_users(1)
+
+    # set a short handle name
+    with pytest.raises(InputError):
+        user_profile_sethandle(user["token"], "ha")
+
+
+def test_handle_duplicate():
+    clear_database()
+    # return two users with handle name below:
+    # user_a: first1last1   user_b: first2last2
+    user_a, user_b = register_n_users(2)
+
+    with pytest.raises(InputError):
+        user_profile_sethandle(user_a["token"], "first2last2")
+
+
+def test_handle_invalid_token():
+    clear_database()
+    user = register_n_users(1)
+    invalid_token = "HAHA"
+
+    with pytest.raises(AccessError):
+        user_profile_sethandle(invalid_token, "JOJOJO")
