@@ -36,20 +36,27 @@ def echo():
 
 
 # Auth_functions
-@APP.route("auth/login", method=["POST"])
+@APP.route("/auth/login", method=["POST"])
 def login():
     data = request.get_json()
     return dumps(auth_login(data["email"], data["password"]))
 
-@APP.route("auth/logout", method=["POST"])
+
+@APP.route("/auth/logout", method=["POST"])
 def logout():
     data = request.get_json()
     return dumps(auth_logout(data["token"]))
 
-@APP.route("auth/register", method=["POST"])
+
+@APP.route("/auth/register", method=["POST"])
 def register():
     data = request.get_json()
-    return dumps(auth_register(data["email"], data["password"], data["name_first"], data["name_last"]))
+    return dumps(
+        auth_register(
+            data["email"], data["password"], data["name_first"], data["name_last"]
+        )
+    )
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
