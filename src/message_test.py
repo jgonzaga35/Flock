@@ -76,8 +76,8 @@ def test_remove_owner_channel_permissions():
     clear_database()
     user01, user02, user03 = register_n_users(3)
 
-    channel01 = channels_create(user01["token"], "channel", is_public=True)
-    channel02 = channels_create(user02["token"], "channel", is_public=True)
+    channels_create(user01["token"], "channel01", is_public=True)
+    channel02 = channels_create(user02["token"], "channel02", is_public=True)
     channel_join(user03["token"], channel02["channel_id"])
 
     message = message_send(user02["token"], channel02["channel_id"], "test message")
