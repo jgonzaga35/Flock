@@ -51,17 +51,17 @@ def test_login_double_login(url):
 
 def test_login_invalid_email(url):
     requests.delete(url + "clear")
-    with pytest.raises(InputError):
-        requests.post(url + "auth/login", json={"email": "didntusethis@gmail", "password": "123abcd!@#"})
-    with pytest.raises(InputError):
-        requests.post(url + "auth/login", json={"email": "didntusethis.com", "password": "123abcd!@#"})
+    r1 = requests.post(url + "auth/login", json={"email": "didntusethis@gmail", "password": "123abcd!@#"})
+    r2 = requests.post(url + "auth/login", json={"email": "didntusethis.com", "password": "123abcd!@#"})
+    assert r1.status_code == 400
+    assert r2.status_code == 400
 
 
 def test_login_wrong_password(url):
     requests.delete(url + "clear")
     register_new_account(url)
-    with pytest.raises(InputError):
-        requests.post(url + "auth/login", json={"email": "validemail@gmail.com", "password": "123"})
+    r = requests.post(url + "auth/login", json={"email": "validemail@gmail.com", "password": "123"})
+    assert r.status_code == 400
 
 
 def test_login_never_registered(url):
