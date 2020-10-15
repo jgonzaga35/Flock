@@ -7,17 +7,16 @@ from user import (
 )
 from error import InputError, AccessError
 import pytest
-from database import clear_database, database
+from database import clear_database
 from auth import auth_register, check_email
 
 # --------------------------------user profile-------------------------------------
 def test_user_profile_successful():
     clear_database()
     user = register_n_users(1)  # return a user which has profile below:
-    #                 email: email1@gmail.com",
-    #                 passworkd: passwordthatislongenough1
-    #                 first name: first1
-    #                 last name: last1
+    #                 email: email0@gmail.com",
+    #                 first name: first0
+    #                 last name: last0
 
     # We compare the profile above to the returned result.
     userProfile = user_profile(user["token"], user["u_id"])
@@ -61,9 +60,9 @@ def test_setname_successful():
     user_a = register_n_users(1)
     # set user name to Eric JOJO
     user_profile_setname(user_a["token"], "Eric", "JOJO")
-
-    assert database["users"][user_a["u_id"]]["first_name"] == "Eric"
-    assert database["users"][user_a["u_id"]]["last_name"] == "JOJO"
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])
+    assert user_a_profile["first_name"] == "Eric"
+    assert user_a_profile["last_name"] == "JOJO"
 
 
 def test_setname_firstname_too_long():
@@ -94,7 +93,6 @@ def test_setname_lastname_too_long():
 
 def test_setname_invalid_token():
     clear_database()
-    user_a = register_n_users(1)
     # Generate an invalid token
     invalid_token = "HaHa"
     with pytest.raises(AccessError):
@@ -104,11 +102,10 @@ def test_setname_invalid_token():
 # ----------------------------user_profile_setemail----------------------------
 def test_setemail_successful():
     clear_database()
-    user = register_n_users(1)  # return a user which has profile below:
-    #                 email: email1@gmail.com"
-
-    user_profile_setemail(user["token"], "newemail@gmail.com")
-    assert database["users"][user["u_id"]]["email"] == "newemail@gmail.com"
+    user_a = register_n_users(1)
+    user_profile_setemail(user_a["token"], "newemail@gmail.com")
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])
+    assert user_a_profile["email"] == "newemail@gmail.com"
 
 
 def test_set_illegal_email():
@@ -120,8 +117,6 @@ def test_set_illegal_email():
 
 def test_invalid_token_access():
     clear_database()
-    user = register_n_users(1)  # return a user which has profile below:
-    #                 email: email1@gmail.com"
     invalid_token = "HAHA"
     with pytest.raises(AccessError):
         user_profile_setemail(invalid_token, "newemail@gmail.com")
@@ -130,11 +125,12 @@ def test_invalid_token_access():
 # ----------------------------user_profile_sethandle----------------------------
 def test_sethandle_successful():
     clear_database()
-    user = register_n_users(1)
+    user_a = register_n_users(1)
 
     # Set a new handle name as JOJOKING
-    user_profile_sethandle(user["token"], "JOJOKING")
-    assert database["users"][user["u_id"]]["handle"] == "JOJOKING"
+    user_profile_sethandle(user_a["token"], "JOJOKING")
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])
+    assert user_a_profile["handle"] == "JOJOKING"
 
 
 def test_handle_too_long():
@@ -158,16 +154,17 @@ def test_handle_too_short():
 def test_handle_duplicate():
     clear_database()
     # return two users with handle name below:
-    # user_a: first1last1   user_b: first2last2
     user_a, user_b = register_n_users(2)
 
+    # Get user_b's profile and we will use his handle as the duplicated handle
+    user_b_profile = user_profile(user_b["token"], user_b["u_id"])
+
     with pytest.raises(InputError):
-        user_profile_sethandle(user_a["token"], "first2last2")
+        user_profile_sethandle(user_a["token"], user_b_profile["handle"])
 
 
 def test_handle_invalid_token():
     clear_database()
-    user = register_n_users(1)
     invalid_token = "HAHA"
 
     with pytest.raises(AccessError):

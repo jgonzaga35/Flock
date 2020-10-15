@@ -4,7 +4,16 @@ from auth import auth_get_current_user_id_from_token, check_email
 
 
 def user_profile(token, u_id):
-
+    """
+    take a valid token and u_id, return a dictionary as below:
+    >>> {
+        'u_id': user['id'],
+        'email': user['email'],
+        'first_name': user['first_name'],
+        'last_name': user['last_name'],
+        'handle': user['handle'],
+    }
+    """
     # Ensure token is valid
     if not token in database["active_tokens"]:
         raise AccessError(f"{token} is not a valid token")
@@ -15,7 +24,14 @@ def user_profile(token, u_id):
     except KeyError:
         raise InputError(f"{u_id} is not a valid user id")
 
-    return user
+    # We don't directly return user from database since password is included
+    return {
+        "u_id": user["id"],
+        "email": user["email"],
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
+        "handle": user["handle"],
+    }
 
 
 def user_profile_setname(token, name_first, name_last):
@@ -30,8 +46,8 @@ def user_profile_setname(token, name_first, name_last):
         raise InputError(f"{name_last} is illegal")
 
     user = database["users"][u_id]
-    user['first_name'] = name_first
-    user['last_name'] = name_last
+    user["first_name"] = name_first
+    user["last_name"] = name_last
 
 
 def user_profile_setemail(token, email):
@@ -47,17 +63,23 @@ def user_profile_setemail(token, email):
 
 
 def user_profile_sethandle(token, handle_str):
-    
+
     # raises AccessError if token is not active
     u_id = auth_get_current_user_id_from_token(token)
 
-    # raises InputError if handleis not illegal 
-    if not isNameLengthOK(handle_str, 3, 20):
-        raise InputError(f'length of {handle_str} is illegal')
+    # raises InputError if there is a duplicated handle
+    for user in database["users"].values():
+        if user["handle"] == handle_str:
+            raise InputError(f"{handle_str} has been used")
 
-    user = database['users'][u_id]
-    user['handle'] = handle_str
-    
+    # raises InputError if handleis not illegal
+    if not isNameLengthOK(handle_str, 3, 20):
+        raise InputError(f"length of {handle_str} is illegal")
+
+    user = database["users"][u_id]
+    user["handle"] = handle_str
+
+
 # --------------------helper function--------------------
 def isNameLengthOK(name, min, max):
     """
@@ -70,7 +92,7 @@ def isNameLengthOK(name, min, max):
     If name is not illegal, return True
     If length of name is good, return False
     """
-    if len(name) < max or len(name) > min:
+    if len(name) < max and len(name) > min:
         return True
     else:
         return False
