@@ -21,8 +21,9 @@ def message_remove(token, message_id):
 
     # Check message exists in database
     message_exists = 0
-    for ch in database["channels"]:
-        for m in ch['messages']:
+    for ch in database["channels"].values():
+        print(ch)
+        for m in ch['messages'].values():
             if m["message_id"] == message_id:
                 message_exists = 1
 
@@ -36,16 +37,16 @@ def message_remove(token, message_id):
         channels_user_is_in["channel_id"] for x in channels_user_is_in
     ]
 
+    # Remove message if user is authorised
     for ch in user_channel_id_list:
-        for msg in database["channels"][ch]["messages"]:
+        for msg in database["channels"][ch]["messages"].values():
             if msg["message_id"] == message_id and (
-                msg["u_id"] == user_id or (user_id in database['channels'][ch]["owner_members_id"])
+                msg["u_id"] == user_id or (user_id in database['channels'][ch]["owner_members_id"].values())
             ):
                 del msg
                 return {}
 
-    # Message exists but not sent by this user or user trying to remove a
-    # message they are not authorised to remove
+    # Unauthorised to remove message
     raise AccessError
 
 
