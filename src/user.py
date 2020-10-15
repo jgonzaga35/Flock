@@ -39,7 +39,7 @@ def users_all(token):
     users = []
 
     # authenticate user
-    current_user_id = auth_get_current_user_id_from_token(token)
+    auth_get_current_user_id_from_token(token)
 
     for user in database["users"].values():
         user_info = get_user_details(user) 

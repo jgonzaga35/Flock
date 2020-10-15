@@ -1,6 +1,7 @@
 import pytest
 import re
 import signal
+from database import database
 from auth import auth_register
 from subprocess import Popen, PIPE
 from time import sleep
@@ -35,13 +36,19 @@ def register_n_users(num_users):
 
     return users
 
-def get_user_details(user):
+def get_user_details_from_user_id(user_id):
+
+    for user in database["users"].values():
+        if user_id == user["id"]:
+            current_user = user
+            break
+
     return {
-        "u_id": user["id"],
-        "email": user["email"],
-        "name_first": user["first_name"],
-        "name_last": user["last_name"],
-        "handle_str": user["handle"]
+        "u_id": current_user["id"],
+        "email": current_user["email"],
+        "name_first": current_user["first_name"],
+        "name_last": current_user["last_name"],
+        "handle_str": current_user["handle"]
     }
 
 # Use this fixture to get the URL of the server. It starts the server for you,
