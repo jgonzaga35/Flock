@@ -51,7 +51,7 @@
     * raises any AccessError before any InputError. For example, if an unauthorized user (should raise AccessError) sends a 1200 character long message (should raise InputError), an AccessError will be raised.
 
 * message_remove
-    * When a message is remove, it no longer exists in the database
+    * When a message is removed, it no longer exists in the database
     * You can only remove messages that you have sent.
     * You cannot remove other people's messages (unless you are the owner of the channel)
     * Every message has a unique ID - including messages that are deleted (i.e. a deleted message and an active message cannot have the same ID)
