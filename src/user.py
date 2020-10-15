@@ -1,6 +1,10 @@
 from database import database
 from error import InputError, AccessError
-from auth import auth_get_current_user_id_from_token, check_email
+from auth import (
+    auth_get_current_user_id_from_token,
+    check_email,
+    is_handle_already_used,
+)
 
 
 def user_profile(token, u_id):
@@ -9,9 +13,9 @@ def user_profile(token, u_id):
     >>> {
         'u_id': user['id'],
         'email': user['email'],
-        'first_name': user['first_name'],
-        'last_name': user['last_name'],
-        'handle': user['handle'],
+        'name_first': user['first_name'],
+        'name_last': user['last_name'],
+        'handle_str': user['handle'],
     }
     """
     # Ensure token is valid
@@ -28,9 +32,9 @@ def user_profile(token, u_id):
     return {
         "u_id": user["id"],
         "email": user["email"],
-        "first_name": user["first_name"],
-        "last_name": user["last_name"],
-        "handle": user["handle"],
+        "name_first": user["first_name"],
+        "name_last": user["last_name"],
+        "handle_str": user["handle"],
     }
 
 
@@ -68,9 +72,8 @@ def user_profile_sethandle(token, handle_str):
     u_id = auth_get_current_user_id_from_token(token)
 
     # raises InputError if there is a duplicated handle
-    for user in database["users"].values():
-        if user["handle"] == handle_str:
-            raise InputError(f"{handle_str} has been used")
+    if is_handle_already_used(handle_str):
+        raise InputError(f"{handle_str} has been used")
 
     # raises InputError if handleis not illegal
     if not isNameLengthOK(handle_str, 3, 20):
@@ -92,7 +95,7 @@ def isNameLengthOK(name, min, max):
     If name is not illegal, return True
     If length of name is good, return False
     """
-    if len(name) < max and len(name) > min:
+    if len(name) <= max and len(name) >= min:
         return True
     else:
         return False

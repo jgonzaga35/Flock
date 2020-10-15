@@ -21,8 +21,8 @@ def test_user_profile_successful():
     # We compare the profile above to the returned result.
     userProfile = user_profile(user["token"], user["u_id"])
     assert userProfile["email"] == "email0@gmail.com"
-    assert userProfile["first_name"] == "first0"
-    assert userProfile["last_name"] == "last0"
+    assert userProfile["name_first"] == "first0"
+    assert userProfile["name_last"] == "last0"
 
 
 def test_user_profile_with_invalid_uid():
@@ -61,8 +61,8 @@ def test_setname_successful():
     # set user name to Eric JOJO
     user_profile_setname(user_a["token"], "Eric", "JOJO")
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])
-    assert user_a_profile["first_name"] == "Eric"
-    assert user_a_profile["last_name"] == "JOJO"
+    assert user_a_profile["name_first"] == "Eric"
+    assert user_a_profile["name_last"] == "JOJO"
 
 
 def test_setname_firstname_too_long():
@@ -130,7 +130,7 @@ def test_sethandle_successful():
     # Set a new handle name as JOJOKING
     user_profile_sethandle(user_a["token"], "JOJOKING")
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])
-    assert user_a_profile["handle"] == "JOJOKING"
+    assert user_a_profile["handle_str"] == "JOJOKING"
 
 
 def test_handle_too_long():
@@ -160,7 +160,7 @@ def test_handle_duplicate():
     user_b_profile = user_profile(user_b["token"], user_b["u_id"])
 
     with pytest.raises(InputError):
-        user_profile_sethandle(user_a["token"], user_b_profile["handle"])
+        user_profile_sethandle(user_a["token"], user_b_profile["handle_str"])
 
 
 def test_handle_invalid_token():
