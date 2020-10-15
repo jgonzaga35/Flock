@@ -1,6 +1,6 @@
 from database import database
 from error import InputError, AccessError
-from auth import auth_get_current_user_id_from_token
+from auth import auth_get_current_user_id_from_token, check_email
 
 
 def user_profile(token, u_id):
@@ -31,7 +31,15 @@ def user_profile_setname(token, name_first, name_last):
 
 
 def user_profile_setemail(token, email):
-    return {}
+
+    # raises AccessError if token is not active
+    u_id = auth_get_current_user_id_from_token(token)
+
+    # raises InputError if email address is illegal
+    check_email(email)
+
+    user = database["users"][u_id]
+    user["email"] = email
 
 
 def user_profile_sethandle(token, handle_str):

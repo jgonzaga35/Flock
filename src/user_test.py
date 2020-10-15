@@ -95,25 +95,28 @@ def test_setname_invalid_token():
     with pytest.raises(AccessError):
         user_profile_setname(invalid_token, "Eric", "JOJO")
 
-#----------------------------user_profile_setemail----------------------------
+
+# ----------------------------user_profile_setemail----------------------------
 def test_setemail_successful():
     clear_database()
     user = register_n_users(1)  # return a user which has profile below:
     #                 email: email1@gmail.com",
 
-    user_profile_setemail(user['token'], 'newemail@gmail.com')
-    assert(database['users'][user['u_id']]['email'] == 'newemail@gmail.com')
+    user_profile_setemail(user["token"], "newemail@gmail.com")
+    assert database["users"][user["u_id"]]["email"] == "newemail@gmail.com"
+
 
 def test_set_illegal_email():
     clear_database()
     user = register_n_users(1)
     with pytest.raises(InputError):
-        user_profile_setemail(user['token'], 'invalid_email_address.com')
+        user_profile_setemail(user["token"], "invalid_email_address.com")
+
 
 def test_invalid_token_access():
     clear_database()
     user = register_n_users(1)  # return a user which has profile below:
     #                 email: email1@gmail.com",
-    invalid_token = 'HAHA' 
+    invalid_token = "HAHA"
     with pytest.raises(AccessError):
-        user_profile_setemail(invalid_token, 'newemail@gmail.com')
+        user_profile_setemail(invalid_token, "newemail@gmail.com")
