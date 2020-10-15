@@ -8,7 +8,7 @@ def get_user_details(user):
         "email": user["email"],
         "name_first": user["first_name"],
         "name_last": user["last_name"],
-        #"handle_str" = user["handle"] not implemented yet!
+        "handle_str": user["handle"] 
     }
 
 def user_profile(token, u_id):
