@@ -180,3 +180,18 @@ def test_remove_owner_flock_permissions():
     ]
     
     assert database["channels"][channel["channel_id"]]["messages"][message['message_id']]['message'] == 'edited message'
+
+# Test that the owner of a channel can remove any message
+def test_remove_owner_channel_permissions():
+    clear_database()
+    user01, user02, user03 = register_n_users(3)
+
+    channels_create(user01["token"], "channel01", is_public=True)
+    channel02 = channels_create(user02["token"], "channel02", is_public=True)
+    channel_join(user03["token"], channel02["channel_id"])
+
+    message = message_send(user03["token"], channel02["channel_id"], "test message")
+    message_edit(user02["token"], message["message_id"], 'edited message')
+
+    assert database["channels"][channel02["channel_id"]]["messages"][message['message_id']]['message'] == 'edited message'
+
