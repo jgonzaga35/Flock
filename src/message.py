@@ -44,13 +44,13 @@ def message_remove(token, message_id):
         raise AccessError
 
     # Check message exists in database
-    message_exists = 0
+    message_exists = False
     for ch in database["channels"].values():
         for m in ch["messages"].values():
             if m["message_id"] == message_id:
-                message_exists = 1
+                message_exists = True
 
-    if message_exists == 0:
+    if message_exists == False:
         raise InputError
 
     # Get list of channels that the user is a part of
