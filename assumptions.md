@@ -48,6 +48,10 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * channel_remove
     * For now, this is used as a helper function. It will simply delete the channel from the database without ensuring whether there are users in the channel
 
+* message_send:
+    * if the channel doesn't exists, it still raises an AccessError, and not an InputError. It's consistent with the rest of the app, but it's consistent with the spec.
+    * raises any AccessError before any InputError. For example, if an unauthorized user (should raise AccessError) sends a 1200 character long message (should raise InputError), an AccessError will be raised.
+
 * message_remove
     * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
     that a messsage has been deleted to other users.
@@ -60,3 +64,5 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * You are only able to edit messages that you have sent.
     * You do not have to be an admin or owner of the channel to edit your message.
 
+* user_profile
+    * Any valid user can access other users' profile
