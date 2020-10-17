@@ -63,7 +63,7 @@ def test_setname_successful(url):
     user = register_new_account(url)
     # set user name to Eric JOJO
     requests.put(url + "user/profile/setname", json={"token": user["token"], "name_first": "Eric", "name_last": "JOJO"})
-    userProfile = requests.get(url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]})
+    userProfile = requests.get(url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}).json()
     assert userProfile["name_first"] == "Eric"
     assert userProfile["name_last"] == "JOJO"
 
@@ -125,7 +125,7 @@ def test_sethandle_successful(url):
     # Set a new handle name as JOJOKING
     requests.put(url + "user/profile/sethandle", json={"token": user["token"], "handle_str": "JOJOKING"})
     userProfile = requests.get(url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}).json()
-    assert userProfile["handle"] == "JOJOKING"
+    assert userProfile["handle_str"] == "JOJOKING"
 
 
 def test_handle_too_long(url):
@@ -163,7 +163,7 @@ def test_handle_duplicate(url):
     # Get user_b's profile and we will use his handle as the duplicated handle
     user_b_profile = requests.get(url + "user/profile", params={"token": user_b["token"], "u_id": user_b["u_id"]}).json()
 
-    r = requests.put(url + "user/profile/sethandle", json={"token": user_a["token"], "handle_str": user_b_profile["handle"]})
+    r = requests.put(url + "user/profile/sethandle", json={"token": user_a["token"], "handle_str": user_b_profile["handle_str"]})
     assert r.status_code == 400  
 
 

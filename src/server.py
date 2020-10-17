@@ -73,17 +73,17 @@ def profile():
 @APP.route("/user/profile/setname", methods=["PUT"])
 def setname():
     data = request.get_json()
-    return dumps(user_profile_setname(data["token"], data["name_first"], data["name_last"]))
+    user_profile_setname(data["token"], data["name_first"], data["name_last"])
 
 @APP.route("/user/profile/setemail", methods=["PUT"])
 def setemail():
     data = request.get_json()
-    return dumps(user_profile_setemail(data["token"], data["email"]))
+    user_profile_setemail(data["token"], data["email"])
 
 @APP.route("/user/profile/sethandle", methods=["PUT"])
 def sethandle():
     data = request.get_json()
-    return dumps(user_profile_sethandle(data["token"], data["handle_str"]))
+    user_profile_sethandle(data["token"], data["handle_str"])
 
 
 if __name__ == "__main__":
