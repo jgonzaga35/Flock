@@ -51,10 +51,11 @@
     * raises any AccessError before any InputError. For example, if an unauthorized user (should raise AccessError) sends a 1200 character long message (should raise InputError), an AccessError will be raised.
 
 * message_remove
-    * Removing a message leaves another message on the channel stating "This message has been removed" to indicate
-    that a messsage has been deleted to other users.
+    * When a message is removed, it no longer exists in the database
     * You can only remove messages that you have sent.
-    * You cannot remove other people's messages.
+    * You cannot remove other people's messages (unless you are the owner of the channel)
+    * Every message has a unique ID - including messages that are deleted (i.e. a deleted message and an active message cannot have the same ID)
+    * An input error also occurs when a message id does not exist (as well as occuring when it no longer exists)
 
 * message_edit
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
@@ -62,3 +63,5 @@
     * You are only able to edit messages that you have sent.
     * You do not have to be an admin or owner of the channel to edit your message.
 
+* user_profile
+    * Any valid user can access other users' profile
