@@ -367,7 +367,7 @@ def test_edit_invalid_message_id():
     # User sends a message
     message_send(user["token"], channel["channel_id"], "test message")
     # User tries to edit message with an invalid message id (doesn't exist)
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         assert message_edit(user["token"], INVALID_MESSAGE_ID, "edited message")
 
 
@@ -380,7 +380,7 @@ def test_edit_unauthorised_user():
     channel = channels_create(user01["token"], "channel", is_public=True)
     channel_join(user02["token"], channel["channel_id"])
     message = message_send(user01["token"], channel["channel_id"], "test message")
-    # User02 tries to remove message from user01
+    # User02 tries to edit message from user01
     with pytest.raises(AccessError):
         message_edit(user02["token"], message["message_id"], "edited message")
 
@@ -471,10 +471,6 @@ def test_edit_continuous_send():
     for i in range(1, 50):
         message = message_send(user["token"], channel_id, "message " + str(i))
         message_edit(user["token"], message["message_id"], "edited message " + str(i))
-        assert (
-            database["channels"][channel_id]["messages"][
-                message["message_id"]
-            ]["message"]
-            == "edited message " + str(i)
-        )
-        
+        assert database["channels"][channel_id]["messages"][message["message_id"]][
+            "message"
+        ] == "edited message " + str(i)

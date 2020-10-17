@@ -72,4 +72,42 @@ def message_remove(token, message_id):
 
 
 def message_edit(token, message_id, message):
-    return {}
+    """Given a message, update its text with new text. If the new message
+    is an empty string, the message is deleted
+    """
+
+    # Check token is valid
+    if token not in database["active_tokens"]:
+        raise AccessError
+
+    # Check message exists in database
+    message_exists = False
+    for ch in database["channels"].values():
+        for m in ch["messages"].values():
+            if m["message_id"] == message_id:
+                message_exists = True
+
+    if message_exists == False:
+        raise AccessError
+
+    # This is done after error checking as input error not allowed in this function
+    if message == "":
+        message_remove(token, message_id)
+        return {}
+
+    # Get list of channels the user is a part of
+    user_id = auth_get_current_user_id_from_token(token)
+    user_channel_id_list = [x["channel_id"] for x in channels_list(token)]
+
+    # Edit message if user is authorised, delete if message = ''
+    for ch in user_channel_id_list:
+        for msg in database["channels"][ch]["messages"].values():
+            if msg["message_id"] == message_id and (
+                msg["u_id"] == user_id
+                or (user_id in database["channels"][ch]["owner_members_id"])
+            ):
+                database["channels"][ch]["messages"][message_id]["message"] = message
+                return {}
+
+    # Unauthorised to edit message
+    raise AccessError
