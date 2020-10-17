@@ -35,6 +35,7 @@ def echo():
         raise InputError(description='Cannot echo "echo"')
     return dumps({"data": data})
 
+
 @APP.route("/clear", methods=["DELETE"])
 def delete():
     clear()
