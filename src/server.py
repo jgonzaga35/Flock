@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
 from other import clear
+from user import user_profile, user_profile_setname, user_profile_setemail, user_profile_sethandle
 
 
 def defaultHandler(err):
@@ -37,6 +38,27 @@ def echo():
 @APP.route("/clear", methods=["DELETE"])
 def delete():
     clear()
+
+@APP.route("/user/profile", methods=["GET"])
+def profile():
+    token = request.args.get("token")
+    u_id = request.args.get("u_id")
+    return dumps(user_profile(token, u_id))
+
+@APP.route("/user/profile/setname", methods=["PUT"])
+def setname():
+    data = request.get_json()
+    return dumps(user_profile_setname(data["token"], data["name_first"], data["name_last"]))
+
+@APP.route("/user/profile/setemail", methods=["PUT"])
+def setemail():
+    data = request.get_json()
+    return dumps(user_profile_setemail(data["token"], data["email"]))
+
+@APP.route("/user/profile/sethandle", methods=["PUT"])
+def sethandle():
+    data = request.get_json()
+    return dumps(user_profile_sethandle(data["token"], data["handle_str"]))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
