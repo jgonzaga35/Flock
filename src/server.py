@@ -3,6 +3,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
+from auth import auth_login, auth_logout, auth_register
 from other import clear
 from user import user_profile, user_profile_setname, user_profile_setemail, user_profile_sethandle
 
@@ -40,6 +41,29 @@ def echo():
 def delete():
     clear()
 
+# Auth_functions
+@APP.route("/auth/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    return dumps(auth_login(data["email"], data["password"]))
+
+
+@APP.route("/auth/logout", methods=["POST"])
+def logout():
+    data = request.get_json()
+    return dumps(auth_logout(data["token"]))
+
+
+@APP.route("/auth/register", methods=["POST"])
+def register():
+    data = request.get_json()
+    return dumps(
+        auth_register(
+            data["email"], data["password"], data["name_first"], data["name_last"]
+        )
+    )
+
+# User functions
 @APP.route("/user/profile", methods=["GET"])
 def profile():
     token = request.args.get("token")
@@ -60,6 +84,7 @@ def setemail():
 def sethandle():
     data = request.get_json()
     return dumps(user_profile_sethandle(data["token"], data["handle_str"]))
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
