@@ -137,7 +137,7 @@ def test_handle_too_long(url):
     assert r.status_code == 400  
 
 
-def test_handle_too_short():
+def test_handle_too_short(url):
     requests.delete(url + "clear")
     user = register_new_account(url)
 
@@ -146,7 +146,7 @@ def test_handle_too_short():
     assert r.status_code == 400  
 
 
-def test_handle_duplicate():
+def test_handle_duplicate(url):
     requests.delete(url + "clear")
     # return two users with handle name below:
     user_a = register_new_account(url)
@@ -167,7 +167,7 @@ def test_handle_duplicate():
     assert r.status_code == 400  
 
 
-def test_handle_invalid_token():
+def test_handle_invalid_token(url):
     requests.delete(url + "clear")
     invalid_token = "HAHA"
 
