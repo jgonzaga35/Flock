@@ -39,33 +39,27 @@ def message_remove(token, message_id):
     """
     Given a message_id for a message, this message is removed from the channel
     """
-    # Check token is valid
-    if token not in database["active_tokens"]:
-        raise AccessError
+    # Check token is valid - error checking in function
+    user_id = auth_get_current_user_id_from_token(token)
 
     # Check message exists in database
     message_exists = False
     for ch in database["channels"].values():
-        for m in ch["messages"].values():
-            if m["message_id"] == message_id:
-                message_exists = True
+        if message_id in ch['messages']:
+            channel_id_for_message = ch['id']
+            message_exists = True
 
     if message_exists == False:
         raise InputError
 
-    # Get list of channels that the user is a part of
-    user_id = auth_get_current_user_id_from_token(token)
-    user_channel_id_list = [x["channel_id"] for x in channels_list(token)]
-
     # Remove message if user is authorised
-    for ch in user_channel_id_list:
-        for msg in database["channels"][ch]["messages"].values():
-            if msg["message_id"] == message_id and (
-                msg["u_id"] == user_id
-                or (user_id in database["channels"][ch]["owner_members_id"])
-            ):
-                del database["channels"][ch]["messages"][message_id]
-                return {}
+    for msg in database["channels"][channel_id_for_message]["messages"].values():
+        if msg["message_id"] == message_id and (
+            msg["u_id"] == user_id
+            or (user_id in database["channels"][channel_id_for_message]["owner_members_id"])
+        ):
+            del database["channels"][channel_id_for_message]["messages"][message_id]
+            return {}
 
     # Unauthorised to remove message
     raise AccessError
