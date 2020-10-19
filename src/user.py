@@ -30,11 +30,13 @@ def user_profile(token, u_id):
 
     # We don't directly return user from database since password is included
     return {
-        "u_id": user["id"],
-        "email": user["email"],
-        "name_first": user["first_name"],
-        "name_last": user["last_name"],
-        "handle_str": user["handle"],
+        'user': {
+            "u_id": user["id"],
+            "email": user["email"],
+            "name_first": user["first_name"],
+            "name_last": user["last_name"],
+            "handle_str": user["handle"],
+        }
     }
 
 
