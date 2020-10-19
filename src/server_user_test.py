@@ -53,8 +53,9 @@ def test_invalid_token_user_profile(url):
     requests.delete(url + "clear")
     user = register_new_account(url)
     # Generate an invalid token
-    invalid_token = "HaHa"
+    invalid_token = -1
     r = requests.get(url + "user/profile", params={"token": invalid_token, "u_id": user["u_id"]})
+    print(r)
     assert r.status_code == 400
 
 # -----------------------------user_profile_setname------------------------------

@@ -68,7 +68,7 @@ def register():
 def profile():
     token = request.args.get("token")
     u_id = request.args.get("u_id")
-    return dumps(user_profile(token, u_id))
+    return dumps(user_profile(int(token), int(u_id)))
 
 @APP.route("/user/profile/setname", methods=["PUT"])
 def setname():
