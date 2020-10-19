@@ -83,6 +83,7 @@ def message_edit(token, message_id, message):
     message_exists = False
     for ch in database["channels"].values():
         if message_id in ch['messages']:
+            channel_id_for_message = ch['id']
             message_exists = True
 
     if message_exists == False:
@@ -93,19 +94,14 @@ def message_edit(token, message_id, message):
         message_remove(token, message_id)
         return {}
 
-    # Get list of channels the user is a part of
-    auth_get_current_user_id_from_token(token)
-    user_channel_id_list = [x["channel_id"] for x in channels_list(token)]
-
     # Edit message if user is authorised, delete if message = ''
-    for ch in user_channel_id_list:
-        for msg in database["channels"][ch]["messages"].values():
-            if msg["message_id"] == message_id and (
-                msg["u_id"] == user_id
-                or (user_id in database["channels"][ch]["owner_members_id"])
-            ):
-                msg["message"] = message
-                return {}
+    for msg in database["channels"][channel_id_for_message]["messages"].values():
+        if msg["message_id"] == message_id and (
+            msg["u_id"] == user_id
+            or (user_id in database["channels"][channel_id_for_message]["owner_members_id"])
+        ):
+            msg["message"] = message
+            return {}
 
     # Unauthorised to edit message
     raise AccessError
