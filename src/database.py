@@ -23,7 +23,7 @@ database = {
         # },
     },
     # no message should have the same id, even across channels
-    "message_id_head": 1,
+    "messages_id_head": 1,
     "active_tokens": [],
 }
 
