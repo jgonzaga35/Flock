@@ -471,6 +471,6 @@ def test_edit_continuous_send():
     for i in range(1, 50):
         message = message_send(user["token"], channel_id, "message " + str(i))
         message_edit(user["token"], message["message_id"], "edited message " + str(i))
-        assert database["channels"][channel_id]["messages"][message["message_id"]][
+        assert channel_messages(user["token"], channel_id, 0)["messages"][0][
             "message"
         ] == "edited message " + str(i)
