@@ -3,6 +3,7 @@ from test_helpers import http_register_n_users, url
 
 
 def test_http_channel_details_valid(url):
+    requests.delete(url + "clear")
     usera = http_register_n_users(url, 1)
     response = requests.post(
         url + "channels/create",

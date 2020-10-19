@@ -5,6 +5,7 @@ from test_helpers import url, http_register_n_users
 def test_http_channels_create_empty_name(url):
     """Testing empty names because the http stack might remove them
     automatically or something. It's clearly an edge case"""
+    requests.delete(url + "clear")
     usera = http_register_n_users(url, 1)
 
     response = requests.post(
