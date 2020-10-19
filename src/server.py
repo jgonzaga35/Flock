@@ -37,6 +37,7 @@ def echo():
 @APP.route("/clear", methods=["DELETE"])
 def delete():
     clear()
+    return dumps({})
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
