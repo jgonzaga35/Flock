@@ -1,9 +1,10 @@
 import sys
 from json import dumps
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from error import InputError
 from auth import auth_login, auth_logout, auth_register
+from message import message_remove
 from other import clear
 
 
@@ -62,6 +63,28 @@ def register():
         )
     )
 
+#############################################################################
+#                           Routes for messages                             #
+#############################################################################
+
+
+@APP.route("/channels/create", methods=["POST"])
+def channels_create_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    name = data["name"]
+    is_public = data["is_public"]
+    
+    return jsonify(channels_create(token, name, is_public))
+
+
+@APP.route("/message/remove", methods=["DELETE"])
+def message_remove():
+    data = request.get_json()
+    return dumps(
+        message_remove(data["token"], data["message_id"])
+    )
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
