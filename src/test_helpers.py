@@ -61,7 +61,7 @@ def get_user_details_from_user_id(user_id):
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
-@pytest.fixture
+@pytest.fixture(scope="session")
 def url():
     url_re = re.compile(r" \* Running on ([^ ]*)")
     server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
