@@ -97,11 +97,12 @@ def register():
 #     channel_id = data["channel_id"]
 #     return dumps({channel_join(token, channel_id)})
 
+# # Last test fails with this route if int() is included
 # @APP.route("/channel/messages", methods=["GET"])
 # def messages_channel():
-#     token = request.args.get("token")
-#     channel_id = request.args.get("channel_id")
-#     start = request.args.get("start")
+#     token = int(request.args.get("token")) 
+#     channel_id = int(request.args.get("channel_id"))
+#     start = int(request.args.get("start"))
 
 #     return dumps({
 #         channel_messages(token, channel_id, start)
