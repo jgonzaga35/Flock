@@ -42,7 +42,7 @@ def echo():
 @APP.route("/clear", methods=["DELETE"])
 def delete():
     clear()
-    return({})
+    return dumps({})
 
 # Auth_functions
 @APP.route("/auth/login", methods=["POST"])
