@@ -1,32 +1,36 @@
 from database import clear_database
 
+
 def clear():
     clear_database()
 
+
 def users_all(token):
     return {
-        'users': [
+        "users": [
             {
-                'u_id': 1,
-                'email': 'cs1531@cse.unsw.edu.au',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'hjacobs',
+                "u_id": 1,
+                "email": "cs1531@cse.unsw.edu.au",
+                "name_first": "Hayden",
+                "name_last": "Jacobs",
+                "handle_str": "hjacobs",
             },
         ],
     }
 
+
 def admin_userpermission_change(token, u_id, permission_id):
     pass
 
+
 def search(token, query_str):
     return {
-        'messages': [
+        "messages": [
             {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
+                "message_id": 1,
+                "u_id": 1,
+                "message": "Hello world",
+                "time_created": 1582426789,
             }
         ],
     }
