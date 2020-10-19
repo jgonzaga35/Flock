@@ -43,19 +43,19 @@ def delete():
 # Auth_functions
 @APP.route("/auth/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json(force=True)
     return dumps(auth_login(data["email"], data["password"]))
 
 
 @APP.route("/auth/logout", methods=["POST"])
 def logout():
-    data = request.get_json()
+    data = request.get_json(force=True)
     return dumps(auth_logout(data["token"]))
 
 
 @APP.route("/auth/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    data = request.get_json(force=True)
     return dumps(
         auth_register(
             data["email"], data["password"], data["name_first"], data["name_last"]
