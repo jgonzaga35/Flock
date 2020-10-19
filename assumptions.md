@@ -62,6 +62,7 @@
     to notify the other users.
     * You are only able to edit messages that you have sent.
     * You do not have to be an admin or owner of the channel to edit your message.
+    * Spec states an AccessError should be raised if this is not true: "The authorised user is an owner of this channel or the flockr". Therefore, the owner of the flockr or the owner of the channel can edit any message.
 
 * user_profile
     * Any valid user can access other users' profile
