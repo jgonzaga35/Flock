@@ -6,6 +6,7 @@ from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
 from channels import channels_create
+from channel import channel_details
 
 
 def defaultHandler(err):
@@ -74,6 +75,13 @@ def channels_create_handler():
     is_public = data["is_public"]
 
     return jsonify(channels_create(token, name, is_public))
+
+
+@APP.route("/channel/details", methods=["GET"])
+def channel_details_handler():
+    token = int(request.args.get("token"))
+    channel_id = int(request.args.get("channel_id"))
+    return jsonify(channel_details(token, channel_id))
 
 
 if __name__ == "__main__":
