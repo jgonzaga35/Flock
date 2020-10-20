@@ -33,12 +33,11 @@ def test_join_invalid_token(url):
         json={"token": admin["token"], "name": "channel_01", "is_public": True},
     ).json()
 
-    invalid_token = admin["token"] + 1
     response = requests.post(
         url + "channel/join",
-        json={"token": invalid_token, "channel_id": channel["channel_id"]},
+        json={"token": -1, "channel_id": channel["channel_id"]},
     )
-    assert response.status_code == 400
+    assert response.status_code == 403
 
 
 # User tries to join channel with invalid channel id
