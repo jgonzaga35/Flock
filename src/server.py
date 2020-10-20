@@ -5,7 +5,7 @@ from flask_cors import CORS
 from error import InputError
 # Import the functions we are wrapping
 from auth import auth_login, auth_logout, auth_register
-from user import user_profile, user_profile_setname, user_profile_setemail, user_profile_sethandle
+from user import user_profile, user_profile_setname, user_profile_setemail, user_profile_sethandle, users_all
 from channels import channels_create
 from channel import channel_details
 from other import clear
@@ -89,6 +89,11 @@ def setemail():
 def sethandle():
     data = request.get_json()
     user_profile_sethandle(data["token"], data["handle_str"])
+
+@APP.route("/users/all", methods=["GET"])
+def get_all():
+    token = request.args.get("token")
+    return dumps(users_all(int(token)))
 
 # Channels functions
 @APP.route("/channels/create", methods=["POST"])

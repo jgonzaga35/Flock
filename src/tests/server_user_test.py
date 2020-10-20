@@ -162,7 +162,8 @@ def test_users_all_many_users(url):
     users = http_register_n_users(url, 3)
 
     valid_token = users[1]["token"]
-    all_users = requests.get(url + "users/all", params={"token": valid_token})
+    all_users = requests.get(url + "users/all", params={"token": valid_token}).json()
+    print(all_users)
 
     all_users_info = []
     for user in users:
@@ -172,8 +173,8 @@ def test_users_all_many_users(url):
     assert all_users == all_users_info
 
 
-def test_users_all_invalid_token():
+def test_users_all_invalid_token(url):
     requests.delete(url + "clear")
 
-    r = requests.get(url + "users/all", params={"token": "invalid_token"})
+    r = requests.get(url + "users/all", params={"token": -1})
     assert r.status_code == 403
