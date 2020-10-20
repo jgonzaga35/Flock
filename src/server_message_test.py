@@ -194,7 +194,7 @@ def test_edit_owner(url):
         url + "channel/messages", params=channel_messages_params
     ).json()
     print(channel_messages)
-    assert channel_messages["messages"][0] == "try editing"
+    assert "try editing" in [x["message"] for x in channel_messages]
 
 
 # # Tests that a message is deleted is edit if empty string
