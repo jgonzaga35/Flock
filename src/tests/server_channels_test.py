@@ -6,10 +6,10 @@ from test_helpers import url, http_register_n_users
 #                       Tests for channels/list                           #
 ###########################################################################
 # User admin of one channel
-def test_channels_list_successful(url):
+def test_channels_list_1_channel(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
-    requests.post(
+    channel = requests.post(
         url + "channels/create",
         json={"token": user["token"], "name": "channel_01", "is_public": True},
     ).json()
@@ -21,7 +21,7 @@ def test_channels_list_successful(url):
 
 
 # User admin of two chanels
-def test_channels_list_successful(url):
+def test_channels_list_2_channels(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
     channel01 = requests.post(

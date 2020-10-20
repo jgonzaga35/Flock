@@ -27,7 +27,7 @@ def test_join_successful(url):
 # User with invalid token tires to join a channel
 def test_join_invalid_token(url):
     requests.delete(url + "clear")
-    admin, user = http_register_n_users(url, 2)
+    admin = http_register_n_users(url, 1)
     channel = requests.post(
         url + "channels/create",
         json={"token": admin["token"], "name": "channel_01", "is_public": True},
