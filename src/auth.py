@@ -1,7 +1,7 @@
 import re
 from database import database
 from error import InputError, AccessError
-from jwt import encode, decode
+import jwt
 from hashlib import sha256
 
 TOKEN_SECRET_KEY = "COMP1531"
@@ -119,14 +119,14 @@ def input_error_checking(email, password, name_first, name_last):
 
 # Helper function that returns encoded jwt
 def jwt_encode(user_info):
-    return encode(user_info, TOKEN_SECRET_KEY, algorithm="HS256").decode("utf-8")
+    return jwt.encode(user_info, TOKEN_SECRET_KEY, algorithm="HS256").decode("utf-8")
 
 
 # Helper function to decode jwt
 def jwt_decode(token):
     try:
-        return decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
-    except jwt.exceptions.InvalidSignatureError:
+        return jwt.decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
+    except jwt.exceptions.DecodeError:
         raise AccessError("Decoding token fails")
 
 
