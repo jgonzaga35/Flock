@@ -3,7 +3,6 @@ import requests
 import json
 from test_helpers import url, http_register_n_users
 from error import AccessError, InputError
-from auth import auth_get_current_user_id_from_token
 
 def test_user_profile_successful(url):
     requests.delete(url + "clear")
