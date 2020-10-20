@@ -39,13 +39,30 @@ def admin_userpermission_change(token, u_id, permission_id):
 
 
 def search(token, query_str):
+    user_id = auth_get_current_user_id_from_token(token)
+
+    matching_messages = []
+    # loop through every channel in which the user is a member, add add the
+    # matching message to the list
+    for channel in database["channels"].values():
+        if user_id in channel["all_members_id"]:
+            add_matching_messages(channel, query_str, matching_messages)
+
     return {
-        "messages": [
-            {
-                "message_id": 1,
-                "u_id": 1,
-                "message": "Hello world",
-                "time_created": 1582426789,
-            }
-        ],
+        "messages": sorted(
+            matching_messages, key=lambda message: message["time_created"], reverse=True
+        ),
     }
+
+
+def add_matching_messages(channel, query_str, matching_messages):
+    for message in channel["messages"].values():
+        if query_str in message["message"]:
+            matching_messages.append(
+                {
+                    "message_id": message["message_id"],
+                    "message": message["message"],
+                    "time_created": message["time_created"],
+                    "u_id": message["u_id"],
+                }
+            )
