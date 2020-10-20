@@ -1,60 +1,11 @@
 import requests
 from test_helpers import url, http_register_n_users
 
-
 ###########################################################################
-#                       Tests for channels/list                           #
+#                       Tests for channel/join                           #
 ###########################################################################
-# User admin of one channel
-def test_channels_list_successful(url):
-    requests.delete(url + "clear")
-    user = http_register_n_users(url, 1)
-    requests.post(
-        url + "channels/create",
-        json={"token": user["token"], "name": "channel_01", "is_public": True},
-    ).json()
-
-    response = requests.get(url + "channels/list", params={"token": user["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
-
-
-# User admin of two chanels
-def test_channels_list_successful(url):
-    requests.delete(url + "clear")
-    user = http_register_n_users(url, 1)
-    channel01 = requests.post(
-        url + "channels/create",
-        json={"token": user["token"], "name": "channel_01", "is_public": True},
-    ).json()
-    channel02 = requests.post(
-        url + "channels/create",
-        json={"token": user["token"], "name": "channel_02", "is_public": True},
-    ).json()
-
-    response = requests.get(url + "channels/list", params={"token": user["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel01["channel_id"] in [x["channel_id"] for x in channels_list]
-    assert channel02["channel_id"] in [x["channel_id"] for x in channels_list]
-
-# User admin of private channel
-def test_channels_list_public(url):
-    requests.delete(url + "clear")
-    user = http_register_n_users(url, 1)
-    channel = requests.post(
-        url + "channels/create",
-        json={"token": user["token"], "name": "channel_01", "is_public": False},
-    ).json()
-
-    response = requests.get(url + "channels/list", params={"token": user["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
-
-# Non-admin requests channels list
-def tests_channels_list_non_admin(url):
+# User joins public channel successfully
+def test_join_successful(url):
     requests.delete(url + "clear")
     admin, user = http_register_n_users(url, 2)
     channel = requests.post(
@@ -67,22 +18,41 @@ def tests_channels_list_non_admin(url):
         json={"token": user["token"], "channel_id": channel["channel_id"]},
     )
 
+    # List of dicts of channels user is part of
     response = requests.get(url + "channels/list", params={"token": user["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    # Ensure channel_id is in this lists
+    assert channel["channel_id"] in [x["channel_id"] for x in response.json()]
 
 
-# Channels list with messages and multiple users in channel
-def tests_channels_list_mock_channel(url):
-    pass
+# User with invalid token tires to join a channel
+def test_join_invalid_token(url):
     requests.delete(url + "clear")
-    admin = http_register_n_users(url, 1)
+    admin, user = http_register_n_users(url, 2)
     channel = requests.post(
         url + "channels/create",
         json={"token": admin["token"], "name": "channel_01", "is_public": True},
     ).json()
-    response = requests.get(url + "channels/list", params={"token": admin["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+
+    invalid_token = admin["token"] + 1
+    response = requests.post(
+        url + "channel/join",
+        json={"token": invalid_token, "channel_id": channel["channel_id"]},
+    )
+    assert response.status_code == 400
+
+
+# User tries to join channel with invalid channel id
+def test_join_invalid_channel_id(url):
+    requests.delete(url + "clear")
+    admin, user = http_register_n_users(url, 2)
+    channel = requests.post(
+        url + "channels/create",
+        json={"token": admin["token"], "name": "channel_01", "is_public": True},
+    ).json()
+
+    invalid_channel_id = channel["channel_id"] + 1
+    response = requests.post(
+        url + "channel/join",
+        json={"token": user["token"], "channel_id": invalid_channel_id},
+    )
+    assert response.status_code == 400
