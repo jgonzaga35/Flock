@@ -74,6 +74,7 @@ def tests_channels_list_non_admin(url):
     channels_list = response.json()
     assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
 
+
 # User in multiple different channels
 def test_channel_list_user_multiple(url):
     requests.delete(url + "clear")
@@ -116,6 +117,7 @@ def test_channel_list_user_multiple(url):
     assert channel_04["channel_id"] in channel_list
     assert channel_05["channel_id"] in channel_list
 
+
 # Channels list with messages and multiple users in channel
 def tests_channels_list_large(url):
     requests.delete(url + "clear")
@@ -148,19 +150,31 @@ def tests_channels_list_large(url):
     # Each user sends a customised message
     r = requests.post(
         url + "message/send",
-        json={"token": user01["token"], "channel_id": channel["channel_id"], "message": "user01"},
+        json={
+            "token": user01["token"],
+            "channel_id": channel["channel_id"],
+            "message": "user01",
+        },
     )
     assert r.status_code == 200
 
     r = requests.post(
         url + "message/send",
-        json={"token": user02["token"], "channel_id": channel["channel_id"], "message": "user02"},
+        json={
+            "token": user02["token"],
+            "channel_id": channel["channel_id"],
+            "message": "user02",
+        },
     )
     assert r.status_code == 200
 
     r = requests.post(
         url + "message/send",
-        json={"token": user03["token"], "channel_id": channel["channel_id"], "message": "user03"},
+        json={
+            "token": user03["token"],
+            "channel_id": channel["channel_id"],
+            "message": "user03",
+        },
     )
     assert r.status_code == 200
 
