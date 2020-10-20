@@ -3,9 +3,16 @@ from json import dumps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from error import InputError
+
 # Import the functions we are wrapping
 from auth import auth_login, auth_logout, auth_register
-from user import user_profile, user_profile_setname, user_profile_setemail, user_profile_sethandle, users_all
+from user import (
+    user_profile,
+    user_profile_setname,
+    user_profile_setemail,
+    user_profile_sethandle,
+    users_all,
+)
 from channels import channels_create
 from channel import channel_details
 from other import clear
@@ -68,6 +75,7 @@ def register():
         )
     )
 
+
 # User functions
 @APP.route("/user/profile", methods=["GET"])
 def profile():
@@ -75,25 +83,30 @@ def profile():
     u_id = request.args.get("u_id")
     return dumps(user_profile(int(token), int(u_id)))
 
+
 @APP.route("/user/profile/setname", methods=["PUT"])
 def setname():
     data = request.get_json()
     user_profile_setname(data["token"], data["name_first"], data["name_last"])
+
 
 @APP.route("/user/profile/setemail", methods=["PUT"])
 def setemail():
     data = request.get_json()
     user_profile_setemail(data["token"], data["email"])
 
+
 @APP.route("/user/profile/sethandle", methods=["PUT"])
 def sethandle():
     data = request.get_json()
     user_profile_sethandle(data["token"], data["handle_str"])
 
+
 @APP.route("/users/all", methods=["GET"])
 def get_all():
     token = request.args.get("token")
     return dumps(users_all(int(token)))
+
 
 # Channels functions
 @APP.route("/channels/create", methods=["POST"])
