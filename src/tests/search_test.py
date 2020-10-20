@@ -208,3 +208,18 @@ def test_search_three_channels_five_users():
         assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
         assert results["messages"][i]["message_id"] == message["id"]
+
+
+def test_search_no_match():
+    clear_database()
+
+    user = register_n_users(1)
+    channel_id = channels_create(user["token"], "channel", is_public=True)["channel_id"]
+    message_send(user["token"], channel_id, "hello world")
+    message_send(user["token"], channel_id, "this is a test")
+    message_send(user["token"], channel_id, "no words contain the keyword")
+    message_send(user["token"], channel_id, "but what is the key word going to be")
+    message_send(user["token"], channel_id, "lorem ipsum?")
+    message_send(user["token"], channel_id, "not anymore")
+
+    assert len(search(user["token"], "search")["messages"]) == 0
