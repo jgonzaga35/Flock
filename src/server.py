@@ -5,7 +5,7 @@ from flask_cors import CORS
 from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
-from channels import channels_create
+from channels import channels_create, channels_list
 from channel import channel_details
 
 
@@ -83,6 +83,13 @@ def channel_details_handler():
     token = int(request.args.get("token"))
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
+
+
+@APP.route("/channels/list", methods=["GET"])
+def list_channels():
+    # Lists the channels an authorised user is a part of
+    token = int(request.args.get("token"))
+    return jsonify(channels_list(token))
 
 
 if __name__ == "__main__":
