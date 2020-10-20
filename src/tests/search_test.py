@@ -68,7 +68,7 @@ def test_search_three_channels_five_users():
     )["channel_id"]
     channel_invite(userd["token"], channel_de_id, usere["u_id"])
     channel_addowner(userd["token"], channel_de_id, usere["u_id"])
-    id3 = message_send(userd["token"], channel_de_id, "our own channel #match!")[
+    id3 = message_send(userd["token"], channel_de_id, "our own channel! #match")[
         "message_id"
     ]
     id4 = message_send(usere["token"], channel_de_id, "how cool!")["message_id"]
@@ -100,7 +100,7 @@ def test_search_three_channels_five_users():
     channel_invite(userb["token"], channel_b_id, userc["token"])
     id8 = message_send(
         userc["token"], channel_b_id, "a message that everyone will see #match"
-    )
+    )["message_id"]
     channel_invite(userb["token"], channel_b_id, userd["token"])
     channel_invite(userb["token"], channel_b_id, usere["token"])
 
@@ -108,7 +108,7 @@ def test_search_three_channels_five_users():
         usere["token"],
         channel_de_id,
         "yo did you see the channel with everyone? #match",
-    )
+    )["message_id"]
 
     # usera sees all the message in channel a, even though is not an owner anymore
     results = search(usera["token"], "#match")
@@ -138,7 +138,7 @@ def test_search_three_channels_five_users():
     ):
         assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
-        assert results["messages"][i]["id"] == message["id"]
+        assert results["messages"][i]["message_id"] == message["id"]
 
     # user B sees the same messages because he is in the same channels as a
     assert results == search(userb["token"], "#match")
@@ -182,7 +182,7 @@ def test_search_three_channels_five_users():
     ):
         assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
-        assert results["messages"][i]["id"] == message["id"]
+        assert results["messages"][i]["message_id"] == message["id"]
 
     # user E only sees the messages in channel DE and the third channel
     results = search(usere["token"], "#match")
@@ -207,4 +207,4 @@ def test_search_three_channels_five_users():
     ):
         assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
-        assert results["messages"][i]["id"] == message["id"]
+        assert results["messages"][i]["message_id"] == message["id"]
