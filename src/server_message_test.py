@@ -7,6 +7,7 @@ import json
 
 INVALID_MESSAGE_ID = -1
 
+
 def register_new_account(url):
     return requests.post(
         url + "/auth/register",
@@ -17,6 +18,7 @@ def register_new_account(url):
             "name_last": "Everest",
         },
     ).json()
+
 
 ###############################################################################
 #                           Tests for message_edit                            #
@@ -162,10 +164,10 @@ def test_edit_owner(url):
     channel = requests.post(url + "channels/create", json=channel_params).json()
     x = channel["channel_id"]
     print(f"channel id is: {x}")
-    requests.post(url + "channel/join", json={
-        "token": user02["token"], 
-        "channel_id": channel["channel_id"]
-    })
+    requests.post(
+        url + "channel/join",
+        json={"token": user02["token"], "channel_id": channel["channel_id"]},
+    )
     # User 2 sends a message
     message_params = {
         "token": user02["token"],
@@ -193,6 +195,7 @@ def test_edit_owner(url):
     ).json()
     print(channel_messages)
     assert channel_messages["messages"][0] == "try editing"
+
 
 # # Tests that a message is deleted is edit if empty string
 # def test_edit_empty_string(url):
