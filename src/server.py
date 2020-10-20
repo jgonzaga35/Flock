@@ -6,7 +6,7 @@ from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
 from channels import channels_create, channels_list
-from channel import channel_details
+from channel import channel_details, channel_join
 
 
 def defaultHandler(err):
@@ -90,6 +90,12 @@ def list_channels():
     # Lists the channels an authorised user is a part of
     token = int(request.args.get("token"))
     return jsonify(channels_list(token))
+
+
+@APP.route("/channel/join", methods=["POST"])
+def join_channel():
+    data = request.get_json()
+    return jsonify(channel_join(data["token"], data["channel_id"]))
 
 
 if __name__ == "__main__":
