@@ -3,6 +3,7 @@ import requests
 import json
 from test_helpers import url, http_register_n_users
 from error import AccessError, InputError
+from auth import auth_get_current_user_id_from_token
 
 def test_user_profile_successful(url):
     requests.delete(url + "clear")
@@ -154,4 +155,26 @@ def test_handle_invalid_token(url):
     invalid_token = "HAHA"
 
     r = requests.put(url + "user/profile/sethandle", json={"token": invalid_token, "handle_str": "ha"})
+    assert r.status_code == 403
+
+def test_users_all_many_users(url):
+    requests.delete(url + "clear")
+
+    users = http_register_n_users(url, 3)
+
+    valid_token = users[1]["token"]
+    all_users = requests.get(url + "users/all", params={"token": valid_token})
+
+    all_users_info = []
+    for user in users:
+        profile = requests.get(url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}).json()["user"]
+        all_users_info.append(profile)
+
+    assert all_users == all_users_info
+
+
+def test_users_all_invalid_token():
+    requests.delete(url + "clear")
+
+    r = requests.get(url + "users/all", params={"token": "invalid_token"})
     assert r.status_code == 403
