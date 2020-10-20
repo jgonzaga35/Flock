@@ -4,8 +4,7 @@ from user import get_user_details
 from error import AccessError, InputError
 
 
-def clear():
-    clear_database()
+clear = clear_database
 
 
 def users_all(token):
