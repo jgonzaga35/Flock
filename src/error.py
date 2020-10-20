@@ -2,10 +2,10 @@ from werkzeug.exceptions import HTTPException
 
 
 class AccessError(HTTPException):
-    code = 403
+    code = 400
     message = "Access Error"
 
 
 class InputError(HTTPException):
-    code = 422
+    code = 400
     message = "Input Error"
