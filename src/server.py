@@ -6,7 +6,7 @@ from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from message import message_remove, message_send
 from other import clear
-from channel import channel_join, channel_messages
+from channel import channel_join, channel_messages, channel_details
 from channels import channels_create
 
 
@@ -43,6 +43,7 @@ def echo():
 def delete():
     clear()
     return dumps({})
+
 
 # Auth_functions
 @APP.route("/auth/login", methods=["POST"])
@@ -114,6 +115,24 @@ def remove_message():
     return dumps(
         message_remove(data["token"], data["message_id"])
     )
+
+@APP.route("/channels/create", methods=["POST"])
+def channels_create_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    name = data["name"]
+    is_public = data["is_public"]
+
+    return jsonify(channels_create(token, name, is_public))
+
+
+@APP.route("/channel/details", methods=["GET"])
+def channel_details_handler():
+    token = int(request.args.get("token"))
+    channel_id = int(request.args.get("channel_id"))
+    return jsonify(channel_details(token, channel_id))
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
