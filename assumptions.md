@@ -35,7 +35,8 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * There can be multiple owners of a channel.
     * If there is only one user in the channel, that user automatically becomes the owner.
     * If a user join a channel with no member, he automatically becomes the owner
-
+    * User is not has to be the member of a channel before becoming user of that channel.
+  
 * channel_removeowner
     * If the owner is the only owner of that channel and been removed, one of other users in that channel randomly be selected to be the next owner.
     * If the the owner is the last owner in the channel and he wants to leave that channel, the channel shouldn't be removed. In other words, we allow a channel with no owner.
