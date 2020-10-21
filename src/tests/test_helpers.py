@@ -68,6 +68,29 @@ def get_user_details_from_user_id(user_id):
     }
 
 
+def assert_contains_users_id(user_details, expected_user_ids):
+    """
+    Checks whether the expected users' id are in the users details list.
+
+    >>> user_details = channel_details(token, channel_id)['all_members']
+    >>> expected_members_id = [usera['u_id'], userb['u_id']]
+    >>> assert_contains_users_id(user_details, expected_members_id)
+    """
+
+    assert len(user_details) == len(
+        expected_user_ids
+    ), f"expect {len(expected_user_ids)} users, but got {len(user_details)}"
+
+    for user in user_details:
+        assert (
+            user["u_id"] in expected_user_ids
+        ), f"channel contains unexpected user {user['u_id']}"
+        expected_user_ids.remove(user["u_id"])
+    assert (
+        len(expected_user_ids) == 0
+    ), f"users ${expected_user_ids} where not found in the channel"
+
+
 def http_register_n_users(url, num_users):
     """Same thing as register_n_users, except it goes through the web server"""
     assert isinstance(num_users, int)
