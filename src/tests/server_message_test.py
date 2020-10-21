@@ -167,7 +167,7 @@ def test_remove_owner(url):
     assert response.status_code == 200
     channel = response.json()
     
-    # User 2 sends a message
+    # User 2 joins channel
     response = requests.post(
         url + "channel/join", 
         json={
@@ -177,6 +177,7 @@ def test_remove_owner(url):
     )
     assert response.status_code == 200
     
+    # User 2 sends a messages to channel
     message_params = {
         "token": user02["token"],
         "channel_id": channel["channel_id"],
@@ -193,7 +194,7 @@ def test_remove_owner(url):
     }
     response = requests.delete(url + "message/remove", json=message_remove_params)
     assert response.status_code == 200
-    
+
     # Confirm that message was removed successfuly
     channel_message_params = {
         "token": user01["token"],
