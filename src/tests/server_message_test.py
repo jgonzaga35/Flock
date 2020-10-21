@@ -164,3 +164,131 @@ def test_remove_owner(url):
     assert message["message_id"] not in channel_messages
 
 
+def test_remove_large_flockr(url):
+    requests.delete(url + "clear")
+    admin, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
+
+     # Admin creates a public channel
+    response = requests.post(
+        url + "channels/create",
+        json={"token": admin["token"], "name": "channel_01", "is_public": True},
+    )
+    assert response.status_code == 200
+    channel = response.json()
+
+    # Users join the channel
+    response = requests.post(
+        url + "channel/join",
+        json={"token": user_01["token"], "channel_id": channel["channel_id"]},
+    )
+    assert response.status_code == 200
+
+    response = requests.post(
+        url + "channel/join",
+        json={"token": user_02["token"], "channel_id": channel["channel_id"]},
+    )
+    assert response.status_code == 200
+
+    response = requests.post(
+        url + "channel/join",
+        json={"token": user_03["token"], "channel_id": channel["channel_id"]},
+    )
+    assert response.status_code == 200
+
+    response = requests.post(
+        url + "channel/join",
+        json={"token": user_04["token"], "channel_id": channel["channel_id"]},
+    )
+    assert response.status_code == 200
+
+    # Each user (expect admin) sends a single message
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user_01["token"],
+            "channel_id": channel["channel_id"],
+            "message": "message from user_01",
+        },
+    )
+    assert response.status_code == 200
+    message_id_01 = response.json()["message_id"]
+
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user_02["token"],
+            "channel_id": channel["channel_id"],
+            "message": "message from user_02",
+        },
+    )
+    assert response.status_code == 200
+    message_id_02 = response.json()["message_id"]
+
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user_03["token"],
+            "channel_id": channel["channel_id"],
+            "message": "message from user_03",
+        },
+    )
+    assert response.status_code == 200
+    message_id_03 = response.json()["message_id"]
+
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user_04["token"],
+            "channel_id": channel["channel_id"],
+            "message": "message from user_04",
+        },
+    )
+    assert response.status_code == 200
+    message_id_04 = response.json()["message_id"]
+
+    # Verify messages actually in database
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user_01["token"],
+            "channel_id": channel["channel_id"],
+            "start": 0,
+        },
+    )
+    assert response.status_code == 200
+    channel_messages_dict = response.json()
+    messages = [x["message"] for x in channel_messages_dict["messages"]]
+    assert "message from user_01" in messages
+    assert "message from user_02" in messages
+    assert "message from user_03" in messages
+    assert "message from user_04" in messages
+
+    # Admin removes all messages from users
+    message_ids = [message_id_01, message_id_02, message_id_03, message_id_04]
+    for i in message_ids:
+        response = requests.delete(
+            url + "message/remove", 
+            json={
+                "token": admin["token"],
+                "message_id": i,
+            }
+        )
+        assert response.status_code == 200
+
+    # Verify messages is actually removed from database
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user_01["token"],
+            "channel_id": channel["channel_id"],
+            "start": 0,
+        },
+    )
+    assert response.status_code == 200
+    channel_messages_dict = response.json()
+    messages = [x["message"] for x in channel_messages_dict["messages"]]
+    
+    assert "message from user_01" not in messages
+    assert "message from user_02" not in messages
+    assert "message from user_03" not in messages
+    assert "message from user_04" not in messages
