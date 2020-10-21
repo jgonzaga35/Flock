@@ -61,7 +61,6 @@ def test_remove_invald_message_id(url):
     }
     response = requests.post(url + "message/send", json=message_params)
     assert response.status_code == 200
-    message = response.json()
 
     # User tries to edit message with invalid message id
     message_remove_params = {"token": user["token"], "message_id": INVALID_MESSAGE_ID}
