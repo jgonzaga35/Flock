@@ -64,7 +64,6 @@ def test_edit_invalid_message_id(url):
     }
     response = requests.post(url + "message/send", json=message_params)
     assert response.status_code == 200
-    message = response.json()
 
     # User tries to edit message with an invalid message id
     message_edit_data = {
