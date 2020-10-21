@@ -5,15 +5,9 @@ from flask_cors import CORS
 from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
-<<<<<<< HEAD
 from message import message_send, message_edit, message_remove
-from channel import channel_join, channel_messages
+from channel import channel_join, channel_messages, channel_details
 from channels import channels_create
-
-=======
-from channels import channels_create
-from channel import channel_details
->>>>>>> master
 
 
 def defaultHandler(err):
