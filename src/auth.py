@@ -1,9 +1,10 @@
 import re
 from database import database
 from error import InputError, AccessError
-
-"""To encryt user password"""
+import jwt
 from hashlib import sha256
+
+TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"
 
 
 def auth_login(email, password):
@@ -25,7 +26,7 @@ def auth_login(email, password):
 
                 # If the user is not logged in, append a new token
                 if active_token == None:
-                    token = u_id
+                    token = jwt_encode(auth_get_user_data_from_id(u_id))
                     database["active_tokens"].append(token)
                     active_token = token
 
@@ -67,7 +68,7 @@ def auth_register(email, password, name_first, name_last):
         "id": u_id,
         "handle": generate_handle(name_first, name_last, u_id),
     }
-    token = u_id
+    token = jwt_encode(new_user)
 
     database["users"][u_id] = new_user
     database["users_id_head"] += 1
@@ -81,11 +82,10 @@ def auth_register(email, password, name_first, name_last):
 
 # helper
 def auth_get_current_user_id_from_token(token):
-    # right now, tokens are just the user ids
     if token not in database["active_tokens"]:
         raise AccessError("token is invalid")
 
-    return token
+    return jwt_decode(token)["id"]
 
 
 # helper
@@ -115,6 +115,19 @@ def input_error_checking(email, password, name_first, name_last):
 
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
+
+
+# Helper function that returns encoded jwt
+def jwt_encode(user_info):
+    return jwt.encode(user_info, TOKEN_SECRET_KEY, algorithm="HS256").decode("utf-8")
+
+
+# Helper function to decode jwt
+def jwt_decode(token):
+    try:
+        return jwt.decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
+    except jwt.exceptions.InvalidTokenError:
+        raise AccessError("Decoding token fails")
 
 
 # Helper function to generate handle for a user

@@ -80,7 +80,7 @@ def channels_create_handler():
 
 @APP.route("/channel/details", methods=["GET"])
 def channel_details_handler():
-    token = int(request.args.get("token"))
+    token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
 
