@@ -28,6 +28,7 @@ def test_leave_successful(url):
     # Ensure the list is empty
     assert response.json() == []
 
+
 # User with invalid token tries to leave a channel
 def test_leave_invalid_token(url):
     requests.delete(url + "clear")
@@ -41,6 +42,7 @@ def test_leave_invalid_token(url):
         url + "channel/leave",
         json={"token": -1, "channel_id": channel["channel_id"]},
     )
+
     assert response.status_code == 403
 
 
@@ -61,6 +63,7 @@ def test_leave_invalid_channel_id(url):
 
     assert response.status_code == 400
 
+
 # A user tries to leave a private channel that they are not part of
 def test_inexist_user_leave_channel_private(url):
     requests.delete(url + "clear")
@@ -77,6 +80,7 @@ def test_inexist_user_leave_channel_private(url):
 
     assert response.status_code == 403
 
+
 # A user tries to leave a public channel that they are not part of
 def test_inexist_user_leave_channel_public(url):
     requests.delete(url + "clear")
@@ -92,3 +96,4 @@ def test_inexist_user_leave_channel_public(url):
     )
 
     assert response.status_code == 403
+    

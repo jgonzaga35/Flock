@@ -13,7 +13,7 @@ from user import (
     user_profile_sethandle,
 )
 from channels import channels_create
-from channel import channel_details, channel_messages
+from channel import channel_details, channel_messages, channel_leave
 from other import clear, users_all
 
 
@@ -134,6 +134,10 @@ def messages_channel():
 
     return jsonify(channel_messages(token, channel_id, start))
 
+@APP.route("/channel/leave", methods=["POST"]) 
+def channel_leave_handler():
+    data = request.get_json()
+    return jsonify(channel_leave(data["token"], data["channel_id"]))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
