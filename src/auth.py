@@ -4,7 +4,7 @@ from error import InputError, AccessError
 import jwt
 from hashlib import sha256
 
-TOKEN_SECRET_KEY = "COMP1531"
+TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"
 
 
 def auth_login(email, password):
@@ -126,7 +126,7 @@ def jwt_encode(user_info):
 def jwt_decode(token):
     try:
         return jwt.decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
-    except jwt.exceptions.DecodeError:
+    except jwt.exceptions.InvalidTokenError:
         raise AccessError("Decoding token fails")
 
 

@@ -149,7 +149,12 @@ def test_handle():
     )
     assert "yoonalim" + str(id5) == auth_get_user_data_from_id(id5)["handle"]
 
-def test_jwt_decode_AccessError():
+def test_jwt_decode_invalid_token():
     invalid_token = "LOL"
     with pytest.raises(AccessError):
         jwt_decode(invalid_token)
+
+def test_jwt_decode_wrong_token_key():
+    wrong_key_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJoZWxsbyJ8.DFBWfpMrwzeac2vsWriYfHTx6OpfFM4qzgNDUwEchU8"
+    with pytest.raises(AccessError):
+        jwt_decode(wrong_key_token)
