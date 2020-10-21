@@ -30,6 +30,7 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * channel_leave
     * When a user leaves a channel, they can no longer access any messages on the channel.
     * If there is one channel left with no member, there is no futher operation needed for this channel.
+    * If an owner of the channel is going to leave the channel, he will be removed from the owner list too.
   
 * channel_addowner
     * There can be multiple owners of a channel.

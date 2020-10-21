@@ -96,6 +96,13 @@ def channel_leave(token, channel_id):
     if current_user_id not in channel["all_members_id"]:
         raise AccessError("User is not in this channel")
 
+    # If a user is owner of that channel, he should be removed
+    # from the owner list when he left the channel
+    if current_user_id in channel['owner_members_id']:
+        for owner in channel["owner_members_id"]:
+            if current_user_id == owner:
+                channel["owner_members_id"].remove(current_user_id)
+
     # Delete the user's token from that channel
     for user in channel["all_members_id"]:
         if current_user_id == user:
@@ -109,10 +116,11 @@ def channel_join(token, channel_id):
     if not channel["is_public"]:
         raise AccessError("Channel is not public")
     
+    if len(channel['all_members_id']) == 0:
+        channel['owner_members_id'].append(current_user_id)
+
     channel["all_members_id"].append(current_user_id)
     
-    if len(channel['all_members_id']) == 0:
-        channel['all_owners_id'].append(current_user_id)
 
 
 def channel_addowner(token, channel_id, u_id):
