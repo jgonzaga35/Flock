@@ -39,10 +39,11 @@ def test_remove_invalid_user_token(url):
     r = requests.delete(url + "message/remove", json=message_remove_params)
     assert r.status_code == 403
 
+
 def test_remove_invald_message_id(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
-     # Create a new channel
+    # Create a new channel
     channel_params = {
         "token": user["token"],
         "name": "channel_01",
@@ -51,23 +52,20 @@ def test_remove_invald_message_id(url):
     response = requests.post(url + "channels/create", json=channel_params)
     assert response.status_code == 200
     channel = response.json()
-    
+
     # User sends a message
     message_params = {
         "token": user["token"],
         "channel_id": channel["channel_id"],
         "message": "test message",
     }
-    response = requests.post(url +  "message/send", json=message_params)
+    response = requests.post(url + "message/send", json=message_params)
     assert response.status_code == 200
     message = response.json()
-    
+
     # User tries to edit message with invalid message id
-    message_remove_params = {
-        "token": user["token"],
-        "message_id": INVALID_MESSAGE_ID
-    }
-    
+    message_remove_params = {"token": user["token"], "message_id": INVALID_MESSAGE_ID}
+
     # Ensure input error raised
     r = requests.delete(url + "message/remove", json=message_remove_params)
     assert r.status_code == 400
@@ -77,7 +75,7 @@ def test_remove_invald_message_id(url):
 def test_remove_unauthorised_user(url):
     requests.delete(url + "clear")
     user01, user02 = http_register_n_users(url, 2)
-    
+
     # Create a new channel
     channel_params = {
         "token": user01["token"],
@@ -103,15 +101,16 @@ def test_remove_unauthorised_user(url):
         "token": user02["token"],
         "message_id": message["message_id"],
     }
-    
+
     r = requests.delete(url + "message/remove", json=message_remove_params)
     assert r.status_code == 403
+
 
 # Test that owner of channel can remove any message
 def test_remove_owner(url):
     requests.delete(url + "clear")
     user01, user02 = http_register_n_users(url, 2)
-    
+
     # Create a new channel with User01 as admin
     channel_params = {
         "token": user01["token"],
@@ -121,17 +120,14 @@ def test_remove_owner(url):
     response = requests.post(url + "channels/create", json=channel_params)
     assert response.status_code == 200
     channel = response.json()
-    
+
     # User 2 joins channel
     response = requests.post(
-        url + "channel/join", 
-        json={
-            "token": user02["token"], 
-            "channel_id": channel["channel_id"]
-        }
+        url + "channel/join",
+        json={"token": user02["token"], "channel_id": channel["channel_id"]},
     )
     assert response.status_code == 200
-    
+
     # User 2 sends a messages to channel
     message_params = {
         "token": user02["token"],
@@ -141,7 +137,7 @@ def test_remove_owner(url):
     response = requests.post(url + "message/send", json=message_params)
     assert response.status_code == 200
     message = response.json()
-    
+
     # User01 (admin) removes it
     message_remove_params = {
         "token": user01["token"],
@@ -168,7 +164,7 @@ def test_remove_large_flockr(url):
     requests.delete(url + "clear")
     admin, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
 
-     # Admin creates a public channel
+    # Admin creates a public channel
     response = requests.post(
         url + "channels/create",
         json={"token": admin["token"], "name": "channel_01", "is_public": True},
@@ -267,11 +263,11 @@ def test_remove_large_flockr(url):
     message_ids = [message_id_01, message_id_02, message_id_03, message_id_04]
     for i in message_ids:
         response = requests.delete(
-            url + "message/remove", 
+            url + "message/remove",
             json={
                 "token": admin["token"],
                 "message_id": i,
-            }
+            },
         )
         assert response.status_code == 200
 
@@ -287,7 +283,7 @@ def test_remove_large_flockr(url):
     assert response.status_code == 200
     channel_messages_dict = response.json()
     messages = [x["message"] for x in channel_messages_dict["messages"]]
-    
+
     assert "message from user_01" not in messages
     assert "message from user_02" not in messages
     assert "message from user_03" not in messages
