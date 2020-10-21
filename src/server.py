@@ -5,10 +5,15 @@ from flask_cors import CORS
 from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
+<<<<<<< HEAD
 from message import message_send, message_edit, message_remove
 from channel import channel_join, channel_messages
 from channels import channels_create
 
+=======
+from channels import channels_create
+from channel import channel_details
+>>>>>>> master
 
 
 def defaultHandler(err):
@@ -44,6 +49,7 @@ def echo():
 def delete():
     clear()
     return dumps({})
+
 
 # Auth_functions
 @APP.route("/auth/login", methods=["POST"])
@@ -116,5 +122,23 @@ def edit_message():
     message_edit(data["token"], data["message_id"], data["message"])
     return dumps({})
     
+@APP.route("/channels/create", methods=["POST"])
+def channels_create_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    name = data["name"]
+    is_public = data["is_public"]
+
+    return jsonify(channels_create(token, name, is_public))
+
+
+@APP.route("/channel/details", methods=["GET"])
+def channel_details_handler():
+    token = int(request.args.get("token"))
+    channel_id = int(request.args.get("channel_id"))
+    return jsonify(channel_details(token, channel_id))
+
+
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
