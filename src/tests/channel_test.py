@@ -309,8 +309,8 @@ def test_leave_channel_successfully():
     expected_members_id = [user_A["u_id"]]
     assert_contains_users_id(details["all_members"], expected_members_id)
 
-
-def test_inexist_uesr_leave_channel_private():
+# If a user tries to leave a private channel that they are not part of
+def test_inexist_user_leave_channel_private():
     clear_database()
     user_A, user_B = register_n_users(2)
     private_channel = channels_create(
@@ -320,8 +320,8 @@ def test_inexist_uesr_leave_channel_private():
     with pytest.raises(AccessError):
         channel_leave(user_B["token"], private_channel["channel_id"])
 
-
-def test_inexist_uesr_leave_channel_public():
+# If a user tries to leave a public channel that they are not part of
+def test_inexist_user_leave_channel_public():
     clear_database()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(
