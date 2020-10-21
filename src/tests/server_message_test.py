@@ -1,4 +1,4 @@
-from test_helpers import url
+from test_helpers import url, http_register_n_users
 from error import AccessError, InputError
 import pytest
 import requests
@@ -6,23 +6,12 @@ import json
 
 INVALID_MESSAGE_ID = -1
 
-def register_new_account(url):
-    return requests.post(
-        url + "/auth/register",
-        json={
-            "email": "validemail@gmail.com",
-            "password": "123abc!@#",
-            "name_first": "Hayden",
-            "name_last": "Everest",
-        },
-    ).json()
-
-##############################################################
-#                   Tests for message/remove                 #
-##############################################################
+###################################################################
+#                   Tests for message/remove                      #
+###################################################################
 def test_remove_invalid_user_token(url):
     requests.delete(url + "clear")
-    user = register_new_account(url)
+    user = http_register_n_users(url, 1)
     # Create a new channel
     channel_params = {
         "token": user["token"],
@@ -52,7 +41,7 @@ def test_remove_invalid_user_token(url):
 
 def test_remove_invald_message_id(url):
     requests.delete(url + "clear")
-    user = register_new_account(url)
+    user = http_register_n_users(url, 1)
      # Create a new channel
     channel_params = {
         "token": user["token"],
@@ -87,24 +76,7 @@ def test_remove_invald_message_id(url):
 # User removing a message is not authorised to remove it
 def test_remove_unauthorised_user(url):
     requests.delete(url + "clear")
-    user01 = requests.post(
-        url + "/auth/register",
-        json={
-            "email": "validemail01@gmail.com",
-            "password": "123abc01!@#",
-            "name_first": "Hayden01",
-            "name_last": "Everest01",
-        },
-    ).json()
-    user02 = requests.post(
-        url + "/auth/register",
-        json={
-            "email": "validemail02@gmail.com",
-            "password": "123abc02!@#",
-            "name_first": "Hayden02",
-            "name_last": "Everest02",
-        },
-    ).json()
+    user01, user02 = http_register_n_users(url, 2)
     
     # Create a new channel
     channel_params = {
@@ -138,24 +110,7 @@ def test_remove_unauthorised_user(url):
 # Test that owner of channel can remove any message
 def test_remove_owner(url):
     requests.delete(url + "clear")
-    user01 = requests.post(
-        url + "/auth/register",
-        json={
-            "email": "validemail01@gmail.com",
-            "password": "123abc01!@#",
-            "name_first": "Hayden01",
-            "name_last": "Everest01",
-        },
-    ).json()
-    user02 = requests.post(
-        url + "/auth/register",
-        json={
-            "email": "validemail02@gmail.com",
-            "password": "123abc02!@#",
-            "name_first": "Hayden02",
-            "name_last": "Everest02",
-        },
-    ).json()
+    user01, user02 = http_register_n_users(url, 2)
     
     # Create a new channel with User01 as admin
     channel_params = {
