@@ -6,7 +6,7 @@ from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
 from channels import channels_create
-from channel import channel_details
+from channel import channel_details, channel_leave
 
 
 def defaultHandler(err):
@@ -84,6 +84,11 @@ def channel_details_handler():
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
 
+
+@APP.route("/channel/leave", methods=["POST"]) 
+def channel_leave_handler():
+    data = request.get_json()
+    return jsonify(channel_leave(data["token"], data["channel_id"]))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
