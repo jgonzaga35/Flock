@@ -25,15 +25,15 @@ def channel_invite(token, channel_id, u_id):
 
 
 def channel_details(token, channel_id):
-    '''
+    """
     Return channel_details with formats below:
-    >>> 
+    >>>
     {
         "name": channel["name"],
         "owner_members": owners,
         "all_members": members,
     }
-    '''
+    """
     current_user_id = auth_get_current_user_id_from_token(token)
 
     channel = get_channel_from_id(channel_id)
@@ -107,7 +107,7 @@ def channel_leave(token, channel_id):
 
     # If a user is owner of that channel, he should be removed
     # from the owner list when he left the channel
-    if current_user_id in channel['owner_members_id']:
+    if current_user_id in channel["owner_members_id"]:
         channel["owner_members_id"].remove(current_user_id)
 
     # Delete the user's token from that channel
@@ -120,12 +120,11 @@ def channel_join(token, channel_id):
 
     if not channel["is_public"]:
         raise AccessError("Channel is not public")
-    
-    if len(channel['all_members_id']) == 0:
-        channel['owner_members_id'].append(current_user_id)
+
+    if len(channel["all_members_id"]) == 0:
+        channel["owner_members_id"].append(current_user_id)
 
     channel["all_members_id"].append(current_user_id)
-    
 
 
 def channel_addowner(token, channel_id, u_id):
@@ -134,16 +133,16 @@ def channel_addowner(token, channel_id, u_id):
     if u_id in channel["owner_members_id"]:
         raise InputError("User is already an owner of the channel")
 
-
     if auth_get_current_user_id_from_token(token) not in channel["owner_members_id"]:
         raise AccessError("User is not owner")
 
     if u_id in channel["all_members_id"]:
         channel["owner_members_id"].append(u_id)
     else:
-        get_user_from_id(u_id) # If user is invalid, this function will raise InputError
+        # If a user outside the channel being added owner, he will
+        # first be invited to the channel, then become an owner.
+        channel_invite(token, channel_id, u_id)
         channel["owner_members_id"].append(u_id)
-
 
 
 def channel_removeowner(token, channel_id, u_id):
@@ -176,7 +175,6 @@ def channel_removeowner(token, channel_id, u_id):
         if next_owner_uid != None:
             channel["owner_members_id"].append(next_owner_uid)
 
-
     channel["owner_members_id"].remove(u_id)
 
 
@@ -192,29 +190,20 @@ def formated_user_details_from_user_data(user_data):
 # Helper function
 
 
-def channel_remove(channel_id):
-    """
-    remove the channel based on its channel_id
-    This is not a official function, use it as a helper
-    """
+# def channel_remove(channel_id):
+#     """
+#     remove the channel based on its channel_id
+#     This is not a official function, use it as a helper
+#     """
 
-    del database["channels"][channel_id]
+#     del database["channels"][channel_id]
 
 
 def get_channel_from_id(channel_id):
-    '''
+    """
     Return a channel from database based on its channel id
-    '''
+    """
     try:
         return database["channels"][channel_id]
     except KeyError:
         raise InputError(f"{channel_id} is an invalid channel id")
-
-def get_user_from_id(user_id):
-    ''' 
-    Return users information from the given user_id)
-    '''
-    try:
-        return database['users'][user_id]
-    except KeyError:
-        raise InputError(f'{user_id} is an invalid user')

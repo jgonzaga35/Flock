@@ -263,21 +263,21 @@ def test_join_channel_without_authority():
 
 
 def test_join_empty_channel():
-    '''
-    If a user join a channel with no member, he should automatically becomes the owner  
-    '''
+    """
+    If a user join a channel with no member, he should automatically becomes the owner
+    """
     clear_database()
-    
-    # user_a create a channel and leave from there, user_b join the 
-    # channel with no member. 
+
+    # user_a create a channel and leave from there, user_b join the
+    # channel with no member.
     user_a, user_b = register_n_users(2)
     channel = channels_create(
         user_a["token"], "public_channel", True
     )  # Create a public channel
-    channel_leave(user_a['token'], channel['channel_id'])
-    channel_join(user_b['token'], channel['channel_id'])
+    channel_leave(user_a["token"], channel["channel_id"])
+    channel_join(user_b["token"], channel["channel_id"])
 
-    # Verify that user_b automatically be the owner of that channel 
+    # Verify that user_b automatically be the owner of that channel
     details = channel_details(user_b["token"], channel["channel_id"])
     expect_owner_in_channel = [user_b["u_id"]]
     assert_contains_users_id(details["owner_members"], expect_owner_in_channel)
@@ -414,14 +414,24 @@ def test_add_owner_invalid_id():
     with pytest.raises(AccessError):
         channel_addowner(-1, channel_id, userb["u_id"])
 
+
+# We assume when a user outside a channel being added as owner of this channel,
+# he automatically become an member of this channel
 def test_add_non_members_as_owner():
     clear_database()
     user_a, user_b = register_n_users(2)
-    public_channel = channels_create(user_a['token'], 'public_channel', True)
-    channel_addowner(user_a['token'], public_channel['channel_id'], user_b['u_id'])
+    public_channel = channels_create(user_a["token"], "public_channel", True)
+
+    # invite user from outside this channel
+    channel_addowner(user_a["token"], public_channel["channel_id"], user_b["u_id"])
     details = channel_details(user_a["token"], public_channel["channel_id"])
     expect_owner_in_channel = [user_a["u_id"], user_b["u_id"]]
+    expect_member_in_channel = [user_a["u_id"], user_b["u_id"]]
+
+    # We assume user who is invited will be the member and owner of this channel
     assert_contains_users_id(details["owner_members"], expect_owner_in_channel)
+    assert_contains_users_id(details["all_members"], expect_member_in_channel)
+
 
 def test_add_owner_successfully():
     clear_database()
@@ -576,18 +586,18 @@ def test_remove_the_only_owner():
 
 def test_remove_owner_with_the_only_member():
     clear_database()
-    # register a owner and remove its owner 
+    # register a owner and remove its owner
     user_A = register_n_users(1)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_removeowner(user_A["token"], public_channel["channel_id"], user_A["u_id"])
-    
+
     # We expect there is no owner in the channel after the owner remove_owner. The user
     # will still be in the channel and this channel won't have owner after these operations
-    details = channel_details(user_A['token'], public_channel['channel_id'])
+    details = channel_details(user_A["token"], public_channel["channel_id"])
     expected_owner_ids = []
-    expected_member_ids = [user_A['u_id']]
-    assert_contains_users_id(details['owner_members'], expected_owner_ids)
-    assert_contains_users_id(details['all_members'], expected_member_ids)
+    expected_member_ids = [user_A["u_id"]]
+    assert_contains_users_id(details["owner_members"], expected_owner_ids)
+    assert_contains_users_id(details["all_members"], expected_member_ids)
 
 
 def test_channel_invite_from_unauthorised_user():
