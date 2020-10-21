@@ -121,13 +121,16 @@ def channel_addowner(token, channel_id, u_id):
     if u_id in channel["owner_members_id"]:
         raise InputError("User is already an owner of the channel")
 
-    if u_id not in channel["all_members_id"]:
-        raise InputError("User not in the channel")
 
     if auth_get_current_user_id_from_token(token) not in channel["owner_members_id"]:
         raise AccessError("User is not owner")
 
-    channel["owner_members_id"].append(u_id)
+    if u_id in channel["all_members_id"]:
+        channel["owner_members_id"].append(u_id)
+    else:
+        get_user_from_id(u_id) # If user is invalid, this function will raise InputError
+        channel["owner_members_id"].append(u_id)
+
 
 
 def channel_removeowner(token, channel_id, u_id):
@@ -197,3 +200,12 @@ def get_channel_from_id(channel_id):
         return database["channels"][channel_id]
     except KeyError:
         raise InputError(f"{channel_id} is an invalid channel id")
+
+def get_user_from_id(user_id):
+    ''' 
+    Return users information from the given user_id)
+    '''
+    try:
+        return database['users'][user_id]
+    except KeyError:
+        raise InputError(f'{user_id} is an invalid user')

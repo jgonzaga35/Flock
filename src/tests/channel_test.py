@@ -267,14 +267,20 @@ def test_join_empty_channel():
     If a user join a channel with no member, he should automatically becomes the owner  
     '''
     clear_database()
+    
+    # user_a create a channel and leave from there, user_b join the 
+    # channel with no member. 
     user_a, user_b = register_n_users(2)
     channel = channels_create(
         user_a["token"], "public_channel", True
     )  # Create a public channel
     channel_leave(user_a['token'], channel['channel_id'])
     channel_join(user_b['token'], channel['channel_id'])
-    formated_user_details = formated_user_details_from_user_data(auth_get_user_data_from_id(user_b['u_id']))
-    assert formated_user_details not in channel_details(user_b['token'], channel['channel_id'])['owner_members']
+
+    # Verify that user_b automatically be the owner of that channel 
+    details = channel_details(user_b["token"], channel["channel_id"])
+    expect_owner_in_channel = [user_b["u_id"]]
+    assert_contains_users_id(details["owner_members"], expect_owner_in_channel)
 
 
 def test_leave_invalid_token():
@@ -408,6 +414,14 @@ def test_add_owner_invalid_id():
     with pytest.raises(AccessError):
         channel_addowner(-1, channel_id, userb["u_id"])
 
+def test_add_non_members_as_owner():
+    clear_database()
+    user_a, user_b = register_n_users(2)
+    public_channel = channels_create(user_a['token'], 'public_channel', True)
+    channel_addowner(user_a['token'], public_channel['channel_id'], user_b['u_id'])
+    details = channel_details(user_a["token"], public_channel["channel_id"])
+    expect_owner_in_channel = [user_a["u_id"], user_b["u_id"]]
+    assert_contains_users_id(details["owner_members"], expect_owner_in_channel)
 
 def test_add_owner_successfully():
     clear_database()
