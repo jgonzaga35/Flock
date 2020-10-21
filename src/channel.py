@@ -25,6 +25,15 @@ def channel_invite(token, channel_id, u_id):
 
 
 def channel_details(token, channel_id):
+    '''
+    Return channel_details with formats below:
+    >>> 
+    {
+        "name": channel["name"],
+        "owner_members": owners,
+        "all_members": members,
+    }
+    '''
     current_user_id = auth_get_current_user_id_from_token(token)
 
     channel = get_channel_from_id(channel_id)
@@ -99,14 +108,10 @@ def channel_leave(token, channel_id):
     # If a user is owner of that channel, he should be removed
     # from the owner list when he left the channel
     if current_user_id in channel['owner_members_id']:
-        for owner in channel["owner_members_id"]:
-            if current_user_id == owner:
-                channel["owner_members_id"].remove(current_user_id)
+        channel["owner_members_id"].remove(current_user_id)
 
     # Delete the user's token from that channel
-    for user in channel["all_members_id"]:
-        if current_user_id == user:
-            channel["all_members_id"].remove(current_user_id)
+    channel["all_members_id"].remove(current_user_id)
 
 
 def channel_join(token, channel_id):
@@ -171,12 +176,8 @@ def channel_removeowner(token, channel_id, u_id):
         if next_owner_uid != None:
             channel["owner_members_id"].append(next_owner_uid)
 
-    # If there are only one member in the channel(including owner),
-    # remove the whole channel otherwise remove the owner.
-    if len(channel["all_members_id"]) == 1:
-        channel_remove(channel_id)
-    else:
-        channel["owner_members_id"].remove(u_id)
+
+    channel["owner_members_id"].remove(u_id)
 
 
 # helper used by channel_create
