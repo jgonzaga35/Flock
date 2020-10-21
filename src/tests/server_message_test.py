@@ -8,7 +8,7 @@ import json
 INVALID_MESSAGE_ID = -1
 
 ###############################################################################
-#                           Tests for message_edit                            #
+#                           Tests for message/edit                            #
 ###############################################################################
 def test_edit_non_existent_user(url):
     requests.delete(url + "clear")
