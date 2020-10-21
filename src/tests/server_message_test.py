@@ -186,7 +186,7 @@ def test_remove_owner(url):
     response = requests.post(url + "message/send", json=message_params)
     assert response.status_code == 200
     message = response.json()
-
+    
     # User01 (admin) removes it
     message_remove_params = {
         "token": user01["token"],
@@ -195,11 +195,17 @@ def test_remove_owner(url):
     response = requests.delete(url + "message/remove", json=message_remove_params)
     assert response.status_code == 200
 
-    # Confirm that message was removed successfuly
+    # Verify that message was removed successfuly
     channel_message_params = {
         "token": user01["token"],
         "channel_id": channel["channel_id"],
         "start": 0,
     }
-    channel_messages = requests.get(url + "channel/messages", params=channel_message_params)
-    assert channel_messages.status_code == 403
+    response = requests.get(url + "channel/messages", params=channel_message_params)
+    assert response.status_code == 200
+    channel_messages_dict = response.json()
+
+    channel_messages = [x["message_id"] for x in channel_messages_dict["messages"]]
+    assert message["message_id"] not in channel_messages
+
+
