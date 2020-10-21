@@ -6,7 +6,8 @@ from error import InputError
 from auth import auth_login, auth_logout, auth_register
 from other import clear
 from channels import channels_create
-from channel import channel_details
+from channel import channel_details, channel_messages, channel_join
+from message import message_send
 
 
 def defaultHandler(err):
@@ -84,6 +85,10 @@ def channel_details_handler():
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
 
+@APP.route("/message/send", methods=["POST"])
+def send_message():
+    data = request.get_json()
+    return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
