@@ -8,8 +8,11 @@ from subprocess import Popen, PIPE
 from time import sleep
 
 
-def register_n_users(num_users):
+def register_n_users(num_users, *, include_admin=False):
     """
+    If include_admin is False, returns n *regular* users (the admin is discarded).
+    Else, it the admin user PLUS n - 1 *regular* users (n users total)
+
     Usage
 
     >>> single = register_n_users(1)
@@ -25,6 +28,14 @@ def register_n_users(num_users):
     assert isinstance(num_users, int)
 
     users = []
+    # register the admin user (the first user has admin privileges)
+    admin = auth_register(
+        "admin@gmail.com", "admin password that is long", "My name is", "admin"
+    )
+    if include_admin:
+        users.append(admin)
+        num_users -= 1
+
     for i in range(num_users):
         users.append(
             auth_register(
@@ -37,9 +48,6 @@ def register_n_users(num_users):
 
     if len(users) == 1:
         return users[0]
-
-    # try to make the job of autocompletion engines easier
-    assert len(users) == num_users
 
     return users
 
