@@ -150,16 +150,14 @@ def test_edit_owner(url):
     }
     response = requests.put(url + "message/edit", json=message_edit)
     assert response.status_code == 200
-    
+
     # Confirm that message was edited successfully, returns {messages, start, end}
     channel_messages_params = {
         "token": user01["token"],
         "channel_id": channel["channel_id"],
         "start": 0,
     }
-    response = requests.get(
-        url + "channel/messages", params=channel_messages_params
-    )
+    response = requests.get(url + "channel/messages", params=channel_messages_params)
     assert response.status_code == 200
     channel_messages_dict = response.json()
 
@@ -197,12 +195,12 @@ def test_edit_empty_string(url):
         "channel_id": channel["channel_id"],
         "start": 0,
     }
-    response = requests.get(
-        url + "channel/messages", params=channel_messages_params
-    )
+    response = requests.get(url + "channel/messages", params=channel_messages_params)
     assert response.status_code == 200
     channel_messages_dict = response.json()
-    assert message["message_id"] in [x["message_id"] for x in channel_messages_dict["messages"]]
+    assert message["message_id"] in [
+        x["message_id"] for x in channel_messages_dict["messages"]
+    ]
 
     # Edit message with empty string
     message_edit = {
@@ -214,9 +212,9 @@ def test_edit_empty_string(url):
     assert response.status_code == 200
 
     # Ensure message id not in database
-    response = requests.get(
-        url + "channel/messages", params=channel_messages_params
-    )
+    response = requests.get(url + "channel/messages", params=channel_messages_params)
     assert response.status_code == 200
     channel_messages_dict = response.json()
-    assert message["message_id"] not in [x["message_id"] for x in channel_messages_dict["messages"]]
+    assert message["message_id"] not in [
+        x["message_id"] for x in channel_messages_dict["messages"]
+    ]
