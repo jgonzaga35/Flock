@@ -262,6 +262,21 @@ def test_join_channel_without_authority():
         channel_join(user_B["token"], channel["channel_id"])
 
 
+def test_join_empty_channel():
+    '''
+    If a user join a channel with no member, he should automatically becomes the owner  
+    '''
+    clear_database()
+    user_a, user_b = register_n_users(2)
+    channel = channels_create(
+        user_a["token"], "public_channel", True
+    )  # Create a public channel
+    channel_leave(user_a['token'], channel['channel_id'])
+    channel_join(user_b['token'], channel['channel_id'])
+    formated_user_details = formated_user_details_from_user_data(auth_get_user_data_from_id(user_b['u_id']))
+    assert formated_user_details not in channel_details(user_b['token'], channel['channel_id'])['owner_members']
+
+
 def test_leave_invalid_token():
     clear_database()
     with pytest.raises(AccessError):

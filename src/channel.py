@@ -108,8 +108,11 @@ def channel_join(token, channel_id):
 
     if not channel["is_public"]:
         raise AccessError("Channel is not public")
-
+    
     channel["all_members_id"].append(current_user_id)
+    
+    if len(channel['all_members_id']) == 0:
+        channel['all_owners_id'].append(current_user_id)
 
 
 def channel_addowner(token, channel_id, u_id):
@@ -187,6 +190,9 @@ def channel_remove(channel_id):
 
 
 def get_channel_from_id(channel_id):
+    '''
+    Return a channel from database based on its channel id
+    '''
     try:
         return database["channels"][channel_id]
     except KeyError:
