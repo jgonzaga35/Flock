@@ -25,17 +25,20 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * channel_join
     * When a user joins a channel, they can see any previous messages on the channel before they were invited.
     * Every channel has a unique channel-id.
+    * If a user join a empty channel(For a common user, he can only join the public channel), he automatically becomes the owner of that channel.
 
 * channel_leave
     * When a user leaves a channel, they can no longer access any messages on the channel.
-
+    * If there is one channel left with no member, there is no futher operation needed for this channel.
+  
 * channel_addowner
     * There can be multiple owners of a channel.
     * If there is only one user in the channel, that user automatically becomes the owner.
+    * If a user join a channel with no member, he automatically becomes the owner
 
 * channel_removeowner
     * If the owner is the only owner of that channel and been removed, one of other users in that channel randomly be selected to be the next owner.
-    * If the owner is the only member of a channel and been removed, the channel is also removed. For now, there is no way to remove a whole channel. Therefore, we leave the channel without owner in this situation.
+    * If the the owner is the last owner in the channel and he wants to leave that channel, the channel shouldn't be removed. In other words, we allow a channel with no owner.
 
 * channels_create
     * private channels are channels that cannot be joined unless the user is an admin.
