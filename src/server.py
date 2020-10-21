@@ -67,52 +67,10 @@ def register():
         )
     )
 
-#############################################################################
-#                           Routes for messages                             #
-#############################################################################
-# @APP.route("/channels/create", methods=["POST"])
-# def channels_create_handler():
-#     data = request.get_json()
-
-#     token = data["token"]
-#     name = data["name"]
-#     is_public = data["is_public"]
-    
-#     return jsonify(channels_create(token, name, is_public))
-
-# @APP.route("/message/send", methods=["POST"])
-# def send_message():
-#     data = request.get_json()
-
-#     token = data["token"]
-#     channel_id = data["channel_id"]
-#     message = data["message"]
-
-#     return jsonify(message_send(token, channel_id, message))
-
-# @APP.route("/channel/join", methods=["POST"])
-# def join_channel():
-#     data = request.get_json()
-
-#     token = data["token"]
-#     channel_id = data["channel_id"]
-#     return dumps({channel_join(token, channel_id)})
-
-# # Last test fails with this route if int() is included
-# @APP.route("/channel/messages", methods=["GET"])
-# def messages_channel():
-#     token = int(request.args.get("token")) 
-#     channel_id = int(request.args.get("channel_id"))
-#     start = int(request.args.get("start"))
-
-#     return dumps({
-#         channel_messages(token, channel_id, start)
-#     })
-
 @APP.route("/message/remove", methods=["DELETE"])
 def remove_message():
     data = request.get_json()
-    return dumps(
+    return jsonify(
         message_remove(data["token"], data["message_id"])
     )
 
