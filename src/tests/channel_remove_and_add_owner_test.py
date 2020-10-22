@@ -1,4 +1,5 @@
 import requests
+import json
 from test_helpers import url, http_register_n_users
 
 
@@ -94,7 +95,7 @@ def test_add_owner_repeatedly(url):
     assert response.status_code == 403
 
 # Testing that an owner cannot add nonexistent users
-def test_add_invalid_user_to_owner():
+def test_add_invalid_user_to_owner(url):
     requests.delete(url + "clear")
     owner = http_register_n_users(url, 1)
 
@@ -114,7 +115,7 @@ def test_add_invalid_user_to_owner():
 
 
 # A member without owner privileges should not be able to addowner in the channel
-def test_add_owner_by_non_owner():
+def test_add_owner_by_non_owner(url):
     requests.delete(url + "clear")
     owner, member, user = http_register_n_users(url, 3)
 
@@ -195,7 +196,7 @@ def test_remove_owner_invalid_token(url):
 
 def test_remove_owner_invalid_channel_id(url):
     requests.delete(url + "clear")
-    owner,user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 1)
 
     channel = requests.post(
         url + "channels/create",
