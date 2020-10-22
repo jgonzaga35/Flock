@@ -125,13 +125,15 @@ def channel_details_handler():
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
 
+
 @APP.route("/channel/messages", methods=["GET"])
 def messages_channel():
     token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
     start = int(request.args.get("start"))
-    
+
     return jsonify(channel_messages(token, channel_id, start))
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
