@@ -5,9 +5,10 @@ from auth import (
     auth_register,
     auth_get_user_data_from_id,
     encrypt,
+    jwt_decode,
 )
 from database import clear_database
-from error import InputError
+from error import InputError, AccessError
 from hashlib import sha256
 
 
@@ -147,3 +148,15 @@ def test_handle():
         == auth_get_user_data_from_id(id4)["handle"]
     )
     assert "yoonalim" + str(id5) == auth_get_user_data_from_id(id5)["handle"]
+
+
+def test_jwt_decode_invalid_token():
+    invalid_token = "LOL"
+    with pytest.raises(AccessError):
+        jwt_decode(invalid_token)
+
+
+def test_jwt_decode_wrong_token_key():
+    wrong_key_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJoZWxsbyJ8.DFBWfpMrwzeac2vsWriYfHTx6OpfFM4qzgNDUwEchU8"
+    with pytest.raises(AccessError):
+        jwt_decode(wrong_key_token)

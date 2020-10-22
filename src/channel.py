@@ -161,21 +161,32 @@ def channel_removeowner(token, channel_id, u_id):
     if user_who_remove_others_uid not in channel["owner_members_id"]:
         raise AccessError("User is not authorized")
 
-    # If the owner is the only owner in the channel
-    if len(channel["owner_members_id"]) == 1:
-        # Generate a user to become the owner
-        next_owner_uid = next(
-            (
-                user
-                for user in channel["all_members_id"]
-                if user != user_who_remove_others_uid
-            ),
-            None,
-        )
-        if next_owner_uid != None:
-            channel["owner_members_id"].append(next_owner_uid)
+    # If a owner are the only member of a channel, when this owner
+    # remove owner himself, he will automatically leave the channel
+    if len(channel["all_members_id"]) == 1:
+        channel_leave(token, channel_id)
+    else:
+        # If the owner is the only owner in the channel
+        if len(channel["owner_members_id"]) == 1:
 
-    channel["owner_members_id"].remove(u_id)
+            # Generate a member of channel to become the owner
+            owner_iterator = iter(
+                [
+                    user
+                    for user in channel["all_members_id"]
+                    if user != user_who_remove_others_uid
+                ]
+            )
+            next_owner_uid = next(owner_iterator, None)
+
+            # We assume we will always find a member in the channel
+            # to become owner since length of channel["all_members_id"]
+            # is bigger than 2
+            assert next_owner_uid != None
+            channel["owner_members_id"].append(next_owner_uid)
+            channel["owner_members_id"].remove(u_id)
+        else:
+            channel["owner_members_id"].remove(u_id)
 
 
 # helper used by channel_create
