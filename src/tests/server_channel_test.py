@@ -30,7 +30,7 @@ def test_leave_channel_successfully(url):
     public_channel = requests.post(
         url + "channels/create",
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
-    ).json() # Create public channel
+    ).json() 
 
     # Member joins the owner's channel so now there is 2 users in channel_01
     requests.post(
