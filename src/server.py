@@ -12,7 +12,7 @@ from user import (
     user_profile_setemail,
     user_profile_sethandle,
 )
-from channels import channels_create, channels_create
+from channels import channels_create, channels_create, channels_list
 from channel import channel_details, channel_messages, channel_join
 from message import message_send
 from other import clear, users_all

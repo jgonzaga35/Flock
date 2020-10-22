@@ -8,10 +8,12 @@ from test_helpers import url, http_register_n_users
 def test_join_successful(url):
     requests.delete(url + "clear")
     admin, user = http_register_n_users(url, 2)
-    channel = requests.post(
+    response = requests.post(
         url + "channels/create",
         json={"token": admin["token"], "name": "channel_01", "is_public": True},
-    ).json()
+    )
+    assert response.status_code == 200
+    channel = response.json()
 
     requests.post(
         url + "channel/join",
@@ -20,6 +22,7 @@ def test_join_successful(url):
 
     # List of dicts of channels user is part of
     response = requests.get(url + "channels/list", params={"token": user["token"]})
+    assert response.status_code == 200
     # Ensure channel_id is in this lists
     assert channel["channel_id"] in [x["channel_id"] for x in response.json()]
 
