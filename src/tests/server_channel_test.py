@@ -16,13 +16,17 @@ def test_add_owner_invalid_token(url):
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
     ).json()
 
-
     response = requests.post(
         url + "channel/addowner",
-        json={"token": user["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
     assert response.status_code == 403
+
 
 def test_add_owner_successfully(url):
     requests.delete(url + "clear")
@@ -35,15 +39,21 @@ def test_add_owner_successfully(url):
 
     requests.post(
         url + "channel/addowner",
-        json={"token": owner["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": user["token"], "channel_id": channel["channel_id"]},
     )
 
     members = response.json()["owner_members"]
     assert user["u_id"] in [x["u_id"] for x in members]
+
 
 def test_add_owner_invalid_channel_id(url):
     requests.delete(url + "clear")
@@ -57,15 +67,20 @@ def test_add_owner_invalid_channel_id(url):
     invalid_channel_id = channel["channel_id"] - 1
     response = requests.post(
         url + "channel/addowner",
-        json={"token": owner["token"], "channel_id": invalid_channel_id, "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": invalid_channel_id,
+            "u_id": user["u_id"],
+        },
     )
 
     assert response.status_code == 400
 
+
 def test_add_owner_repeatedly(url):
     requests.delete(url + "clear")
     owner_1, owner_2 = http_register_n_users(url, 2)
-    
+
     public_channel = requests.post(
         url + "channels/create",
         json={"token": owner_1["token"], "name": "channel_01", "is_public": True},
@@ -73,15 +88,24 @@ def test_add_owner_repeatedly(url):
 
     response1 = requests.post(
         url + "channel/addowner",
-        json={"token": owner_1["token"], "channel_id": public_channel["channel_id"], "u_id": owner_2["u_id"]},
+        json={
+            "token": owner_1["token"],
+            "channel_id": public_channel["channel_id"],
+            "u_id": owner_2["u_id"],
+        },
     )
 
     response2 = requests.post(
         url + "channel/addowner",
-        json={"token": owner_1["token"], "channel_id": public_channel["channel_id"], "u_id": owner_2["u_id"]},
+        json={
+            "token": owner_1["token"],
+            "channel_id": public_channel["channel_id"],
+            "u_id": owner_2["u_id"],
+        },
     )
 
     assert response2.status_code == 400
+
 
 # Testing that an owner cannot add nonexistent users
 def test_add_invalid_user_to_owner(url):
@@ -97,7 +121,11 @@ def test_add_invalid_user_to_owner(url):
 
     response = requests.post(
         url + "channel/addowner",
-        json={"token": owner["token"], "channel_id": private_channel["channel_id"], "u_id": invalid_uid},
+        json={
+            "token": owner["token"],
+            "channel_id": private_channel["channel_id"],
+            "u_id": invalid_uid,
+        },
     )
 
     assert response.status_code == 400
@@ -119,17 +147,24 @@ def test_add_owner_by_non_owner(url):
     )
 
     # Test fails if channel/join is not implemented as well
-    response = requests.get(url + "channel/details", 
-        params={"token": owner["token"], "channel_id": channel["channel_id"]},
+    # The member that joined the channel should be in the members list now.
+    response = requests.get(
+        url + "channel/details",
+        params={"token": owner["token"], "channel_id": public_channel["channel_id"]},
     )
-    members = response.json()["owner_members"]
-    assert user["u_id"] in [x["u_id"] for x in members]
+    members = response.json()["all_members"]
+    assert member["u_id"] in [x["u_id"] for x in members]
 
+    # The member should not be able to addowner.
     response = requests.post(
         url + "channel/addowner",
-        json={"token": member["token"], "channel_id": public_channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": member["token"],
+            "channel_id": public_channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
-   
+
     assert response.status_code == 403
 
 
@@ -150,15 +185,24 @@ def test_remove_owner_successful(url):
 
     requests.post(
         url + "channel/addowner",
-        json={"token": owner["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
     requests.post(
         url + "channel/removeowner",
-        json={"token": owner["token"], "channel_id": channel["channel_id"], "u_id": owner["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": owner["u_id"],
+        },
     )
 
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": user["token"], "channel_id": channel["channel_id"]},
     )
 
@@ -168,7 +212,7 @@ def test_remove_owner_successful(url):
 
 # Member without owner privileges tries to remove an owner.
 def test_remove_owner_invalid_token(url):
-    
+
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
 
@@ -177,21 +221,26 @@ def test_remove_owner_invalid_token(url):
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
     ).json()
 
-    requests.post(
+    response = requests.post(
         url + "channel/join",
         json={"token": user["token"], "channel_id": channel["channel_id"]},
     )
-    
+
     # Test fails if channel/join is not implemented as well
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": owner["token"], "channel_id": channel["channel_id"]},
     )
-    members = response.json()["owner_members"]
+    members = response.json()["all_members"]
     assert user["u_id"] in [x["u_id"] for x in members]
- 
+
     response = requests.post(
         url + "channel/removeowner",
-        json={"token": user["token"], "channel_id": channel["channel_id"], "u_id": owner["u_id"]},
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": owner["u_id"],
+        },
     )
 
     assert response.status_code == 403
@@ -199,7 +248,7 @@ def test_remove_owner_invalid_token(url):
 
 # Nonexisting member tries to remove an owner.
 def test_remove_owner_nonexisting_member(url):
- 
+
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
 
@@ -211,13 +260,17 @@ def test_remove_owner_nonexisting_member(url):
     nonexistent_token = -1
     response = requests.post(
         url + "channel/removeowner",
-        json={"token": nonexistent_token, "channel_id": channel["channel_id"], "u_id": owner["u_id"]},
+        json={
+            "token": nonexistent_token,
+            "channel_id": channel["channel_id"],
+            "u_id": owner["u_id"],
+        },
     )
 
     assert response.status_code == 403
 
 
-# Owner adds another user using addowner, but uses removeowner with 
+# Owner adds another user using addowner, but uses removeowner with
 # an invalid channel id argument.
 def test_remove_owner_invalid_channel_id(url):
     requests.delete(url + "clear")
@@ -230,14 +283,21 @@ def test_remove_owner_invalid_channel_id(url):
 
     requests.post(
         url + "channel/addowner",
-        json={"token": user["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
     invalid_channel_id = channel["channel_id"] - 1
     response = requests.post(
         url + "channel/removeowner",
-        json={"token": owner["token"], "channel_id": invalid_channel_id, "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": invalid_channel_id,
+            "u_id": user["u_id"],
+        },
     )
 
     assert response.status_code == 400
-    
