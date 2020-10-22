@@ -16,7 +16,6 @@ def test_user_profile_successful(url):
     userProfile = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}
     ).json()["user"]
-    print(userProfile)
     assert userProfile["email"] == "email0@gmail.com"
     assert userProfile["name_first"] == "first0"
     assert userProfile["name_last"] == "last0"
@@ -70,6 +69,38 @@ def test_setname_successful(url):
     ).json()["user"]
     assert userProfile["name_first"] == "Eric"
     assert userProfile["name_last"] == "JOJO"
+
+
+def test_setname_firstname_empty(url):
+    requests.delete(url + "clear")
+    user = http_register_n_users(url, 1)
+    # set user name to Erichahaha... JOJO
+    # first name is too long
+    r = requests.put(
+        url + "user/profile/setname",
+        json={
+            "token": user["token"],
+            "name_first": "",
+            "name_last": "JOJO",
+        },
+    )
+    assert r.status_code == 400
+
+
+def test_setname_lastname_empty(url):
+    requests.delete(url + "clear")
+    user = http_register_n_users(url, 1)
+    # set user name to Eric JOJOhahaha...
+    # last name is too long
+    r = requests.put(
+        url + "user/profile/setname",
+        json={
+            "token": user["token"],
+            "name_first": "Eric",
+            "name_last": "",
+        },
+    )
+    assert r.status_code == 400
 
 
 def test_setname_firstname_too_long(url):
