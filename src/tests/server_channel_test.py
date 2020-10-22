@@ -76,7 +76,7 @@ def test_channel_invite_invalid_token(url):
 
     invalid_token = -1
     response = requests.post(
-        url + "channel /invite",
+        url + "channel/invite",
         json={"token": invalid_token, "channel_id": private_channel["channel_id"], "u_id": user["u_id"]},
     ) 
 
