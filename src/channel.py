@@ -166,7 +166,10 @@ def channel_removeowner(token, channel_id, u_id):
     if u_id not in channel["owner_members_id"]:
         raise InputError("User is not a owner, can not be removed")
 
-    if user_who_remove_others_uid not in channel["owner_members_id"]:
+    if (
+        user_who_remove_others_uid not in channel["owner_members_id"]
+        and database["users"][user_who_remove_others_uid]["is_admin"] is False
+    ):
         raise AccessError("User is not authorized")
 
     # If a owner are the only member of a channel, when this owner
@@ -179,11 +182,7 @@ def channel_removeowner(token, channel_id, u_id):
 
             # Generate a member of channel to become the owner
             owner_iterator = iter(
-                [
-                    user
-                    for user in channel["all_members_id"]
-                    if user != user_who_remove_others_uid
-                ]
+                [user for user in channel["all_members_id"] if user != u_id]
             )
             next_owner_uid = next(owner_iterator, None)
 
