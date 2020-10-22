@@ -132,7 +132,6 @@ def channel_join(token, channel_id):
 
 def channel_addowner(token, channel_id, u_id):
     channel = get_channel_from_id(channel_id)
-    adder = auth_get_current_user_id_from_token(token)
 
     if u_id in channel["owner_members_id"]:
         raise InputError("User is already an owner of the channel")
