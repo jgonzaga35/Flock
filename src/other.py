@@ -17,7 +17,7 @@ def users_all(token):
         user_info = get_user_details(user)
         users.append(user_info)
 
-    return {"users": users} 
+    return {"users": users}
 
 
 def admin_userpermission_change(token, u_id, permission_id):

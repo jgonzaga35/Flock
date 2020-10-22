@@ -30,7 +30,7 @@ def user_profile(token, u_id):
 
     # We don't directly return user from database since password is included
     return {
-        'user': {
+        "user": {
             "u_id": user["id"],
             "email": user["email"],
             "name_first": user["first_name"],
@@ -83,6 +83,7 @@ def user_profile_sethandle(token, handle_str):
 
     user = database["users"][u_id]
     user["handle"] = handle_str
+
 
 # --------------------helper function--------------------
 def isNameLengthOK(name, min, max):
