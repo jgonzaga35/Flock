@@ -12,7 +12,7 @@ from user import (
     user_profile_setemail,
     user_profile_sethandle,
 )
-from channels import channels_create
+from channels import channels_create, channels_create
 from channel import channel_details, channel_messages, channel_join
 from message import message_send
 from other import clear, users_all
@@ -131,6 +131,19 @@ def channel_details_handler():
 def send_message():
     data = request.get_json()
     return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
+
+
+@APP.route("/channels/list", methods=["GET"])
+def list_channels():
+    # Lists the channels an authorised user is a part of
+    token = request.args.get("token")
+    return jsonify(channels_list(token))
+
+
+@APP.route("/channel/join", methods=["POST"])
+def join_channel():
+    data = request.get_json()
+    return jsonify(channel_join(data["token"], data["channel_id"]))
 
 
 @APP.route("/channel/messages", methods=["GET"])
