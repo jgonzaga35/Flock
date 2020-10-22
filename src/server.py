@@ -80,7 +80,7 @@ def register():
 def profile():
     token = request.args.get("token")
     u_id = request.args.get("u_id")
-    return dumps(user_profile(int(token), int(u_id)))
+    return dumps(user_profile(token, int(u_id)))
 
 
 @APP.route("/user/profile/setname", methods=["PUT"])
@@ -104,7 +104,7 @@ def sethandle():
 @APP.route("/users/all", methods=["GET"])
 def get_all():
     token = request.args.get("token")
-    return dumps(users_all(int(token)))
+    return dumps(users_all(token))
 
 
 # Channels functions
