@@ -594,7 +594,7 @@ def test_remove_owner_with_the_only_member():
     # if a owner is the only member of a channel, we expect him leaving the channel after
     # remove owner, so he won't have authority to access the channel
     with pytest.raises(AccessError):
-        details = channel_details(user_A["token"], public_channel["channel_id"])
+        channel_details(user_A["token"], public_channel["channel_id"])
 
 
 def test_channel_invite_from_unauthorised_user():
