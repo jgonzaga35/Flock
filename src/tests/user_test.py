@@ -3,9 +3,9 @@ from user import (
     user_profile,
     user_profile_setname,
     user_profile_setemail,
-    user_profile_sethandle,
-    users_all,
+    user_profile_sethandle
 )
+from other import users_all
 from error import InputError, AccessError
 import pytest
 from database import clear_database
@@ -180,7 +180,7 @@ def test_users_all_single():
 
     user = register_n_users(1)
 
-    all_users = users_all(user["token"])
+    all_users = users_all(user["token"])["users"]
     all_users_info = []
     all_users_info.append(get_user_details_from_user_id(user["u_id"]))
 
@@ -193,7 +193,7 @@ def test_users_all_many_users():
     users = register_n_users(3)
 
     valid_token = users[1]["token"]
-    all_users = users_all(valid_token)
+    all_users = users_all(valid_token)["users"]
 
     all_users_info = []
     for user in users:
