@@ -606,7 +606,7 @@ def test_channel_invite_from_unauthorised_user():
         assert channel_invite(usera["token"], channel_id, userb["u_id"])
 
 
-def test_channel_invite_invalid_id():
+def test_channel_invite_invalid_user_id():
     clear_database()
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "ch", is_public=False)["channel_id"]
