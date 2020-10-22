@@ -40,7 +40,7 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
   
 * channel_removeowner
     * If the owner is the only owner of that channel and been removed, one of other users in that channel randomly be selected to be the next owner.
-    * If the owner is the only member of a channel and he wants to remove the owner himself, he should be ok to be in the channel and the channel won't have owner in this scenario.
+    * If the owner is the only member of a channel and he wants to remove the owner himself, it will be quivalent to doing the channel_leave operation for this user. In other words, after remove owner himself, he will leave that channel and left with an empty channel.
 
 * channels_create
     * private channels are channels that cannot be joined unless the user is an admin.
