@@ -60,6 +60,7 @@ def message_remove(token, message_id):
                 user_id
                 in database["channels"][channel_id_for_message]["owner_members_id"]
             )
+            or database["users"][user_id]["is_admin"]
         ):
             del database["channels"][channel_id_for_message]["messages"][message_id]
             return {}
