@@ -1,7 +1,7 @@
 import requests
 import pytest
 from database import clear_database
-from error import AccessError
+from error import AccessError, InputError
 from other import admin_userpermission_change
 from test_helpers import register_n_users, url, http_register_n_users
 
@@ -61,3 +61,17 @@ def test_admin_userpermission_change_http(url):
         },
     )
     assert response.status_code == 403
+
+
+def test_admin_userpermission_change_invalid_permission_id():
+    clear_database()
+    admin, usera = register_n_users(2, include_admin=True)
+    with pytest.raises(InputError):
+        admin_userpermission_change(admin["token"], usera["u_id"], -1)
+
+
+def test_admin_userpermission_change_invalid_user_id():
+    clear_database()
+    admin = register_n_users(1, include_admin=True)
+    with pytest.raises(InputError):
+        admin_userpermission_change(admin["token"], -1, 1)
