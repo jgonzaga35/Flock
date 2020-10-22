@@ -88,6 +88,15 @@ def test_leave_channel_id_invalid(url):
         json={"token": user["token"], "name": "channel_01", "is_public": True},
     )
 
+    invalid_channel_id = -1
+
+    response = requests.post(
+        url + "channel/leave",
+        json={"token": user["token"], "channel_id": invalid_channel_id},
+    )
+
+    assert response.status_code == 400
+
 
 ###########################################################################
 #                       Tests for channel/join                            #
