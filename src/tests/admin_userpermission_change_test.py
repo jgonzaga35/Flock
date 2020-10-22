@@ -1,8 +1,9 @@
+import requests
 import pytest
 from database import clear_database
 from error import AccessError
 from other import admin_userpermission_change
-from test_helpers import register_n_users
+from test_helpers import register_n_users, url, http_register_n_users
 
 
 def test_admin_userpermission_change_successful():
@@ -34,3 +35,29 @@ def test_admin_userpermission_change_fail_other():
     # cannot change admin permission
     with pytest.raises(AccessError):
         admin_userpermission_change(usera["token"], admin["u_id"], 2)
+
+
+def test_admin_userpermission_change_http(url):
+    requests.delete(url + "clear")
+
+    admin, usera, userb = http_register_n_users(url, 3, include_admin=True)
+
+    response = requests.post(
+        url + "admin/userpermission/change",
+        json={
+            "token": admin["token"],
+            "u_id": usera["u_id"],
+            "permission_id": 1,
+        },
+    )
+    assert response.status_code == 200
+
+    response = requests.post(
+        url + "admin/userpermission/change",
+        json={
+            "token": userb["token"],
+            "u_id": usera["u_id"],
+            "permission_id": 2,
+        },
+    )
+    assert response.status_code == 403
