@@ -157,7 +157,7 @@ def test_channel_invite_from_unauthorised_user(url):
 # Inviting a non-existent user to a channel
 def test_channel_invite_invalid_user_id(url):
     requests.delete(url + "clear")
-    owner, user = http_register_n_users(url, 2)
+    owner = http_register_n_users(url, 1)
 
     private_channel = requests.post(
         url + "channels/create",
@@ -205,7 +205,7 @@ def test_channel_invite_invalid_channel_id(url):
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
 
-    private_channel = requests.post(
+    requests.post(
         url + "channels/create",
         json={"token": owner["token"], "name": "channel_01", "is_public": False},
     ).json()
