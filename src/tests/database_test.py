@@ -1,5 +1,5 @@
 import pytest
-from database import clear_database
+from other import clear
 from error import InputError
 from auth import auth_register, auth_login
 from channels import channels_create, channels_listall
@@ -16,7 +16,7 @@ def test_database_clear():
     channels_create(userb["token"], "second_channel", is_public=True)
     channels_create(userb["token"], "p_channel", is_public=False)
 
-    clear_database()
+    clear()
 
     # the spec doesn't specifiy which of the InputError and AccessError should
     # be raised first. This is an implementation detail, and since we are doing

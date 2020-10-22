@@ -1,19 +1,19 @@
 import pytest
 from channels import channels_create, channels_list, channels_listall
 from channel import channel_details
-from database import clear_database
+from other import clear
 from error import InputError, AccessError
 from test_helpers import register_n_users
 
 
 def test_create_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channels_create(-1, "channel name", is_public=False)
 
 
 def test_create_simple():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel = channels_create(user["token"], "channel_name", is_public=True)
 
@@ -22,7 +22,7 @@ def test_create_simple():
 
 
 def test_create_private():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channel = channels_create(usera["token"], "channel", is_public=False)
 
@@ -34,14 +34,14 @@ def test_create_private():
 
 
 def test_long_name_error():
-    clear_database()
+    clear()
     user = register_n_users(1)
     with pytest.raises(InputError):
         channels_create(user["token"], "channel name longer than twenty char", True)
 
 
 def test_empty_name():
-    clear_database()
+    clear()
 
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "", is_public=True)["channel_id"]
@@ -50,7 +50,7 @@ def test_empty_name():
 
 
 def test_creator_becomes_owner_and_member():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel = channels_create(user["token"], "channel", is_public=True)
     details = channel_details(user["token"], channel["channel_id"])
@@ -63,7 +63,7 @@ def test_creator_becomes_owner_and_member():
 
 
 def test_channels_list_invalid_token():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
@@ -75,7 +75,7 @@ def test_channels_list_invalid_token():
 
 
 def test_channels_list_public():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
@@ -85,7 +85,7 @@ def test_channels_list_public():
 
 
 def test_channels_list_private():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
@@ -95,7 +95,7 @@ def test_channels_list_private():
 
 
 def test_channels_list_multiple_public():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     channel_ids = []
@@ -110,7 +110,7 @@ def test_channels_list_multiple_public():
 
 
 def test_channels_list_multiple_private():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     channel_ids = []
@@ -125,7 +125,7 @@ def test_channels_list_multiple_private():
 
 
 def test_channels_list_unauthorised_multiple_public():
-    clear_database()
+    clear()
 
     user_01, user_02, user_03 = register_n_users(3)
     channel_id_01 = channels_create(user_01["token"], "channel1", is_public=True)[
@@ -150,7 +150,7 @@ def test_channels_list_unauthorised_multiple_public():
 
 
 def test_channels_list_unauthorised_multiple_private():
-    clear_database()
+    clear()
 
     user_01, user_02, user_03 = register_n_users(3)
     channel_id_01 = channels_create(user_01["token"], "channel1", is_public=False)[
@@ -175,13 +175,13 @@ def test_channels_list_unauthorised_multiple_private():
 
 
 def test_channels_list_empty():
-    clear_database()
+    clear()
     user_01 = register_n_users(1)
     assert channels_list(user_01["token"]) == []
 
 
 def test_channels_listall_invalid_token():
-    clear_database()
+    clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
@@ -193,13 +193,13 @@ def test_channels_listall_invalid_token():
 
 
 def test_channels_listall_empty():
-    clear_database()
+    clear()
     user_01 = register_n_users(1)
     assert channels_listall(user_01["token"]) == []
 
 
 def test_channels_listall_public():
-    clear_database()
+    clear()
     user_01 = register_n_users(1)
     token = user_01["token"]
 
@@ -215,7 +215,7 @@ def test_channels_listall_public():
 
 
 def test_channels_listall_private():
-    clear_database()
+    clear()
     user_01 = register_n_users(1)
     token = user_01["token"]
 
@@ -231,7 +231,7 @@ def test_channels_listall_private():
 
 
 def test_channels_listall_multiple_users_public():
-    clear_database()
+    clear()
 
     user_01, user_02, user_03 = register_n_users(3)
 
@@ -251,7 +251,7 @@ def test_channels_listall_multiple_users_public():
 
 
 def test_channels_listall_multiple_users_private():
-    clear_database()
+    clear()
 
     user_01, user_02, user_03 = register_n_users(3)
 

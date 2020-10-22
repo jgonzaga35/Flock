@@ -1,14 +1,13 @@
 import requests
-from database import clear_database
 from channels import channels_create
 from channel import channel_join, channel_addowner, channel_removeowner, channel_invite
 from message import message_send
-from other import search
+from other import search, clear
 from test_helpers import url, register_n_users
 
 
 def test_search_one_channel_three_users():
-    clear_database()
+    clear()
 
     usera, userb, userc = register_n_users(3)
 
@@ -46,7 +45,7 @@ def test_search_one_channel_three_users():
 
 
 def test_search_three_channels_five_users():
-    clear_database()
+    clear()
 
     usera, userb, userc, userd, usere = register_n_users(5)
 
@@ -209,7 +208,7 @@ def test_search_three_channels_five_users():
 
 
 def test_search_no_match():
-    clear_database()
+    clear()
 
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "channel", is_public=True)["channel_id"]

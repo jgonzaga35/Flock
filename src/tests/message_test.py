@@ -3,7 +3,8 @@ from auth import auth_register
 from channel import channel_messages, channel_join
 from channels import channels_create, channels_list
 from test_helpers import register_n_users
-from database import database, clear_database
+from database import database
+from other import clear
 
 import time
 import pytest
@@ -36,7 +37,7 @@ CHAR_1000_STR = """
 #                           Tests for message_remove                             #
 ##################################################################################
 def test_remove_invalid_user_token():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # Create a new channel
@@ -49,7 +50,7 @@ def test_remove_invalid_user_token():
 
 
 def test_remove_invalid_message_id():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # Create a new channel
@@ -63,7 +64,7 @@ def test_remove_invalid_message_id():
 
 # User tries to remove a message that they are not authorised to remove
 def test_remove_unauthorised_user():
-    clear_database()
+    clear()
     user01, user02 = register_n_users(2)
 
     # Create channel with message from user01
@@ -77,7 +78,7 @@ def test_remove_unauthorised_user():
 
 # Test that the owner of the flockr can remove any message
 def test_remove_owner_flock_permissions():
-    clear_database()
+    clear()
     user01, user02 = register_n_users(2)
 
     # Create a new channel with user01 as admin
@@ -94,7 +95,7 @@ def test_remove_owner_flock_permissions():
 
 # Test that the owner of a channel can remove any message
 def test_remove_owner_channel_permissions():
-    clear_database()
+    clear()
     user01, user02, user03 = register_n_users(3)
 
     channels_create(user01["token"], "channel01", is_public=True)
@@ -112,7 +113,7 @@ def test_remove_owner_channel_permissions():
 
 # Sending an empty messsage - waiting until this is clarified
 # def test_remove_send_empty_message():
-#     clear_database()
+#     clear()
 #     user = register_n_users(1)
 
 #     channel = channels_create(user["token"], "channel", is_public=True)
@@ -122,7 +123,7 @@ def test_remove_owner_channel_permissions():
 
 
 def test_remove_message_non_existent():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel = channels_create(user["token"], "channel", is_public=True)
     message = message_send(user["token"], channel["channel_id"], "test message")
@@ -133,7 +134,7 @@ def test_remove_message_non_existent():
 
 
 def test_remove_continuous_send():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "channela", is_public=True)[
         "channel_id"
@@ -149,7 +150,7 @@ def test_remove_continuous_send():
 
 # Implement a large flockr to test messages are removed correctly
 def test_remove_multiple_channels():
-    clear_database()
+    clear()
     user01, user02, user03 = register_n_users(3)
 
     # User01 owner of all three channels, user02 and user 03 members
@@ -239,7 +240,7 @@ def test_remove_multiple_channels():
 
 
 def test_send_one_message():
-    clear_database()
+    clear()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     channel_id = channels_create(usera["token"], "channela", is_public=True)[
@@ -259,7 +260,7 @@ def test_send_one_message():
 
 
 def test_message_send_access_error():
-    clear_database()
+    clear()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     userb = auth_register("email@b.com", "averylongpassword", "b", "LastB")
@@ -289,7 +290,7 @@ def test_message_send_access_error():
 
 
 def test_send_message_too_long():
-    clear_database()
+    clear()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     channel_id = channels_create(usera["token"], "channela", is_public=True)[
@@ -308,7 +309,7 @@ def test_send_message_too_long():
 
 
 def test_message_send_multiple_messages():
-    clear_database()
+    clear()
 
     usera = auth_register("email@a.com", "averylongpassword", "A", "LastA")
     channel_id = channels_create(usera["token"], "channela", is_public=True)[
@@ -346,7 +347,7 @@ def test_message_send_multiple_messages():
 #                           Tests for message_edit                               #
 ##################################################################################
 def test_edit_invalid_user_token():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # Create a new channel
@@ -359,7 +360,7 @@ def test_edit_invalid_user_token():
 
 
 def test_edit_invalid_message_id():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # Create a new channel
@@ -373,7 +374,7 @@ def test_edit_invalid_message_id():
 
 # User tries to edit a message that they are not authorised to edit
 def test_edit_unauthorised_user():
-    clear_database()
+    clear()
     user01, user02 = register_n_users(2)
 
     # Create channel with message from user01
@@ -387,7 +388,7 @@ def test_edit_unauthorised_user():
 
 # Test that the owner of the flockr can edit any message
 def test_edit_owner_flock_permissions():
-    clear_database()
+    clear()
     user01, user02 = register_n_users(2)
 
     # Create a new channel with user01 as admin
@@ -413,7 +414,7 @@ def test_edit_owner_flock_permissions():
 
 # Test that the owner of a channel can remove any message
 def test_edit_owner_channel_permissions():
-    clear_database()
+    clear()
     user01, user02, user03 = register_n_users(3)
 
     channels_create(user01["token"], "channel01", is_public=True)
@@ -433,7 +434,7 @@ def test_edit_owner_channel_permissions():
 
 # If edited message is empty string, message is deleted
 def test_edit_empty_string():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # Create a new channel
@@ -449,7 +450,7 @@ def test_edit_empty_string():
 
 # Edited message exceeds 1000 characters - commented out until #81 clarified
 # def test_edit_exceeds_1000_char():
-#     clear_database()
+#     clear()
 #     user = register_n_users(1)
 
 #     # Create a new channel
@@ -462,7 +463,7 @@ def test_edit_empty_string():
 
 
 def test_edit_continuous_send():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "channela", is_public=True)[
         "channel_id"

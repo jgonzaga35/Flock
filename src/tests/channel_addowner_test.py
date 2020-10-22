@@ -1,12 +1,12 @@
 import pytest
 from channels import channels_create
 from channel import channel_addowner, channel_details
-from database import clear_database
+from other import clear
 from test_helpers import assert_contains_users_id, register_n_users
 
 
 def test_channel_addowner_admin_public_channel():
-    clear_database()
+    clear()
     admin, usera = register_n_users(2, include_admin=True)
     channel_id = channels_create(usera["token"], "channel", is_public=True)[
         "channel_id"
@@ -18,7 +18,7 @@ def test_channel_addowner_admin_public_channel():
 
 
 def test_channel_addowner_admin_private_channel():
-    clear_database()
+    clear()
     admin, usera = register_n_users(2, include_admin=True)
     channel_id = channels_create(usera["token"], "channel", is_public=False)[
         "channel_id"

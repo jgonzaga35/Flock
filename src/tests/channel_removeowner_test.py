@@ -1,13 +1,13 @@
 import pytest
 from channels import channels_create
 from channel import channel_addowner, channel_details, channel_removeowner, channel_join
-from database import clear_database
+from other import clear
 from test_helpers import assert_contains_users_id, register_n_users
 from error import AccessError
 
 
 def test_channel_removeowner_admin_remaining_owners():
-    clear_database()
+    clear()
     admin, usera, userb = register_n_users(3, include_admin=True)
 
     # A creates channel and adds B as an owner
@@ -24,7 +24,7 @@ def test_channel_removeowner_admin_remaining_owners():
 
 
 def test_channel_removeowner_admin_last_owner_with_no_members():
-    clear_database()
+    clear()
     admin, usera = register_n_users(2, include_admin=True)
 
     # user a creates a channel
@@ -39,7 +39,7 @@ def test_channel_removeowner_admin_last_owner_with_no_members():
 
 
 def test_channel_removeowner_admin_last_owner_with_members():
-    clear_database()
+    clear()
     admin, usera, userb = register_n_users(3, include_admin=True)
     # A creates his channel and B joins
     channel_id = channels_create(usera["token"], "", is_public=True)["channel_id"]

@@ -5,15 +5,14 @@ from user import (
     user_profile_setemail,
     user_profile_sethandle,
 )
-from other import users_all
+from other import users_all, clear
 from error import InputError, AccessError
 import pytest
-from database import clear_database
 from auth import auth_register, check_email
 
 # --------------------------------user profile-------------------------------------
 def test_user_profile_successful():
-    clear_database()
+    clear()
     user = register_n_users(1)  # return a user which has profile below:
     #                 email: email0@gmail.com",
     #                 first name: first0
@@ -33,7 +32,7 @@ def test_user_profile_with_invalid_uid():
 
     We assume it raising InputError
     """
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     # Generate a invalid user id for testing
     invalid_id = -1
@@ -47,7 +46,7 @@ def test_invalid_token_user_profile():
 
     We assume it raising AccessError
     """
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     # Generate an invalid token
     invalid_token = "HaHa"
@@ -57,7 +56,7 @@ def test_invalid_token_user_profile():
 
 # -----------------------------user_profile_setname------------------------------
 def test_setname_successful():
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     # set user name to Eric JOJO
     user_profile_setname(user_a["token"], "Eric", "JOJO")
@@ -67,7 +66,7 @@ def test_setname_successful():
 
 
 def test_setname_firstname_too_long():
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     with pytest.raises(InputError):
         # set user name to Erichahaha... JOJO
@@ -80,7 +79,7 @@ def test_setname_firstname_too_long():
 
 
 def test_setname_lastname_too_long():
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     with pytest.raises(InputError):
         # set user name to Erichahaha... JOJO
@@ -93,7 +92,7 @@ def test_setname_lastname_too_long():
 
 
 def test_setname_invalid_token():
-    clear_database()
+    clear()
     # Generate an invalid token
     invalid_token = "HaHa"
     with pytest.raises(AccessError):
@@ -102,7 +101,7 @@ def test_setname_invalid_token():
 
 # ----------------------------user_profile_setemail----------------------------
 def test_setemail_successful():
-    clear_database()
+    clear()
     user_a = register_n_users(1)
     user_profile_setemail(user_a["token"], "newemail@gmail.com")
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
@@ -110,14 +109,14 @@ def test_setemail_successful():
 
 
 def test_set_illegal_email():
-    clear_database()
+    clear()
     user = register_n_users(1)
     with pytest.raises(InputError):
         user_profile_setemail(user["token"], "invalid_email_address.com")
 
 
 def test_invalid_token_access():
-    clear_database()
+    clear()
     invalid_token = "HAHA"
     with pytest.raises(AccessError):
         user_profile_setemail(invalid_token, "newemail@gmail.com")
@@ -125,7 +124,7 @@ def test_invalid_token_access():
 
 # ----------------------------user_profile_sethandle----------------------------
 def test_sethandle_successful():
-    clear_database()
+    clear()
     user_a = register_n_users(1)
 
     # Set a new handle name as JOJOKING
@@ -135,7 +134,7 @@ def test_sethandle_successful():
 
 
 def test_handle_too_long():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # set a long handle name
@@ -144,7 +143,7 @@ def test_handle_too_long():
 
 
 def test_handle_too_short():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     # set a short handle name
@@ -153,7 +152,7 @@ def test_handle_too_short():
 
 
 def test_handle_duplicate():
-    clear_database()
+    clear()
     # return two users with handle name below:
     user_a, user_b = register_n_users(2)
 
@@ -165,7 +164,7 @@ def test_handle_duplicate():
 
 
 def test_handle_invalid_token():
-    clear_database()
+    clear()
     invalid_token = "HAHA"
 
     with pytest.raises(AccessError):
@@ -176,7 +175,7 @@ def test_handle_invalid_token():
 
 
 def test_users_all_single():
-    clear_database()
+    clear()
 
     user = register_n_users(1, include_admin=True)
 
@@ -188,7 +187,7 @@ def test_users_all_single():
 
 
 def test_users_all_many_users():
-    clear_database()
+    clear()
 
     users = register_n_users(3, include_admin=True)
 
@@ -203,6 +202,6 @@ def test_users_all_many_users():
 
 
 def test_users_all_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         users_all(-1)
