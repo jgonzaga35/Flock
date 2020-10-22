@@ -91,11 +91,26 @@ def assert_contains_users_id(user_details, expected_user_ids):
     ), f"users ${expected_user_ids} where not found in the channel"
 
 
-def http_register_n_users(url, num_users):
+def http_register_n_users(url, num_users, include_admin=False):
     """Same thing as register_n_users, except it goes through the web server"""
     assert isinstance(num_users, int)
 
     users = []
+    response = requests.post(
+        url + "auth/register",
+        json={
+            "email": f"admin@gmail.com",
+            "password": f"admin long enough password",
+            "name_first": "hello",
+            "name_last": "world",
+        },
+    )
+    assert response.status_code == 200
+    if include_admin:
+        user_infos = response.json()
+        users.append(user_infos)
+        num_users -= 1
+
     for i in range(num_users):
         response = requests.post(
             url + "auth/register",
