@@ -32,3 +32,7 @@ def clear_database():
     database["users"].clear()
     database["channels"].clear()
     database["active_tokens"].clear()
+
+    database["message_id_head"] = 1
+    database["users_id_head"] = 1
+    database["channel_id_head"] = 1
