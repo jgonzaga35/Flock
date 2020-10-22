@@ -51,7 +51,6 @@ def test_invalid_token_user_profile(url):
     r = requests.get(
         url + "user/profile", params={"token": invalid_token, "u_id": user["u_id"]}
     )
-    print(r)
     assert r.status_code == 403
 
 
@@ -255,7 +254,6 @@ def test_users_all_many_users(url):
 
     valid_token = users[1]["token"]
     all_users = requests.get(url + "users/all", params={"token": valid_token}).json()
-    print(all_users)
 
     all_users_info = []
     for user in users:
