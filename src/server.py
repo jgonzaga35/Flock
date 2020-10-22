@@ -25,6 +25,7 @@ from channel import (
     channel_addowner,
 )
 from other import clear, users_all
+from other import clear, admin_userpermission_change
 
 
 def defaultHandler(err):
@@ -203,6 +204,15 @@ def channel_removeowner_handler():
     u_id = data["u_id"]
 
     return jsonify(channel_removeowner(token, channel_id, u_id))
+
+
+@APP.route("/admin/userpermission/change", methods=["POST"])
+def admin_userpermission_change_handler():
+    data = request.get_json()
+
+    return jsonify(
+        admin_userpermission_change(data["token"], data["u_id"], data["permission_id"])
+    )
 
 
 if __name__ == "__main__":

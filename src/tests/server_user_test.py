@@ -250,7 +250,7 @@ def test_handle_invalid_token(url):
 def test_users_all_many_users(url):
     requests.delete(url + "clear")
 
-    users = http_register_n_users(url, 3)
+    users = http_register_n_users(url, 3, include_admin=True)
 
     valid_token = users[1]["token"]
     all_users = requests.get(url + "users/all", params={"token": valid_token}).json()[

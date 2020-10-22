@@ -178,7 +178,7 @@ def test_handle_invalid_token():
 def test_users_all_single():
     clear_database()
 
-    user = register_n_users(1)
+    user = register_n_users(1, include_admin=True)
 
     all_users = users_all(user["token"])["users"]
     all_users_info = []
@@ -190,7 +190,7 @@ def test_users_all_single():
 def test_users_all_many_users():
     clear_database()
 
-    users = register_n_users(3)
+    users = register_n_users(3, include_admin=True)
 
     valid_token = users[1]["token"]
     all_users = users_all(valid_token)["users"]

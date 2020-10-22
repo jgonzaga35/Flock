@@ -67,7 +67,13 @@ def auth_register(email, password, name_first, name_last):
         "last_name": name_last,
         "id": u_id,
         "handle": generate_handle(name_first, name_last, u_id),
+        "is_admin": False,
     }
+
+    # first user to register automatically becomes an admin (flockr owner)
+    if len(database["users"]) == 0:
+        new_user["is_admin"] = True
+
     token = jwt_encode(new_user)
 
     database["users"][u_id] = new_user

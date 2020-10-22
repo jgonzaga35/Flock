@@ -1,3 +1,5 @@
+The terms "Flockr owner" and "admin" are equivalent.
+
 **auth_test**
 
 

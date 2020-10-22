@@ -8,8 +8,11 @@ from subprocess import Popen, PIPE
 from time import sleep
 
 
-def register_n_users(num_users):
+def register_n_users(num_users, *, include_admin=False):
     """
+    If include_admin is False, returns n *regular* users (the admin is discarded).
+    Else, it the admin user PLUS n - 1 *regular* users (n users total)
+
     Usage
 
     >>> single = register_n_users(1)
@@ -25,6 +28,14 @@ def register_n_users(num_users):
     assert isinstance(num_users, int)
 
     users = []
+    # register the admin user (the first user has admin privileges)
+    admin = auth_register(
+        "admin@gmail.com", "admin password that is long", "My name is", "admin"
+    )
+    if include_admin:
+        users.append(admin)
+        num_users -= 1
+
     for i in range(num_users):
         users.append(
             auth_register(
@@ -37,9 +48,6 @@ def register_n_users(num_users):
 
     if len(users) == 1:
         return users[0]
-
-    # try to make the job of autocompletion engines easier
-    assert len(users) == num_users
 
     return users
 
@@ -60,11 +68,49 @@ def get_user_details_from_user_id(user_id):
     }
 
 
-def http_register_n_users(url, num_users):
+def assert_contains_users_id(user_details, expected_user_ids):
+    """
+    Checks whether the expected users' id are in the users details list.
+
+    >>> user_details = channel_details(token, channel_id)['all_members']
+    >>> expected_members_id = [usera['u_id'], userb['u_id']]
+    >>> assert_contains_users_id(user_details, expected_members_id)
+    """
+
+    assert len(user_details) == len(
+        expected_user_ids
+    ), f"expect {len(expected_user_ids)} users, but got {len(user_details)}"
+
+    for user in user_details:
+        assert (
+            user["u_id"] in expected_user_ids
+        ), f"channel contains unexpected user {user['u_id']}"
+        expected_user_ids.remove(user["u_id"])
+    assert (
+        len(expected_user_ids) == 0
+    ), f"users ${expected_user_ids} where not found in the channel"
+
+
+def http_register_n_users(url, num_users, include_admin=False):
     """Same thing as register_n_users, except it goes through the web server"""
     assert isinstance(num_users, int)
 
     users = []
+    response = requests.post(
+        url + "auth/register",
+        json={
+            "email": f"admin@gmail.com",
+            "password": f"admin long enough password",
+            "name_first": "hello",
+            "name_last": "world",
+        },
+    )
+    assert response.status_code == 200
+    if include_admin:
+        user_infos = response.json()
+        users.append(user_infos)
+        num_users -= 1
+
     for i in range(num_users):
         response = requests.post(
             url + "auth/register",
