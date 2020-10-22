@@ -82,3 +82,7 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * A message that is deleted (empty string) cannot be edited
 * user_profile
     * Any valid user can access other users' profile
+
+* search:
+    * messages will be sorted by date (newest first)
+    * a query string matches a message if the query string is exactly contained within that message (cases matching)
