@@ -3,7 +3,7 @@ from user import (
     user_profile,
     user_profile_setname,
     user_profile_setemail,
-    user_profile_sethandle
+    user_profile_sethandle,
 )
 from other import users_all
 from error import InputError, AccessError
@@ -20,7 +20,7 @@ def test_user_profile_successful():
     #                 last name: last0
 
     # We compare the profile above to the returned result.
-    userProfile = user_profile(user["token"], user["u_id"])['user']
+    userProfile = user_profile(user["token"], user["u_id"])["user"]
     assert userProfile["email"] == "email0@gmail.com"
     assert userProfile["name_first"] == "first0"
     assert userProfile["name_last"] == "last0"
@@ -61,7 +61,7 @@ def test_setname_successful():
     user_a = register_n_users(1)
     # set user name to Eric JOJO
     user_profile_setname(user_a["token"], "Eric", "JOJO")
-    user_a_profile = user_profile(user_a["token"], user_a["u_id"])['user']
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
     assert user_a_profile["name_first"] == "Eric"
     assert user_a_profile["name_last"] == "JOJO"
 
@@ -105,7 +105,7 @@ def test_setemail_successful():
     clear_database()
     user_a = register_n_users(1)
     user_profile_setemail(user_a["token"], "newemail@gmail.com")
-    user_a_profile = user_profile(user_a["token"], user_a["u_id"])['user']
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
     assert user_a_profile["email"] == "newemail@gmail.com"
 
 
@@ -130,7 +130,7 @@ def test_sethandle_successful():
 
     # Set a new handle name as JOJOKING
     user_profile_sethandle(user_a["token"], "JOJOKING")
-    user_a_profile = user_profile(user_a["token"], user_a["u_id"])['user']
+    user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
     assert user_a_profile["handle_str"] == "JOJOKING"
 
 
@@ -158,7 +158,7 @@ def test_handle_duplicate():
     user_a, user_b = register_n_users(2)
 
     # Get user_b's profile and we will use his handle as the duplicated handle
-    user_b_profile = user_profile(user_b["token"], user_b["u_id"])['user']
+    user_b_profile = user_profile(user_b["token"], user_b["u_id"])["user"]
 
     with pytest.raises(InputError):
         user_profile_sethandle(user_a["token"], user_b_profile["handle_str"])
