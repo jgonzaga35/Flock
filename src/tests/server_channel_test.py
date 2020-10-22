@@ -86,7 +86,7 @@ def test_add_owner_repeatedly(url):
         json={"token": owner_1["token"], "name": "channel_01", "is_public": True},
     ).json()
 
-    response1 = requests.post(
+    requests.post(
         url + "channel/addowner",
         json={
             "token": owner_1["token"],
@@ -95,7 +95,7 @@ def test_add_owner_repeatedly(url):
         },
     )
 
-    response2 = requests.post(
+    response = requests.post(
         url + "channel/addowner",
         json={
             "token": owner_1["token"],
@@ -104,7 +104,7 @@ def test_add_owner_repeatedly(url):
         },
     )
 
-    assert response2.status_code == 400
+    assert response.status_code == 400
 
 
 # Testing that an owner cannot add nonexistent users
@@ -250,7 +250,7 @@ def test_remove_owner_invalid_token(url):
 def test_remove_owner_nonexisting_member(url):
 
     requests.delete(url + "clear")
-    owner, user = http_register_n_users(url, 2)
+    owner= http_register_n_users(url, 1)
 
     channel = requests.post(
         url + "channels/create",
