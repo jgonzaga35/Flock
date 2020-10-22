@@ -3,6 +3,7 @@ from channels import channels_create
 from channel import channel_addowner, channel_details, channel_removeowner, channel_join
 from database import clear_database
 from test_helpers import assert_contains_users_id, register_n_users
+from error import AccessError
 
 
 def test_channel_removeowner_admin_remaining_owners():
@@ -31,10 +32,10 @@ def test_channel_removeowner_admin_last_owner_with_no_members():
     # admin removes him from his channel
     channel_removeowner(admin["token"], channel_id, usera["u_id"])
 
-    # channel should be empty (removeowner with only one member (the owner) should be like channel_leave)
-    details = channel_details(usera["token"], channel_id)
-    assert_contains_users_id(details["owner_members"], [])
-    assert_contains_users_id(details["all_members"], [])
+    with pytest.raises(AccessError):
+        # usera can't access the channel anymore, because he is not a member
+        # (there are no members in the channel anymore)
+        channel_details(usera["token"], channel_id)
 
 
 def test_channel_removeowner_admin_last_owner_with_members():

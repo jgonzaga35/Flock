@@ -172,10 +172,14 @@ def channel_removeowner(token, channel_id, u_id):
     ):
         raise AccessError("User is not authorized")
 
-    # If a owner are the only member of a channel, when this owner
-    # remove owner himself, he will automatically leave the channel
     if len(channel["all_members_id"]) == 1:
-        channel_leave(token, channel_id)
+        # If a owner are the only member of a channel, when this owner
+        # remove owner himself, he will automatically leave the channel
+
+        # we can't use channel_leave, because we want to remove u_id, not u_id
+        # of token (token might be an admin's token)
+        channel["all_members_id"].remove(u_id)
+        channel["owner_members_id"].remove(u_id)
     else:
         # If the owner is the only owner in the channel
         if len(channel["owner_members_id"]) == 1:
