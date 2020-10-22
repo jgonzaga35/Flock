@@ -17,7 +17,7 @@ def test_message_edit_admin(is_public):
     # admin removes the message
     message_edit(admin["token"], message_id, "admin edit #1")
     assert (
-        channel_messages(usera["token"], channel_id)["messages"][0]["message"]
+        channel_messages(usera["token"], channel_id, start=0)["messages"][0]["message"]
         == "admin edit #1"
     )
 
@@ -25,24 +25,28 @@ def test_message_edit_admin(is_public):
     channel_join(admin["token"], channel_id)
 
     # user a sends an other message
-    message_id = message_send(usera["token"], channel_id, "where is my message gone?")
+    message_id = message_send(usera["token"], channel_id, "where is my message gone?")[
+        "message_id"
+    ]
 
     # admin removes the message again
     message_edit(admin["token"], message_id, "admin edit #2")
     assert (
-        channel_messages(usera["token"], channel_id)["messages"][0]["message"]
+        channel_messages(usera["token"], channel_id, start=0)["messages"][0]["message"]
         == "admin edit #2"
     )
 
     # admin joins the channel as an owner
-    channel_addowner(admin["token"], channel_id)
+    channel_addowner(admin["token"], channel_id, admin["u_id"])
 
     # user a sends an other message
-    message_id = message_send(usera["token"], channel_id, "oh you nasty admin")
+    message_id = message_send(usera["token"], channel_id, "oh you nasty admin")[
+        "message_id"
+    ]
 
     # admin removes the message again
     message_edit(admin["token"], message_id, "admin edit #3")
     assert (
-        channel_messages(usera["token"], channel_id)["messages"][0]["message"]
-        == "admin edit #2"
+        channel_messages(usera["token"], channel_id, start=0)["messages"][0]["message"]
+        == "admin edit #3"
     )
