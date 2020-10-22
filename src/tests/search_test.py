@@ -96,13 +96,13 @@ def test_search_three_channels_five_users():
     channel_b_id = channels_create(userb["token"], "everyone!", is_public=True)[
         "channel_id"
     ]
-    channel_invite(userb["token"], channel_b_id, usera["token"])
-    channel_invite(userb["token"], channel_b_id, userc["token"])
+    channel_invite(userb["token"], channel_b_id, usera["u_id"])
+    channel_invite(userb["token"], channel_b_id, userc["u_id"])
     id8 = message_send(
         userc["token"], channel_b_id, "a message that everyone will see #match"
     )["message_id"]
-    channel_invite(userb["token"], channel_b_id, userd["token"])
-    channel_invite(userb["token"], channel_b_id, usere["token"])
+    channel_invite(userb["token"], channel_b_id, userd["u_id"])
+    channel_invite(userb["token"], channel_b_id, usere["u_id"])
 
     id9 = message_send(
         usere["token"],
