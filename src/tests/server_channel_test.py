@@ -29,7 +29,7 @@ def test_leave_channel_successfully(url):
     channel = requests.post(
         url + "channels/create",
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
-    ).json() 
+    ).json()
 
     # Member leaves the channel so there is only the owner in the channel.
     requests.post(
@@ -38,8 +38,12 @@ def test_leave_channel_successfully(url):
     )
 
     # Response should return error 403 as owner no longer has access
-    response = requests.get(url + "channel/details", params={"token": owner["token"], "channel_id": channel["channel_id"]})
+    response = requests.get(
+        url + "channel/details",
+        params={"token": owner["token"], "channel_id": channel["channel_id"]},
+    )
     assert response.status_code == 403
+
 
 # A user tries to leave a private channel that they are not part of
 def test_inexist_user_leave_channel_private(url):
@@ -91,4 +95,3 @@ def test_leave_channel_id_invalid(url):
     )
 
     assert response.status_code == 400
-    

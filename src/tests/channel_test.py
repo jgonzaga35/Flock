@@ -309,6 +309,7 @@ def test_leave_channel_successfully():
     expected_members_id = [user_A["u_id"]]
     assert_contains_users_id(details["all_members"], expected_members_id)
 
+
 # If a user tries to leave a private channel that they are not part of
 def test_inexist_user_leave_channel_private():
     clear_database()
@@ -319,6 +320,7 @@ def test_inexist_user_leave_channel_private():
 
     with pytest.raises(AccessError):
         channel_leave(user_B["token"], private_channel["channel_id"])
+
 
 # If a user tries to leave a public channel that they are not part of
 def test_inexist_user_leave_channel_public():

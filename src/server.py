@@ -134,10 +134,12 @@ def messages_channel():
 
     return jsonify(channel_messages(token, channel_id, start))
 
-@APP.route("/channel/leave", methods=["POST"]) 
+
+@APP.route("/channel/leave", methods=["POST"])
 def channel_leave_handler():
     data = request.get_json()
     return jsonify(channel_leave(data["token"], data["channel_id"]))
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
