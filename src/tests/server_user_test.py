@@ -253,7 +253,9 @@ def test_users_all_many_users(url):
     users = http_register_n_users(url, 3)
 
     valid_token = users[1]["token"]
-    all_users = requests.get(url + "users/all", params={"token": valid_token}).json()
+    all_users = requests.get(url + "users/all", params={"token": valid_token}).json()[
+        "users"
+    ]
 
     all_users_info = []
     for user in users:
