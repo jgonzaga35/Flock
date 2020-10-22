@@ -1,5 +1,4 @@
 import requests
-import json
 from test_helpers import url, http_register_n_users
 
 
@@ -7,11 +6,10 @@ from test_helpers import url, http_register_n_users
 #                       Tests for channel/addowner                        #
 ###########################################################################
 
-
 # Testing for if someone tries to add an owner but do not have admin privileges
 def test_add_owner_invalid_token(url):
     requests.delete(url + "clear")
-    owner,user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
@@ -27,7 +25,7 @@ def test_add_owner_invalid_token(url):
 
 def test_add_owner_successfully(url):
     requests.delete(url + "clear")
-    owner,user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
@@ -53,7 +51,7 @@ def test_add_owner_successfully(url):
 
 def test_add_owner_invalid_channel_id(url):
     requests.delete(url + "clear")
-    owner, user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
@@ -149,7 +147,7 @@ def test_add_owner_by_non_owner(url):
 # User should be owner now.
 def test_remove_owner_successful(url):
     requests.delete(url + "clear")
-    owner,user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
@@ -175,7 +173,7 @@ def test_remove_owner_successful(url):
 
 def test_remove_owner_invalid_token(url):
     requests.delete(url + "clear")
-    owner,user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
@@ -196,7 +194,7 @@ def test_remove_owner_invalid_token(url):
 
 def test_remove_owner_invalid_channel_id(url):
     requests.delete(url + "clear")
-    owner, user = http_register_n_users(url, 1)
+    owner, user = http_register_n_users(url, 2)
 
     channel = requests.post(
         url + "channels/create",
