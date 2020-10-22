@@ -64,7 +64,7 @@ def test_inexist_user_leave_channel_private(url):
 
     response = requests.post(
         url + "channel/leave",
-        json={"token": member["token"], "channel_id": channel["channel_id"]},
+        json={"token": member["token"], "channel_id": private_channel["channel_id"]},
     )
 
     assert response.status_code == 403
