@@ -1,6 +1,5 @@
 import requests
 from test_helpers import url, http_register_n_users
-from channel_test import assert_contains_users_id
 
 ###########################################################################
 #                       Tests for channel/leave                           #
@@ -26,31 +25,22 @@ def test_leave_invalid_token(url):
 # User leaves public channel successfully
 def test_leave_channel_successfully(url):
     requests.delete(url + "clear")
-    owner, member = http_register_n_users(url, 2)
-    public_channel = requests.post(
+    owner = http_register_n_users(url, 1)
+    channel = requests.post(
         url + "channels/create",
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
     ).json() 
 
-    # Member joins the owner's channel so now there is 2 users in channel_01
-    requests.post(
-        url + "channel/join",
-        json={"token": member["token"], "channel_id": public_channel["channel_id"]},
-    )
-    response = requests.get(url + "channel/details", params={"token": owner["token"], "channel_id": public_channel["channel_id"]})
-    channel_details = response.json()
-    expected_members_id = [owner["u_id"], member["u_id"]]
-    assert_contains_users_id(channel_details["all_members"], expected_members_id)
-
     # Member leaves the channel so there is only the owner in the channel.
     requests.post(
         url + "channel/leave",
-        json={"token": member["token"], "channel_id": public_channel["channel_id"]},
+        json={"token": owner["token"], "channel_id": channel["channel_id"]},
     )
-    response = requests.get(url + "channel/details", params={"token": owner["token"], "channel_id": public_channel["channel_id"]})
-    channel_details = response.json()
-    expected_members_id = [owner["u_id"]]
-    assert_contains_users_id(channel_details["all_members"], expected_members_id)
+
+    # Response should return error 403 as owner no longer has access
+    response = requests.get(url + "channel/details", params={"token": owner["token"], "channel_id": channel["channel_id"]})
+    assert response.status_code == 403
+
 
 
 # A user tries to leave a private channel that they are not part of
