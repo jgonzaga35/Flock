@@ -13,7 +13,7 @@ from user import (
     user_profile_sethandle,
 )
 from channels import channels_create
-from channel import channel_details
+from channel import channel_details, channel_messages
 from other import clear, users_all
 
 
@@ -124,6 +124,15 @@ def channel_details_handler():
     token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
+
+
+@APP.route("/channel/messages", methods=["GET"])
+def messages_channel():
+    token = request.args.get("token")
+    channel_id = int(request.args.get("channel_id"))
+    start = int(request.args.get("start"))
+
+    return jsonify(channel_messages(token, channel_id, start))
 
 
 if __name__ == "__main__":
