@@ -14,7 +14,14 @@ from user import (
 )
 
 from channels import channels_create, channels_create, channels_list
-from channel import channel_details, channel_messages, channel_join, channel_leave, channel_removeowner, channel_addowner
+from channel import (
+    channel_details,
+    channel_messages,
+    channel_join,
+    channel_leave,
+    channel_removeowner,
+    channel_addowner,
+)
 from message import message_send
 from other import clear, users_all
 
@@ -161,6 +168,7 @@ def channel_leave_handler():
     data = request.get_json()
     return jsonify(channel_leave(data["token"], data["channel_id"]))
 
+
 @APP.route("/channel/addowner", methods=["POST"])
 def channel_details_handler():
     data = request.get_json()
@@ -171,10 +179,10 @@ def channel_details_handler():
 def channel_addowner_handler():
     data = request.get_json()
 
-    #token = data["token"]
-    #channel_id = data["channel_id"]
-    #u_id = data["u_id"]
-    
+    # token = data["token"]
+    # channel_id = data["channel_id"]
+    # u_id = data["u_id"]
+
     return jsonify(channel_addowner(data["token"], data["channel_id"], data["u_id"]))
 
 
@@ -187,7 +195,7 @@ def channel_removeowner_handler():
     u_id = data["u_id"]
 
     return jsonify(channel_removeowner(token, channel_id, u_id))
-    
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
