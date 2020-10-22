@@ -14,7 +14,6 @@ from user import (
 )
 
 from channels import channels_create, channels_create, channels_list
-from channel import channel_details, channel_messages, channel_join, channel_leave
 from message import message_send, message_remove, message_edit
 from channel import (
     channel_details,
@@ -58,6 +57,7 @@ def echo():
     return dumps({"data": data})
 
 
+# Clear database
 @APP.route("/clear", methods=["DELETE"])
 def delete():
     clear()
@@ -87,6 +87,7 @@ def register():
     )
 
 
+# Message functions
 @APP.route("/message/edit", methods=["PUT"])
 def edit_message():
     data = request.get_json()
@@ -98,6 +99,12 @@ def edit_message():
 def remove_message():
     data = request.get_json()
     return jsonify(message_remove(data["token"], data["message_id"]))
+
+
+@APP.route("/message/send", methods=["POST"])
+def send_message():
+    data = request.get_json()
+    return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
 
 
 # User functions
@@ -144,6 +151,14 @@ def channels_create_handler():
     return jsonify(channels_create(token, name, is_public))
 
 
+@APP.route("/channels/list", methods=["GET"])
+def list_channels():
+    # Lists the channels an authorised user is a part of
+    token = request.args.get("token")
+    return jsonify(channels_list(token))
+
+
+# Channel functions
 @APP.route("/channel/invite", methods=["POST"])
 def channel_invite_handler():
     data = request.get_json()
@@ -160,19 +175,6 @@ def channel_details_handler():
     token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
-
-
-@APP.route("/message/send", methods=["POST"])
-def send_message():
-    data = request.get_json()
-    return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
-
-
-@APP.route("/channels/list", methods=["GET"])
-def list_channels():
-    # Lists the channels an authorised user is a part of
-    token = request.args.get("token")
-    return jsonify(channels_list(token))
 
 
 @APP.route("/channel/join", methods=["POST"])
@@ -200,11 +202,11 @@ def channel_leave_handler():
 def channel_addowner_handler():
     data = request.get_json()
 
-    # token = data["token"]
-    # channel_id = data["channel_id"]
-    # u_id = data["u_id"]
+    token = data["token"]
+    channel_id = data["channel_id"]
+    u_id = data["u_id"]
 
-    return jsonify(channel_addowner(data["token"], data["channel_id"], data["u_id"]))
+    return jsonify(channel_addowner(token, channel_id, u_id))
 
 
 @APP.route("/channel/removeowner", methods=["POST"])
@@ -222,9 +224,11 @@ def channel_removeowner_handler():
 def admin_userpermission_change_handler():
     data = request.get_json()
 
-    return jsonify(
-        admin_userpermission_change(data["token"], data["u_id"], data["permission_id"])
-    )
+    token = data["token"]
+    u_id = data["u_id"]
+    permission_id = data["permission_id"]
+
+    return jsonify(admin_userpermission_change(token, u_id, permission_id))
 
 
 if __name__ == "__main__":
