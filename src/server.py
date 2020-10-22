@@ -11,7 +11,6 @@ from user import (
     user_profile_setname,
     user_profile_setemail,
     user_profile_sethandle,
-    users_all,
 )
 from channels import channels_create
 from channel import channel_details
