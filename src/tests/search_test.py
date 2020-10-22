@@ -66,7 +66,6 @@ def test_search_three_channels_five_users():
     channel_de_id = channels_create(
         userd["token"], "channel of d and e", is_public=False
     )["channel_id"]
-    channel_invite(userd["token"], channel_de_id, usere["u_id"])
     channel_addowner(userd["token"], channel_de_id, usere["u_id"])
     id3 = message_send(userd["token"], channel_de_id, "our own channel! #match")[
         "message_id"
@@ -74,7 +73,6 @@ def test_search_three_channels_five_users():
     message_send(usere["token"], channel_de_id, "how cool!")["message_id"]
 
     # userc becomes the only owner of channel A
-    channel_invite(usera["token"], channel_a_id, userc["u_id"])
     channel_addowner(usera["token"], channel_a_id, userc["u_id"])
     id5 = message_send(usera["token"], channel_a_id, "everyone meet C #match")[
         "message_id"
