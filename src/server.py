@@ -15,7 +15,7 @@ from user import (
 
 from channels import channels_create, channels_create, channels_list
 from channel import channel_details, channel_messages, channel_join, channel_leave
-from message import message_send
+from message import message_send, message_remove
 from other import clear, users_all
 
 
@@ -75,6 +75,12 @@ def register():
             data["email"], data["password"], data["name_first"], data["name_last"]
         )
     )
+
+
+@APP.route("/message/remove", methods=["DELETE"])
+def remove_message():
+    data = request.get_json()
+    return jsonify(message_remove(data["token"], data["message_id"]))
 
 
 # User functions
