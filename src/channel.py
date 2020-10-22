@@ -134,16 +134,23 @@ def channel_addowner(token, channel_id, u_id):
     if u_id in channel["owner_members_id"]:
         raise InputError("User is already an owner of the channel")
 
-    if adder not in channel["owner_members_id"]:
-        raise AccessError("User is not owner")
+    # make sure the user adding an owner is allowed to
+    adder_id = auth_get_current_user_id_from_token(token)
+    if (
+        adder_id not in channel["owner_members_id"]
+        and database["users"][adder_id]["is_admin"] is False
+    ):
+        raise AccessError("User is neither an owner of the channel, nor an admin")
 
-    if u_id in channel["all_members_id"]:
-        channel["owner_members_id"].append(u_id)
-    else:
-        # If a user outside the channel being added owner, he will
-        # first be invited to the channel, then become an owner.
-        channel_invite(token, channel_id, u_id)
-        channel["owner_members_id"].append(u_id)
+    # make sure target user is valid
+    if u_id not in database["users"]:
+        raise InputError(f"{u_id} is an invalid user id")
+
+    # the user wasn't nescerally a member of the channel before becoming an owner
+    if u_id not in channel["all_members_id"]:
+        channel["all_members_id"].append(u_id)
+
+    channel["owner_members_id"].append(u_id)
 
 
 def channel_removeowner(token, channel_id, u_id):
