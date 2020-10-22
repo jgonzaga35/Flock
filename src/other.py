@@ -14,7 +14,7 @@ def users_all(token):
     auth_get_current_user_id_from_token(token)
 
     for user in database["users"].values():
-        user_info = get_user_details(user)["user"]
+        user_info = get_user_details(user)
         users.append(user_info)
 
     return {"users": users} 
