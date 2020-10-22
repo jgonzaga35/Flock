@@ -43,7 +43,6 @@ def test_messages_invalid_channel_id(url):
         }
     )
     assert response.status_code == 200
-    channel = response.json()
     
     response = requests.get(
         url + "channel/messages",
