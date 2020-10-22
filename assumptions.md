@@ -58,6 +58,7 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * raises any AccessError before any InputError. For example, if an unauthorized user (should raise AccessError) sends a 1200 character long message (should raise InputError), an AccessError will be raised.
 
 * message_remove
+    * The user can only remove a message that they have sent if they are a member of the channel that they have sent the message in.
     * When a message is removed, it no longer exists in the database
     * You can only remove messages that you have sent.
     * You cannot remove other people's messages (unless you are the owner of the channel)
@@ -65,6 +66,7 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * An input error also occurs when a message id does not exist (as well as occuring when it no longer exists)
 
 * message_edit
+    * The user can only edit a message that they have sent if they are a member of the channel that they have sent the message in.
     * When a message has been edited, there will remain an irremovable text stating that the message has been edited
     to notify the other users.
     * You are only able to edit messages that you have sent.
