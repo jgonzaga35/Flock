@@ -45,8 +45,8 @@ def message_remove(token, message_id):
     # Check message exists in database
     message_exists = False
     for ch in database["channels"].values():
-        if message_id in ch['messages']:
-            channel_id_for_message = ch['id']
+        if message_id in ch["messages"]:
+            channel_id_for_message = ch["id"]
             message_exists = True
 
     if message_exists == False:
@@ -56,7 +56,11 @@ def message_remove(token, message_id):
     for msg in database["channels"][channel_id_for_message]["messages"].values():
         if msg["message_id"] == message_id and (
             msg["u_id"] == user_id
-            or (user_id in database["channels"][channel_id_for_message]["owner_members_id"])
+            or (
+                user_id
+                in database["channels"][channel_id_for_message]["owner_members_id"]
+            )
+            or database["users"][user_id]["is_admin"]
         ):
             del database["channels"][channel_id_for_message]["messages"][message_id]
             return {}
@@ -76,8 +80,8 @@ def message_edit(token, message_id, message):
     # Check message exists in database
     message_exists = False
     for ch in database["channels"].values():
-        if message_id in ch['messages']:
-            channel_id_for_message = ch['id']
+        if message_id in ch["messages"]:
+            channel_id_for_message = ch["id"]
             message_exists = True
 
     if message_exists == False:
@@ -92,7 +96,11 @@ def message_edit(token, message_id, message):
     for msg in database["channels"][channel_id_for_message]["messages"].values():
         if msg["message_id"] == message_id and (
             msg["u_id"] == user_id
-            or (user_id in database["channels"][channel_id_for_message]["owner_members_id"])
+            or (
+                user_id
+                in database["channels"][channel_id_for_message]["owner_members_id"]
+            )
+            or (database["users"][user_id]["is_admin"])
         ):
             msg["message"] = message
             return {}

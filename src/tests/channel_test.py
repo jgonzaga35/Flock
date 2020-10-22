@@ -17,7 +17,7 @@ from word_list import word_list
 import time
 import random
 import pytest
-from test_helpers import register_n_users
+from test_helpers import register_n_users, assert_contains_users_id
 
 #################################################################################
 #                       Tests for channel_messages
@@ -310,7 +310,8 @@ def test_leave_channel_successfully():
     assert_contains_users_id(details["all_members"], expected_members_id)
 
 
-def test_inexist_uesr_leave_channel_private():
+# If a user tries to leave a private channel that they are not part of
+def test_inexist_user_leave_channel_private():
     clear_database()
     user_A, user_B = register_n_users(2)
     private_channel = channels_create(
@@ -321,7 +322,8 @@ def test_inexist_uesr_leave_channel_private():
         channel_leave(user_B["token"], private_channel["channel_id"])
 
 
-def test_inexist_uesr_leave_channel_public():
+# If a user tries to leave a public channel that they are not part of
+def test_inexist_user_leave_channel_public():
     clear_database()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(
@@ -688,29 +690,3 @@ def test_channel_invite_invalid_channel_id():
 
     with pytest.raises(InputError):
         channel_invite(usera["token"], channel_id=-1, u_id=userb["u_id"])
-
-
-# Helper function
-
-# Check whether the user is the owner or member of a channel
-def assert_contains_users_id(user_details, expected_user_ids):
-    """
-    Checks whether the expected users' id are in the users details list.
-
-    >>> user_details = channel_details(token, channel_id)['all_members']
-    >>> expected_members_id = [usera['u_id'], userb['u_id']]
-    >>> assert_contains_users_id(user_details, expected_members_id)
-    """
-
-    assert len(user_details) == len(
-        expected_user_ids
-    ), f"expect {len(expected_user_ids)} users, but got {len(user_details)}"
-
-    for user in user_details:
-        assert (
-            user["u_id"] in expected_user_ids
-        ), f"channel contains unexpected user {user['u_id']}"
-        expected_user_ids.remove(user["u_id"])
-    assert (
-        len(expected_user_ids) == 0
-    ), f"users ${expected_user_ids} where not found in the channel"

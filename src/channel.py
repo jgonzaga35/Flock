@@ -118,7 +118,10 @@ def channel_join(token, channel_id):
     current_user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
 
-    if not channel["is_public"]:
+    if (
+        not channel["is_public"]
+        and database["users"][current_user_id]["is_admin"] is False
+    ):
         raise AccessError("Channel is not public")
 
     if len(channel["all_members_id"]) == 0:
@@ -133,16 +136,23 @@ def channel_addowner(token, channel_id, u_id):
     if u_id in channel["owner_members_id"]:
         raise InputError("User is already an owner of the channel")
 
-    if auth_get_current_user_id_from_token(token) not in channel["owner_members_id"]:
-        raise AccessError("User is not owner")
+    # make sure the user adding an owner is allowed to
+    adder_id = auth_get_current_user_id_from_token(token)
+    if (
+        adder_id not in channel["owner_members_id"]
+        and database["users"][adder_id]["is_admin"] is False
+    ):
+        raise AccessError("User is neither an owner of the channel, nor an admin")
 
-    if u_id in channel["all_members_id"]:
-        channel["owner_members_id"].append(u_id)
-    else:
-        # If a user outside the channel being added owner, he will
-        # first be invited to the channel, then become an owner.
-        channel_invite(token, channel_id, u_id)
-        channel["owner_members_id"].append(u_id)
+    # make sure target user is valid
+    if u_id not in database["users"]:
+        raise InputError(f"{u_id} is an invalid user id")
+
+    # the user wasn't nescerally a member of the channel before becoming an owner
+    if u_id not in channel["all_members_id"]:
+        channel["all_members_id"].append(u_id)
+
+    channel["owner_members_id"].append(u_id)
 
 
 def channel_removeowner(token, channel_id, u_id):
@@ -158,24 +168,27 @@ def channel_removeowner(token, channel_id, u_id):
     if u_id not in channel["owner_members_id"]:
         raise InputError("User is not a owner, can not be removed")
 
-    if user_who_remove_others_uid not in channel["owner_members_id"]:
+    if (
+        user_who_remove_others_uid not in channel["owner_members_id"]
+        and database["users"][user_who_remove_others_uid]["is_admin"] is False
+    ):
         raise AccessError("User is not authorized")
 
-    # If a owner are the only member of a channel, when this owner
-    # remove owner himself, he will automatically leave the channel
     if len(channel["all_members_id"]) == 1:
-        channel_leave(token, channel_id)
+        # If a owner are the only member of a channel, when this owner
+        # remove owner himself, he will automatically leave the channel
+
+        # we can't use channel_leave, because we want to remove u_id, not u_id
+        # of token (token might be an admin's token)
+        channel["all_members_id"].remove(u_id)
+        channel["owner_members_id"].remove(u_id)
     else:
         # If the owner is the only owner in the channel
         if len(channel["owner_members_id"]) == 1:
 
             # Generate a member of channel to become the owner
             owner_iterator = iter(
-                [
-                    user
-                    for user in channel["all_members_id"]
-                    if user != user_who_remove_others_uid
-                ]
+                [user for user in channel["all_members_id"] if user != u_id]
             )
             next_owner_uid = next(owner_iterator, None)
 

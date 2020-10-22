@@ -11,7 +11,8 @@ database = {
         #     "owner_members_id": [1, 2, 3]
         #     # the user id of all the members (including the owners)
         #     "all_members_id": [1, 2, 3, 5, 4, 9]
-        #     "is_public": True
+        #     "is_public": True,
+        #     "is_admin": False, # is a global "flockr owner"
         #     "messages": {
         #           1: {
         #               "message_id": 1,
@@ -32,3 +33,7 @@ def clear_database():
     database["users"].clear()
     database["channels"].clear()
     database["active_tokens"].clear()
+
+    database["message_id_head"] = 1
+    database["users_id_head"] = 1
+    database["channel_id_head"] = 1

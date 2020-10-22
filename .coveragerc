@@ -10,4 +10,3 @@ omit =
     src/*_test.py
     src/tests/test_helpers.py
     src/server.py
-    src/other.py
