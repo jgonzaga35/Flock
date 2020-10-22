@@ -118,7 +118,10 @@ def channel_join(token, channel_id):
     current_user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
 
-    if not channel["is_public"]:
+    if (
+        not channel["is_public"]
+        and database["users"][current_user_id]["is_admin"] is False
+    ):
         raise AccessError("Channel is not public")
 
     if len(channel["all_members_id"]) == 0:
