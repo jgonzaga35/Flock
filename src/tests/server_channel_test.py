@@ -118,6 +118,13 @@ def test_add_owner_by_non_owner(url):
         json={"token": member["token"], "channel_id": public_channel["channel_id"]},
     )
 
+    # Test fails if channel/join is not implemented as well
+    response = requests.get(url + "channel/details", 
+        params={"token": owner["token"], "channel_id": channel["channel_id"]},
+    )
+    members = response.json()["owner_members"]
+    assert user["u_id"] in [x["u_id"] for x in members]
+
     response = requests.post(
         url + "channel/addowner",
         json={"token": member["token"], "channel_id": public_channel["channel_id"], "u_id": user["u_id"]},
@@ -162,8 +169,10 @@ def test_remove_owner_successful(url):
     members = response.json()["owner_members"]
     assert owner["u_id"] not in [x["u_id"] for x in members]
 
+
 # Member without owner privileges tries to remove an owner.
 def test_remove_owner_invalid_token(url):
+    
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
 
@@ -176,7 +185,7 @@ def test_remove_owner_invalid_token(url):
         url + "channel/join",
         json={"token": user["token"], "channel_id": channel["channel_id"]},
     )
-
+    
     # Test fails if channel/join is not implemented as well
     response = requests.get(url + "channel/details", 
         params={"token": owner["token"], "channel_id": channel["channel_id"]},
@@ -193,7 +202,8 @@ def test_remove_owner_invalid_token(url):
 
 
 # Nonexisting member tries to remove an owner.
-def test_remove_owner_invalid_token(url):
+def test_remove_owner_nonexisting_member(url):
+ 
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
 
