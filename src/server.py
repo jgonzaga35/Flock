@@ -12,8 +12,9 @@ from user import (
     user_profile_setemail,
     user_profile_sethandle,
 )
+
 from channels import channels_create, channels_create, channels_list
-from channel import channel_details, channel_messages, channel_join
+from channel import channel_details, channel_messages, channel_join, channel_leave
 from message import message_send
 from other import clear, users_all
 
@@ -153,6 +154,12 @@ def messages_channel():
     start = int(request.args.get("start"))
 
     return jsonify(channel_messages(token, channel_id, start))
+
+
+@APP.route("/channel/leave", methods=["POST"])
+def channel_leave_handler():
+    data = request.get_json()
+    return jsonify(channel_leave(data["token"], data["channel_id"]))
 
 
 if __name__ == "__main__":
