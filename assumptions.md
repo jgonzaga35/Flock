@@ -73,5 +73,10 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * You do not have to be an admin or owner of the channel to edit your message.
     * Spec states an AccessError should be raised if this is not true: "The authorised user is an owner of this channel or the flockr". Therefore, the owner of the flockr or the owner of the channel can edit any message.
 
+**message**
+
+* message_edit
+    * Owner of the flock and owner of the channel can edit any message
+    * A message that is deleted (empty string) cannot be edited
 * user_profile
     * Any valid user can access other users' profile

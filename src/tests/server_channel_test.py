@@ -250,7 +250,7 @@ def test_remove_owner_invalid_token(url):
 def test_remove_owner_nonexisting_member(url):
 
     requests.delete(url + "clear")
-    owner= http_register_n_users(url, 1)
+    owner = http_register_n_users(url, 1)
 
     channel = requests.post(
         url + "channels/create",
