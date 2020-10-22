@@ -163,6 +163,7 @@ def channel_removeowner(token, channel_id, u_id):
 
     # If the owner is the only owner in the channel
     if len(channel["owner_members_id"]) == 1:
+
         # Generate a user to become the owner
         next_owner_uid = next(
             (
@@ -175,7 +176,12 @@ def channel_removeowner(token, channel_id, u_id):
         if next_owner_uid != None:
             channel["owner_members_id"].append(next_owner_uid)
 
-    channel["owner_members_id"].remove(u_id)
+    # If a owner are the only member of a channel, when this owner
+    # remove owner himself, he will automatically leave the channel
+    if len(channel["all_members_id"]) == 1:
+        channel_leave(token, channel_id)
+    else:
+        channel["owner_members_id"].remove(u_id)
 
 
 # helper used by channel_create

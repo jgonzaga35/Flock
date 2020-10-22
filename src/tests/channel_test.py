@@ -571,7 +571,7 @@ def test_channel_removeowner_multiple_channels():
 
 # There are two situations when we remove the owner and there is only one owner:
 # 1: The channel has other member so we pick a random user to be the owner
-# 2: The channel only contain the owner itself so the channel will left with no owner
+# 2: The channel only contain the owner himself and we let the owner leave that channel
 # The two tests below will test these two situation repectively
 def test_remove_the_only_owner():
     clear_database()
@@ -591,13 +591,10 @@ def test_remove_owner_with_the_only_member():
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_removeowner(user_A["token"], public_channel["channel_id"], user_A["u_id"])
 
-    # We expect there is no owner in the channel after the owner remove_owner. The user
-    # will still be in the channel and this channel won't have owner after these operations
-    details = channel_details(user_A["token"], public_channel["channel_id"])
-    expected_owner_ids = []
-    expected_member_ids = [user_A["u_id"]]
-    assert_contains_users_id(details["owner_members"], expected_owner_ids)
-    assert_contains_users_id(details["all_members"], expected_member_ids)
+    # if a owner is the only member of a channel, we expect him leaving the channel after
+    # remove owner, so he won't have authority to access the channel
+    with pytest.raises(AccessError):
+        details = channel_details(user_A["token"], public_channel["channel_id"])
 
 
 def test_channel_invite_from_unauthorised_user():
