@@ -53,13 +53,42 @@ def test_leave_channel_successfully(url):
     assert_contains_users_id(channel_details["all_members"], expected_members_id)
 
 
-# Need to test that user can no longer see the messages of the channel they have left
+# A user tries to leave a private channel that they are not part of
+def test_inexist_user_leave_channel_private(url):
+    requests.delete(url + "clear")
+    owner, member = http_register_n_users(url, 2)
+    private_channel = requests.post(
+        url + "channels/create",
+        json={"token": owner["token"], "name": "channel_01", "is_public": False},
+    ).json()
 
-# test that owner is no longer part of owner list of channel if they leave
+    response = requests.post(
+        url + "channel/leave",
+        json={"token": member["token"], "channel_id": channel["channel_id"]},
+    )
+
+    assert response.status_code == 403
+
+
+# A user tries to leave a public channel that they are not part of
+def test_inexist_user_leave_channel_public(url):
+    requests.delete(url + "clear")
+    owner, member = http_register_n_users(url, 2)
+    channel = requests.post(
+        url + "channels/create",
+        json={"token": owner["token"], "name": "channel_01", "is_public": True},
+    ).json()
+
+    response = requests.post(
+        url + "channel/leave",
+        json={"token": member["token"], "channel_id": channel["channel_id"]},
+    )
+
+    assert response.status_code == 403
 
 
 # User tries to leave channel with invalid channel id
-def test_leave_invalid_channel_id(url):
+def test_leave_channel_id_invalid(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
     channel = requests.post(
@@ -74,38 +103,4 @@ def test_leave_invalid_channel_id(url):
     )
 
     assert response.status_code == 400
-
-
-# A user tries to leave a private channel that they are not part of
-def test_inexist_user_leave_channel_private(url):
-    requests.delete(url + "clear")
-    user1, user2 = http_register_n_users(url, 2)
-    channel = requests.post(
-        url + "channels/create",
-        json={"token": user1["token"], "name": "channel_01", "is_public": False},
-    ).json()
-
-    response = requests.post(
-        url + "channel/leave",
-        json={"token": user2["token"], "channel_id": channel["channel_id"]},
-    )
-
-    assert response.status_code == 403
-
-
-# A user tries to leave a public channel that they are not part of
-def test_inexist_user_leave_channel_public(url):
-    requests.delete(url + "clear")
-    user1, user2 = http_register_n_users(url, 2)
-    channel = requests.post(
-        url + "channels/create",
-        json={"token": user1["token"], "name": "channel_01", "is_public": True},
-    ).json()
-
-    response = requests.post(
-        url + "channel/leave",
-        json={"token": user2["token"], "channel_id": channel["channel_id"]},
-    )
-
-    assert response.status_code == 403
     
