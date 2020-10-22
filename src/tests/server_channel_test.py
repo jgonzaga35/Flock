@@ -41,8 +41,6 @@ def test_leave_channel_successfully(url):
     response = requests.get(url + "channel/details", params={"token": owner["token"], "channel_id": channel["channel_id"]})
     assert response.status_code == 403
 
-
-
 # A user tries to leave a private channel that they are not part of
 def test_inexist_user_leave_channel_private(url):
     requests.delete(url + "clear")
