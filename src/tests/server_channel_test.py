@@ -138,11 +138,7 @@ def test_add_owner_by_non_owner(url):
 ###########################################################################
 
 
-# Successfully removing owner and passing ownership to user
-# Owner creates a channel
-# User joins channel
-# Owner removes himself from channel
-# User should be owner now.
+# Successfully removing owner and passing ownership to other user in channel
 def test_remove_owner_successful(url):
     requests.delete(url + "clear")
     owner, user = http_register_n_users(url, 2)
