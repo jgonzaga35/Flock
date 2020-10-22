@@ -14,13 +14,13 @@ from user import (
 )
 
 from channels import channels_create, channels_create, channels_list
-from channel import channel_details, channel_messages, channel_join, channel_leave
 from message import message_send, message_remove, message_edit
 from channel import (
     channel_details,
     channel_messages,
     channel_join,
     channel_leave,
+    channel_invite,
     channel_removeowner,
     channel_addowner,
 )
@@ -141,6 +141,17 @@ def channels_create_handler():
     is_public = data["is_public"]
 
     return jsonify(channels_create(token, name, is_public))
+
+
+@APP.route("/channel/invite", methods=["POST"])
+def channel_invite_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    channel_id = data["channel_id"]
+    user_id = data["u_id"]
+
+    return jsonify(channel_invite(token, channel_id, user_id))
 
 
 @APP.route("/channel/details", methods=["GET"])
