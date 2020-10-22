@@ -30,7 +30,7 @@ def user_profile(token, u_id):
 
     # We don't directly return user from database since password is included
     return {
-        'user': {
+        "user": {
             "u_id": user["id"],
             "email": user["email"],
             "name_first": user["first_name"],
@@ -83,19 +83,6 @@ def user_profile_sethandle(token, handle_str):
 
     user = database["users"][u_id]
     user["handle"] = handle_str
-
-
-def users_all(token):
-    users = []
-
-    # authenticate user
-    auth_get_current_user_id_from_token(token)
-
-    for user in database["users"].values():
-        user_info = get_user_details(user)
-        users.append(user_info)
-
-    return users
 
 
 # --------------------helper function--------------------

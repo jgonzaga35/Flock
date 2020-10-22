@@ -1,4 +1,6 @@
-from database import clear_database
+from database import database, clear_database
+from auth import auth_get_current_user_id_from_token
+from user import get_user_details
 
 
 def clear():
@@ -6,17 +8,16 @@ def clear():
 
 
 def users_all(token):
-    return {
-        "users": [
-            {
-                "u_id": 1,
-                "email": "cs1531@cse.unsw.edu.au",
-                "name_first": "Hayden",
-                "name_last": "Jacobs",
-                "handle_str": "hjacobs",
-            },
-        ],
-    }
+    users = []
+
+    # authenticate user
+    auth_get_current_user_id_from_token(token)
+
+    for user in database["users"].values():
+        user_info = get_user_details(user)
+        users.append(user_info)
+
+    return {"users": users}
 
 
 def admin_userpermission_change(token, u_id, permission_id):
