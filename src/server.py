@@ -170,12 +170,6 @@ def channel_leave_handler():
 
 
 @APP.route("/channel/addowner", methods=["POST"])
-def channel_details_handler():
-    data = request.get_json()
-    return jsonify(channel_leave(data["token"], data["channel_id"]))
-
-
-@APP.route("/channel/addowner", methods=["POST"])
 def channel_addowner_handler():
     data = request.get_json()
 
