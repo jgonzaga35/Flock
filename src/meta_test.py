@@ -21,4 +21,6 @@ def test_black():
     # wait for the process to finish
     p.wait()
     # return code of zero means success
-    assert p.returncode == 0, "your python files aren't formated properly"
+    assert (
+        p.returncode == 0
+    ), "your python files aren't formated properly. \n\n\n\n Run $ black . \n\n\n"
