@@ -2,11 +2,11 @@ import pytest
 from test_helpers import register_n_users, assert_contains_users_id
 from channel import channel_join, channel_details
 from channels import channels_create
-from database import clear_database
+from other import clear
 
 
 def test_channel_join_admin_on_private_channel():
-    clear_database()
+    clear()
     admin, usera = register_n_users(2, include_admin=True)
 
     channel_id = channels_create(usera["token"], "channel", is_public=False)[

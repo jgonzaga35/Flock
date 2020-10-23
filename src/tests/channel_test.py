@@ -11,7 +11,7 @@ from channel import (
 from message import message_send
 from auth import auth_get_user_data_from_id
 from channels import channels_create, channels_list
-from database import clear_database
+from other import clear
 from error import InputError, AccessError
 from word_list import word_list
 import time
@@ -23,7 +23,7 @@ from test_helpers import register_n_users, assert_contains_users_id
 #                       Tests for channel_messages
 #################################################################################
 def test_messages_no_messages():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel = channels_create(user["token"], "channel", is_public=True)
     messages_in_channel = channel_messages(
@@ -36,7 +36,7 @@ def test_messages_no_messages():
 
 
 def test_messages_invalid_channel_ID():
-    clear_database()
+    clear()
     user = register_n_users(1)
     invalid_channel_id = -1
     with pytest.raises(InputError):
@@ -44,7 +44,7 @@ def test_messages_invalid_channel_ID():
 
 
 def test_channel_messages_invalid_start():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     channel_id = channels_create(user["token"], "channel", is_public=True)["channel_id"]
@@ -57,7 +57,7 @@ def test_channel_messages_invalid_start():
 
 
 def test_messages_user_not_member():
-    clear_database()
+    clear()
 
     user_01, user_02 = register_n_users(2)
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
@@ -68,14 +68,14 @@ def test_messages_user_not_member():
 
 
 def test_messages_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_messages(-1, 0, 0)
 
 
 # ----------------------------- Add these tests when message_send is implemented ------------------
 def test_messages_negative_start_index():
-    clear_database()
+    clear()
     # Add a user and log them in
     user = register_n_users(1)
 
@@ -87,7 +87,7 @@ def test_messages_negative_start_index():
 
 
 def test_messages_simple():
-    clear_database()
+    clear()
     # Add a user and log them in
     user = register_n_users(1)
 
@@ -99,7 +99,7 @@ def test_messages_simple():
 
 
 def test_messages_start_overflow():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel = channels_create(user["token"], "channel_01", is_public=True)
     channel_join(user["token"], channel["channel_id"])
@@ -109,7 +109,7 @@ def test_messages_start_overflow():
 
 
 def test_messages_start_underflow():
-    clear_database()
+    clear()
     user = register_n_users(1)
 
     channel = channels_create(user["token"], "channel_01", is_public=True)
@@ -131,7 +131,7 @@ def test_channel_message_a_lot_of_message():
     print("seed", seed)
     random.seed(seed)
 
-    clear_database()
+    clear()
     usera, userb, userc = register_n_users(3)
     channel_id = channels_create(usera["token"], "channel", is_public=True)[
         "channel_id"
@@ -189,13 +189,13 @@ def populate_channel_hundred_messages(token, channel_id):
 
 
 def test_join_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_join(-1, 0)
 
 
 def test_channel_join_multiple_channels():
-    clear_database()
+    clear()
     usera, userb, userc = register_n_users(3)
     channel_id_a = channels_create(usera["token"], "channela", is_public=True)[
         "channel_id"
@@ -230,7 +230,7 @@ def test_channel_join_multiple_channels():
 
 # Join the channel successfully
 def test_join_channel_successfully():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "Channel_A", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -242,7 +242,7 @@ def test_join_channel_successfully():
 
 # user try to join a channel with invalid channel id
 def test_join_channel_with_invalid_channel_id():
-    clear_database()
+    clear()
     user = register_n_users(1)
     invalid_channel_id = 233
 
@@ -252,7 +252,7 @@ def test_join_channel_with_invalid_channel_id():
 
 # join a user without authority to a channel
 def test_join_channel_without_authority():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     channel = channels_create(
         user_A["token"], "Private_channel", False
@@ -266,7 +266,7 @@ def test_join_empty_channel():
     """
     If a user join a channel with no member, he should automatically becomes the owner
     """
-    clear_database()
+    clear()
 
     # user_a create a channel and leave from there, user_b join the
     # channel with no member.
@@ -284,14 +284,14 @@ def test_join_empty_channel():
 
 
 def test_leave_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_leave(-1, 0)
 
 
 # user successfully leave the channel
 def test_leave_channel_successfully():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(
         user_A["token"], "public_channel", True
@@ -312,7 +312,7 @@ def test_leave_channel_successfully():
 
 # If a user tries to leave a private channel that they are not part of
 def test_inexist_user_leave_channel_private():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     private_channel = channels_create(
         user_A["token"], "private_channel", False
@@ -324,7 +324,7 @@ def test_inexist_user_leave_channel_private():
 
 # If a user tries to leave a public channel that they are not part of
 def test_inexist_user_leave_channel_public():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(
         user_A["token"], "public_channel", True
@@ -335,7 +335,7 @@ def test_inexist_user_leave_channel_public():
 
 
 def test_leave_channel_id_invalid():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "channel_A", True)["channel_id"]
     invalid_channel_id = channel_id + 1
@@ -345,13 +345,13 @@ def test_leave_channel_id_invalid():
 
 
 def test_channel_details_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_details(-1, 0)
 
 
 def test_channel_details_basic():
-    clear_database()
+    clear()
 
     usera = register_n_users(1)
 
@@ -374,7 +374,7 @@ def test_channel_details_basic():
 
 
 def test_channel_details_private():
-    clear_database()
+    clear()
 
     usera, userb = register_n_users(2)
 
@@ -399,14 +399,14 @@ def test_channel_details_private():
 
 
 def test_channel_details_invalid_id():
-    clear_database()
+    clear()
     usera, _ = register_n_users(2)
     with pytest.raises(InputError):
         channel_details(usera["token"], 1)
 
 
 def test_add_owner_invalid_id():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channel_id = channels_create(usera["token"], "channel_name", is_public=True)[
         "channel_id"
@@ -420,7 +420,7 @@ def test_add_owner_invalid_id():
 # We assume when a user outside a channel being added as owner of this channel,
 # he automatically become an member of this channel
 def test_add_non_members_as_owner():
-    clear_database()
+    clear()
     user_a, user_b = register_n_users(2)
     public_channel = channels_create(user_a["token"], "public_channel", True)
 
@@ -436,7 +436,7 @@ def test_add_non_members_as_owner():
 
 
 def test_add_owner_successfully():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -449,7 +449,7 @@ def test_add_owner_successfully():
 
 
 def test_add_owner_with_invalid_channel_id():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -459,7 +459,7 @@ def test_add_owner_with_invalid_channel_id():
 
 
 def test_add_owner_repeatedly():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -469,7 +469,7 @@ def test_add_owner_repeatedly():
 
 
 def test_add_invalid_user_to_owner():
-    clear_database()
+    clear()
     user_A = register_n_users(1)
     private_channel = channels_create(user_A["token"], "private_channel", False)
     invalid_uid = 233
@@ -480,7 +480,7 @@ def test_add_invalid_user_to_owner():
 # We assume all of the user are in a public channel
 # One of them are the owner whereas other two are common user in this channel
 def test_add_owner_by_non_owner():
-    clear_database()
+    clear()
     user_A, user_B, user_C = register_n_users(3)
     public_channel = channels_create(
         user_A["token"], "public_channel", True
@@ -497,13 +497,13 @@ def test_add_owner_by_non_owner():
 
 
 def test_remove_owner_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_removeowner(-1, 0, 0)
 
 
 def test_remove_user_successfully():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -522,7 +522,7 @@ def test_remove_user_successfully():
 
 
 def test_remove_owner_with_invalid_channel_id():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -534,7 +534,7 @@ def test_remove_owner_with_invalid_channel_id():
 
 
 def test_remove_owner_to_non_owner():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -546,7 +546,7 @@ def test_remove_owner_to_non_owner():
 
 
 def test_remove_owner_by_non_owner():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -558,7 +558,7 @@ def test_remove_owner_by_non_owner():
 
 
 def test_channel_removeowner_multiple_channels():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channela = channels_create(usera["token"], "a", is_public=True)["channel_id"]
     channelb = channels_create(userb["token"], "b", is_public=True)["channel_id"]
@@ -576,7 +576,7 @@ def test_channel_removeowner_multiple_channels():
 # 2: The channel only contain the owner himself and we let the owner leave that channel
 # The two tests below will test these two situation repectively
 def test_remove_the_only_owner():
-    clear_database()
+    clear()
     user_A, user_B = register_n_users(2)
     public_channel = channels_create(user_A["token"], "public_channel", True)
     channel_join(user_B["token"], public_channel["channel_id"])
@@ -587,7 +587,7 @@ def test_remove_the_only_owner():
 
 
 def test_remove_owner_with_the_only_member():
-    clear_database()
+    clear()
     # register a owner and remove its owner
     user_A = register_n_users(1)
     public_channel = channels_create(user_A["token"], "public_channel", True)
@@ -600,7 +600,7 @@ def test_remove_owner_with_the_only_member():
 
 
 def test_channel_invite_from_unauthorised_user():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channel_id = channels_create(userb["token"], "userb_channel", False)["channel_id"]
 
@@ -609,7 +609,7 @@ def test_channel_invite_from_unauthorised_user():
 
 
 def test_channel_invite_invalid_id():
-    clear_database()
+    clear()
     user = register_n_users(1)
     channel_id = channels_create(user["token"], "ch", is_public=False)["channel_id"]
 
@@ -618,13 +618,13 @@ def test_channel_invite_invalid_id():
 
 
 def test_channel_invite_invalid_token():
-    clear_database()
+    clear()
     with pytest.raises(AccessError):
         channel_invite(-1, 0, 0)
 
 
 def test_channel_invite_simple():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channel_id = channels_create(userb["token"], "userb_channel", False)["channel_id"]
 
@@ -645,7 +645,7 @@ def test_channel_invite_simple():
 
 
 def test_channel_invite_member_already_in_channel():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channel_id = channels_create(userb["token"], "userb_channel", True)["channel_id"]
 
@@ -667,7 +667,7 @@ def test_channel_invite_member_already_in_channel():
 
 
 def test_channel_invite_multiple_channels():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
     channela = channels_create(usera["token"], "usera_ch", is_public=False)
     channelb = channels_create(userb["token"], "userb_ch", is_public=False)
@@ -685,7 +685,7 @@ def test_channel_invite_multiple_channels():
 
 
 def test_channel_invite_invalid_channel_id():
-    clear_database()
+    clear()
     usera, userb = register_n_users(2)
 
     with pytest.raises(InputError):

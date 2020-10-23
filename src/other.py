@@ -1,10 +1,17 @@
-from database import database, clear_database
+from database import database
 from auth import auth_get_current_user_id_from_token
 from user import get_user_details
 from error import AccessError, InputError
 
 
-clear = clear_database
+def clear():
+    database["users"].clear()
+    database["channels"].clear()
+    database["active_tokens"].clear()
+
+    database["message_id_head"] = 1
+    database["users_id_head"] = 1
+    database["channel_id_head"] = 1
 
 
 def users_all(token):
