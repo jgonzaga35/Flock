@@ -135,4 +135,3 @@ def test_remove_owner_invalid_channel_id(url):
     )
 
     assert response.status_code == 400
-    
