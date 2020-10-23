@@ -76,7 +76,7 @@ def auth_register(email, password, name_first, name_last):
 
     # token shouldn't include the encoding of password which can be easily brutally decode
     new_user_without_password = dict(new_user)  # Construct a new copy
-    del new_user_without_password['password']
+    del new_user_without_password["password"]
     token = jwt_encode(new_user_without_password)
 
     database["users"][u_id] = new_user
