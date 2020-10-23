@@ -389,5 +389,3 @@ def test_search_three_channels_five_users(url):
         assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
         assert results["messages"][i]["message_id"] == message["id"]
-
-
