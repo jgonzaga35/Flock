@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import requests
 from test_helpers import url, http_register_n_users
 
@@ -116,15 +115,21 @@ def test_channel_invite_successful(url):
 
     response = requests.post(
         url + "channel/invite",
-        json={"token": owner["token"], "channel_id": private_channel["channel_id"], "u_id": non_member["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": private_channel["channel_id"],
+            "u_id": non_member["u_id"],
+        },
     )
 
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": owner["token"], "channel_id": private_channel["channel_id"]},
     )
 
     members = response.json()["all_members"]
     assert non_member["u_id"] in [x["u_id"] for x in members]
+
 
 # Non-member of a channel invites another non-member into that channel
 def test_channel_invite_from_unauthorised_user(url):
@@ -139,10 +144,15 @@ def test_channel_invite_from_unauthorised_user(url):
     # User 1 (non-member) invites User2 (non-member) to Owner's channel
     response = requests.post(
         url + "channel/invite",
-        json={"token": user1["token"], "channel_id": private_channel["channel_id"], "u_id": user2["u_id"]},
+        json={
+            "token": user1["token"],
+            "channel_id": private_channel["channel_id"],
+            "u_id": user2["u_id"],
+        },
     )
 
     assert response.status_code == 403
+
 
 # Inviting a non-existent user to a channel
 def test_channel_invite_invalid_user_id(url):
@@ -157,10 +167,15 @@ def test_channel_invite_invalid_user_id(url):
     invalid_user_id = -1
     response = requests.post(
         url + "channel/invite",
-        json={"token": owner["token"], "channel_id": private_channel["channel_id"], "u_id": invalid_user_id},
-    ) 
+        json={
+            "token": owner["token"],
+            "channel_id": private_channel["channel_id"],
+            "u_id": invalid_user_id,
+        },
+    )
 
     assert response.status_code == 400
+
 
 # Testing for a token that does not exist in the database
 def test_channel_invite_invalid_token(url):
@@ -175,11 +190,15 @@ def test_channel_invite_invalid_token(url):
     invalid_token = "arandomtoken"
     response = requests.post(
         url + "channel/invite",
-        json={"token": invalid_token, "channel_id": private_channel["channel_id"], "u_id": user["u_id"]},
-    ) 
+        json={
+            "token": invalid_token,
+            "channel_id": private_channel["channel_id"],
+            "u_id": user["u_id"],
+        },
+    )
 
-    # Error Code should be 404 as no token found in database
-    assert response.status_code == 404
+    assert response.status_code == 403
+
 
 # Testing for a channel that does not exist in the database
 def test_channel_invite_invalid_channel_id(url):
@@ -194,10 +213,15 @@ def test_channel_invite_invalid_channel_id(url):
     invalid_channel_id = -1
     response = requests.post(
         url + "channel/invite",
-        json={"token": owner["token"], "channel_id": invalid_channel_id, "u_id": user["u_id"]},
-    ) 
+        json={
+            "token": owner["token"],
+            "channel_id": invalid_channel_id,
+            "u_id": user["u_id"],
+        },
+    )
 
     assert response.status_code == 400
+
 
 # Testing to ensure inviting a member of a channel to the same channel
 # again does not increase number of members of channel
@@ -212,11 +236,16 @@ def test_channel_invite_repeated(url):
 
     requests.post(
         url + "channel/invite",
-        json={"token": owner["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
     # Get a list of all members in owner's channel
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": user["token"], "channel_id": channel["channel_id"]},
     )
     members = response.json()["all_members"]
@@ -225,23 +254,20 @@ def test_channel_invite_repeated(url):
 
     requests.post(
         url + "channel/invite",
-        json={"token": owner["token"], "channel_id": channel["channel_id"], "u_id": user["u_id"]},
+        json={
+            "token": owner["token"],
+            "channel_id": channel["channel_id"],
+            "u_id": user["u_id"],
+        },
     )
 
     # Ensure length is same as previous list
-    response = requests.get(url + "channel/details", 
+    response = requests.get(
+        url + "channel/details",
         params={"token": user["token"], "channel_id": channel["channel_id"]},
     )
     members = response.json()["all_members"]
-<<<<<<< HEAD
-    assert length(members) == expected_num_of_members
-     
-=======
     assert len(members) == expected_num_of_members
-<<<<<<< HEAD
-     
->>>>>>> fixed typo in server.py channel_invite, fixed naming errors/key errors that caused failed tests in server_channel_test.py
-=======
 
 
 ###########################################################################
@@ -698,6 +724,3 @@ def test_leave_channel_id_invalid(url):
     )
 
     assert response.status_code == 400
->>>>>>> added tests for channel/join and channel/leave that were made before but somehow disappeared at somepoint
-=======
->>>>>>> 1744f1f5014826f3fae2ab52817c43dec679d1f6

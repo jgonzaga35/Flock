@@ -19,6 +19,7 @@ from channel import (
     channel_details,
     channel_messages,
     channel_join,
+    channel_invite,
     channel_leave,
     channel_invite,
     channel_removeowner,
