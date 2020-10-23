@@ -4,7 +4,7 @@ from error import InputError, AccessError
 import jwt
 from hashlib import sha256
 
-TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"
+TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"  # The key to the JWT encoding
 
 
 def auth_login(email, password):
@@ -54,11 +54,12 @@ def auth_logout(token):
 def auth_register(email, password, name_first, name_last):
     input_error_checking(email, password, name_first, name_last)
 
+    # Check if email is already taken
     for user in database["users"].values():
         if user["email"] == email:
             raise InputError("Email has been used.")
 
-    # finds the highest user id
+    # The next u_id to be used is stored in the database
     u_id = database["users_id_head"]
     new_user = {
         "email": email,
@@ -76,9 +77,9 @@ def auth_register(email, password, name_first, name_last):
 
     token = jwt_encode(new_user)
 
-    database["users"][u_id] = new_user
-    database["users_id_head"] += 1
-    database["active_tokens"].append(token)
+    database["users"][u_id] = new_user  # Append all info under the user's u_id key
+    database["users_id_head"] += 1  # Increment so that u_ids are unique
+    database["active_tokens"].append(token)  # Log user in automatically
 
     return {
         "u_id": u_id,
@@ -86,7 +87,7 @@ def auth_register(email, password, name_first, name_last):
     }
 
 
-# helper
+# Helper to get u_id from token
 def auth_get_current_user_id_from_token(token):
     if token not in database["active_tokens"]:
         raise AccessError("token is invalid")
@@ -94,7 +95,7 @@ def auth_get_current_user_id_from_token(token):
     return jwt_decode(token)["id"]
 
 
-# helper
+# Helper to get all user data from their id
 def auth_get_user_data_from_id(user_id):
     """Raises KeyError is the a user with id id doesn't exists. It should
     never happen, because only valid id should be generated from tokens"""
@@ -130,6 +131,7 @@ def jwt_encode(user_info):
 
 # Helper function to decode jwt
 def jwt_decode(token):
+    # If decode fails, we raise an AccessError
     try:
         return jwt.decode(token.encode("utf-8"), TOKEN_SECRET_KEY, algorithms=["HS256"])
     except jwt.exceptions.InvalidTokenError:
@@ -142,9 +144,11 @@ def generate_handle(first_name, last_name, u_id):
     assert len(u_id) < 20
 
     handle = first_name.lower() + last_name.lower()
+    # If the concatenation of first and last name exceeds 20, we only keep the first 20
     if len(handle) > 20:
         handle = handle[:20]
 
+    # If the handles is taken, we add the unique u_id to the end
     if is_handle_already_used(handle):
         if len(handle) + len(u_id) > 20:
             handle = handle[: (20 - len(u_id))] + u_id
@@ -155,6 +159,7 @@ def generate_handle(first_name, last_name, u_id):
 
 # Helper function to check whether the handle exist already
 def is_handle_already_used(handle):
+    # Loop through all the handles
     for user in database["users"].values():
         if user["handle"] == handle:
             return True
