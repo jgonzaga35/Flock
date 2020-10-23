@@ -1,6 +1,10 @@
 import requests
 from test_helpers import url, http_register_n_users
 
+###########################################################################
+#                       Tests for channel/messages                        #
+###########################################################################
+
 
 def test_messages_no_messages(url):
     requests.delete(url + "clear")
