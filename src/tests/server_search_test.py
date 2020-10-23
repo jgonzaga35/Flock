@@ -134,7 +134,7 @@ def test_search_three_channels_five_users(url):
         json={
             "token": userd["token"],
             "name": "channel of d and e",
-            "is_public": True,
+            "is_public": False,
         },
     ).json()["channel_id"]
 
@@ -322,7 +322,7 @@ def test_search_three_channels_five_users(url):
         ).json()
     )
 
-    results == requests.get(
+    results = requests.get(
         url + "search", params={"token": userd["token"], "query_str": "#match"}
     ).json()
     for i, message in enumerate(
@@ -359,7 +359,7 @@ def test_search_three_channels_five_users(url):
             },
         ]
     ):
-        #assert results["messages"][i]["u_id"]) == message["author"]
+        assert results["messages"][i]["u_id"] == message["author"]
         assert results["messages"][i]["message"] == message["content"]
         assert results["messages"][i]["message_id"] == message["id"]
 
@@ -391,5 +391,3 @@ def test_search_three_channels_five_users(url):
         assert results["messages"][i]["message_id"] == message["id"]
 
 
-if __name__ == "__main__":
-    test_search_three_channels_five_users(url)
