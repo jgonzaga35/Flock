@@ -96,6 +96,15 @@ def message_edit(token, message_id, message):
     if message_exists == False:
         raise AccessError
 
+    if (
+        database["users"][user_id]["is_admin"] is False
+        and user_id
+        not in database["channels"][channel_id_for_message]["all_members_id"]
+    ):
+        raise AccessError(
+            "user must be part of the channel to edit his/her message (see assumptions.md)"
+        )
+
     # This is done after error checking as input error not allowed in this function
     if message == "":
         message_remove(token, message_id)
