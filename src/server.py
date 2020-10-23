@@ -13,7 +13,8 @@ from user import (
     user_profile_sethandle,
 )
 
-from channels import channels_create, channels_create, channels_list
+from channels import channels_create, channels_create, channels_list, channels_listall
+from channel import channel_details, channel_messages, channel_join, channel_leave
 from message import message_send, message_remove, message_edit
 from channel import (
     channel_details,
@@ -176,6 +177,12 @@ def channel_details_handler():
     token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
     return jsonify(channel_details(token, channel_id))
+
+
+@APP.route("/channels/listall", methods=["GET"])
+def channel_listall():
+    token = request.args.get("token")
+    return jsonify(channels_listall(token))
 
 
 @APP.route("/channel/join", methods=["POST"])
