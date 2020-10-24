@@ -428,7 +428,7 @@ def test_edit_empty_string():
     ]
 
 
-# Edited message exceeds 1000 characters 
+# Edited message exceeds 1000 characters
 def test_edit_exceeds_1000_char():
     clear()
     user = register_n_users(1)
