@@ -74,7 +74,12 @@ def auth_register(email, password, name_first, name_last):
     if len(database["users"]) == 0:
         new_user["is_admin"] = True
 
-    token = jwt_encode(new_user)
+    # token shouldn't include the encoding of password which can be easily brutally decode
+    new_user_without_password = dict(new_user)  # Construct a new copy
+    assert (
+        new_user_without_password.pop("password", None) != None
+    )  # Assert pop is performed succesfully
+    token = jwt_encode(new_user_without_password)
 
     database["users"][u_id] = new_user
     database["users_id_head"] += 1
@@ -155,6 +160,7 @@ def generate_handle(first_name, last_name, u_id):
 
 # Helper function to check whether the handle exist already
 def is_handle_already_used(handle):
+    # Loop throught all handles
     for user in database["users"].values():
         if user["handle"] == handle:
             return True
