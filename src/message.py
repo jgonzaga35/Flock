@@ -52,6 +52,15 @@ def message_remove(token, message_id):
     if message_exists == False:
         raise InputError
 
+    if (
+        database["users"][user_id]["is_admin"] is False
+        and user_id
+        not in database["channels"][channel_id_for_message]["all_members_id"]
+    ):
+        raise AccessError(
+            "user must be part of the channel to remove his/her message (see assumptions.md)"
+        )
+
     # Remove message if user is authorised
     for msg in database["channels"][channel_id_for_message]["messages"].values():
         if msg["message_id"] == message_id and (
@@ -86,6 +95,15 @@ def message_edit(token, message_id, message):
 
     if message_exists == False:
         raise AccessError
+
+    if (
+        database["users"][user_id]["is_admin"] is False
+        and user_id
+        not in database["channels"][channel_id_for_message]["all_members_id"]
+    ):
+        raise AccessError(
+            "user must be part of the channel to edit his/her message (see assumptions.md)"
+        )
 
     # This is done after error checking as input error not allowed in this function
     if message == "":

@@ -26,7 +26,7 @@ from channel import (
     channel_removeowner,
     channel_addowner,
 )
-from other import clear, users_all
+from other import clear, users_all, search
 from other import clear, admin_userpermission_change
 
 
@@ -237,6 +237,14 @@ def admin_userpermission_change_handler():
     permission_id = data["permission_id"]
 
     return jsonify(admin_userpermission_change(token, u_id, permission_id))
+
+
+@APP.route("/search", methods=["GET"])
+def search_messages():
+    token = request.args.get("token")
+    query_str = request.args.get("query_str")
+
+    return jsonify(search(token, query_str))
 
 
 if __name__ == "__main__":
