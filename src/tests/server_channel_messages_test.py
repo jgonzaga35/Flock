@@ -126,7 +126,6 @@ def test_messages_negative_start_index(url):
         },
     )
     assert response.status_code == 200
-    message = response.json()
 
     # Channel messages with invalid start index
     response = requests.get(
@@ -213,7 +212,6 @@ def test_messages_start_overflow(url):
         },
     )
     assert response.status_code == 200
-    message = response.json()
 
     # Get channel messages
     response = requests.get(
@@ -256,7 +254,6 @@ def test_messages_start_underflow(url):
         },
     )
     assert response.status_code == 200
-    message = response.json()
 
     # Get channel messages
     response = requests.get(
