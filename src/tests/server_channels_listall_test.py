@@ -49,9 +49,7 @@ def test_channels_listall_public(url):
     response = requests.get(url + "channels/listall", params={"token": token})
     assert response.status_code == 200
     channel_ids = [channel["channel_id"] for channel in response.json()]
-    assert channel_id_1 in channel_ids
-    assert channel_id_2 in channel_ids
-
+    assert channel_ids == [channel_id_1, channel_id_2]
 
 def test_channels_listall_private(url):
     requests.delete(url + "clear")
@@ -70,9 +68,7 @@ def test_channels_listall_private(url):
     response = requests.get(url + "channels/listall", params={"token": token})
     assert response.status_code == 200
     channel_ids = [channel["channel_id"] for channel in response.json()]
-    assert channel_id_1 in channel_ids
-    assert channel_id_2 in channel_ids
-
+    assert channel_ids == [channel_id_1, channel_id_2]
 
 def test_channels_listall_multiple_users_public(url):
     requests.delete(url + "clear")
