@@ -34,7 +34,7 @@ def test_user_profile_with_invalid_uid():
     """
     clear()
     user_a = register_n_users(1)
-    # Generate a invalid user id for testing
+    # Generate a invalid user id and attempt to retrieve user profile
     invalid_id = -1
     with pytest.raises(InputError):
         user_profile(user_a["token"], invalid_id)
@@ -48,7 +48,7 @@ def test_invalid_token_user_profile():
     """
     clear()
     user_a = register_n_users(1)
-    # Generate an invalid token
+    # Generate an invalid token and attempt to retrieve user profile
     invalid_token = "HaHa"
     with pytest.raises(AccessError):
         user_profile(invalid_token, user_a["u_id"])
@@ -58,8 +58,11 @@ def test_invalid_token_user_profile():
 def test_setname_successful():
     clear()
     user_a = register_n_users(1)
+
     # set user name to Eric JOJO
     user_profile_setname(user_a["token"], "Eric", "JOJO")
+
+    # Assert that the name is changed successfully
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
     assert user_a_profile["name_first"] == "Eric"
     assert user_a_profile["name_last"] == "JOJO"
@@ -105,6 +108,8 @@ def test_setemail_successful():
     user_a = register_n_users(1)
     user_profile_setemail(user_a["token"], "newemail@gmail.com")
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
+
+    # Assert that email is changed
     assert user_a_profile["email"] == "newemail@gmail.com"
 
 
@@ -191,17 +196,22 @@ def test_users_all_many_users():
 
     users = register_n_users(3, include_admin=True)
 
+    # Get the three user profile via users/all function
     valid_token = users[1]["token"]
     all_users = users_all(valid_token)["users"]
 
+    # Get the three user profile one by one via user/profile function
     all_users_info = []
     for user in users:
         all_users_info.append(get_user_details_from_user_id(user["u_id"]))
 
+    # Assert that the info retrieved either way equals
     assert all_users == all_users_info
 
 
 def test_users_all_invalid_token():
     clear()
+
+    # The request should fail as a result of invalid token
     with pytest.raises(AccessError):
         users_all(-1)
