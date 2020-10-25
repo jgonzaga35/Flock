@@ -107,7 +107,7 @@ def test_add_owner_invalid_channel_id(url):
     owner, user = http_register_n_users(url, 2)
 
     # Owner creates public channel
-    channel = requests.post(
+    requests.post(
         url + "channels/create",
         json={"token": owner["token"], "name": "channel_01", "is_public": True},
     ).json()
