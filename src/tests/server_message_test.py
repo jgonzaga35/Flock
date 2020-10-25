@@ -751,3 +751,38 @@ def test_edit_empty_string(url):
     assert message["message_id"] not in [
         x["message_id"] for x in channel_messages_dict["messages"]
     ]
+
+
+# Input error raised if edited message exceeds 100 characters
+# see assumptions.md
+def test_message_edit_exceeeds_limit(url):
+    requests.delete(url + "clear")
+    user = http_register_n_users(url, 1)
+    # Create a new channel
+    channel_params = {
+        "token": user["token"],
+        "name": "channel_01",
+        "is_public": True,
+    }
+    response = requests.post(url + "channels/create", json=channel_params)
+    assert response.status_code == 200
+    channel = response.json()
+
+    # User sends a message
+    message_params = {
+        "token": user["token"],
+        "channel_id": channel["channel_id"],
+        "message": "test message",
+    }
+    response = requests.post(url + "message/send", json=message_params)
+    assert response.status_code == 200
+    message = response.json()
+
+    # Edited message exeeds 1000 chars
+    message_edit_data = {
+        "token": user["token"],
+        "message_id": message["message_id"],
+        "message": "a" * 1001,
+    }
+    response = requests.put(url + "message/edit", json=message_edit_data)
+    assert response.status_code == 400
