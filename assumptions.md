@@ -10,11 +10,11 @@ The terms "Flockr owner" and "admin" are equivalent.
 
 * auth_login
     * Every time when a user is logged in, token will be stored in the active_tokens in the database
-
-* auth_login
-    * Every time when a user is logged out, token will be removed from the active_tokens in the database
     * If a user try to login multiple times, they will receive the same token instead of a newly generated one
 
+* auth_logout
+    * Every time when a user is logged out, token will be removed from the active_tokens in the database
+    
 It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 
 **channel_test**
@@ -86,3 +86,8 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * search:
     * messages will be sorted by date (newest first)
     * a query string matches a message if the query string is exactly contained within that message (cases matching)
+
+**user_HTTP_wrapper**
+
+* user/profile
+    * The token pass to user_profile is of type string

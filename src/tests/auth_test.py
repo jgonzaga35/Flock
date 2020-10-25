@@ -86,8 +86,10 @@ def test_register_success_case():
 def test_auth_register_invalid_email():
     clear()
     with pytest.raises(InputError):
+        # Doesn't contain .com
         auth_register("didntusethis@gmail", "123abcd!@#", "Peter", "Li")
     with pytest.raises(InputError):
+        # Contains no @ symbol
         auth_register("didntusethis.com", "123abcd!@#", "Peter", "Li")
 
 
@@ -106,6 +108,7 @@ def test_auth_register_weak_password():
 
 def test_auth_register_wrong_name():
     clear()
+    # Too long first name
     with pytest.raises(InputError):
         auth_register(
             "validemail@gmail.com",
@@ -113,6 +116,7 @@ def test_auth_register_wrong_name():
             "dsjfsdkfjsdafklsdjfsdklfjlkasdkflasdjkfjklsdafjklasdkjlflksjadfjklsdakjfjkdsaflkjadslkflkasdklfklkljdsafl",
             "Everest",
         )
+    # Too long last name
     with pytest.raises(InputError):
         auth_register(
             "validemail@gmail.com",
@@ -151,12 +155,14 @@ def test_handle():
 
 
 def test_jwt_decode_invalid_token():
+    # A invalid JWT
     invalid_token = "LOL"
     with pytest.raises(AccessError):
         jwt_decode(invalid_token)
 
 
 def test_jwt_decode_wrong_token_key():
+    # A token that's a valid JWT string, but derived from incorrect key
     wrong_key_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJoZWxsbyJ8.DFBWfpMrwzeac2vsWriYfHTx6OpfFM4qzgNDUwEchU8"
     with pytest.raises(AccessError):
         jwt_decode(wrong_key_token)

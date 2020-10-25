@@ -19,26 +19,6 @@ from error import AccessError, InputError
 
 INVALID_USER_TOKEN = -1
 INVALID_MESSAGE_ID = -1
-CHAR_1000_STR = """
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-    Nullam ac purus non diam elementum commodo. Fusce nec leo eros. 
-    Nullam a augue iaculis, convallis velit eu, porta elit. 
-    Nunc vitae sollicitudin sem, sed varius nibh. 
-    Donec aliquam sollicitudin nunc et dignissim. 
-    Morbi sed luctus arcu, sed consectetur odio. 
-    Duis et mauris sollicitudin, lacinia mauris in, posuere turpis. 
-    Curabitur pellentesque ultrices odio, eu semper risus pretium in. 
-    Nam iaculis, purus in ultrices porta, metus ex sagittis orci, 
-    in ultricies ipsum turpis nec justo. Morbi nec est est. 
-    Duis lacinia ex vel nibh tristique, at ultricies nulla molestie.
-    In vel massa quis ipsum venenatis interdum id sit amet urna. 
-    Pellentesque mattis lacinia quam, nec posuere purus volutpat id. 
-    Morbi at ultrices purus, eu aliquet sapien. 
-    Etiam risus odio, convallis id sagittis nec, tincidunt ac nisl. 
-    Aliquam interdum, turpis eu eleifend varius, 
-    mi nunc pellentesque massa, et vulputate nulla magna ac neque. 
-    Morbi eu pharetra ante. Duis quis fermentum mi. 
-    """
 
 ##################################################################################
 #                           Tests for message_remove                             #
@@ -516,18 +496,18 @@ def test_edit_empty_string():
     ]
 
 
-# Edited message exceeds 1000 characters - commented out until #81 clarified
-# def test_edit_exceeds_1000_char():
-#     clear()
-#     user = register_n_users(1)
+# Edited message exceeds 1000 characters
+def test_edit_exceeds_1000_char():
+    clear()
+    user = register_n_users(1)
 
-#     # Create a new channel
-#     channel = channels_create(user["token"], "channel01", is_public=True)
-#     # User sends a message
-#     message = message_send(user["token"], channel["channel_id"], "test message")
-
-#     with pytest.raises(InputError):
-#         assert message_edit(user["token"], message["message_id"], CHAR_1000_STR)
+    # Create a new channel
+    channel = channels_create(user["token"], "channel01", is_public=True)
+    # User sends a message
+    message = message_send(user["token"], channel["channel_id"], "test message")
+    edited_message = "a" * 1001
+    with pytest.raises(InputError):
+        assert message_edit(user["token"], message["message_id"], edited_message)
 
 
 def test_edit_continuous_send():

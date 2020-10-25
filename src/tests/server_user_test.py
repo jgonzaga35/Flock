@@ -5,6 +5,11 @@ from test_helpers import url, http_register_n_users
 from error import AccessError, InputError
 
 
+##############################################################
+#                   Tests for user/profile                   #
+##############################################################
+
+
 def test_user_profile_successful(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)  # return a user which has profile below:
@@ -12,7 +17,7 @@ def test_user_profile_successful(url):
     #                 first name: first0
     #                 last name: last0
 
-    # We compare the profile above to the returned result.
+    # Assert that the returned user profile match what we registered with
     userProfile = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}
     ).json()["user"]
@@ -30,7 +35,7 @@ def test_user_profile_with_invalid_uid(url):
     """
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
-    # Generate a invalid user id for testing
+    # Generate a invalid user id and attempt to retrieve user profile
     invalid_id = -1
     r = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": invalid_id}
@@ -46,7 +51,7 @@ def test_invalid_token_user_profile(url):
     """
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
-    # Generate an invalid token
+    # Generate an invalid token and attempt to retrieve user profile
     invalid_token = -1
     r = requests.get(
         url + "user/profile", params={"token": invalid_token, "u_id": user["u_id"]}
@@ -54,15 +59,20 @@ def test_invalid_token_user_profile(url):
     assert r.status_code == 403
 
 
-# -----------------------------user_profile_setname------------------------------
+##############################################################
+#               Tests for user/profile/setname               #
+##############################################################
 def test_setname_successful(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
+
     # set user name to Eric JOJO
     requests.put(
         url + "user/profile/setname",
         json={"token": user["token"], "name_first": "Eric", "name_last": "JOJO"},
     )
+
+    # Assert that the name is changed successfully
     userProfile = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}
     ).json()["user"]
@@ -145,7 +155,9 @@ def test_setname_invalid_token(url):
     assert r.status_code == 403
 
 
-# ----------------------------user_profile_setemail----------------------------
+##############################################################
+#               Tests for user/profile/setemail              #
+##############################################################
 def test_setemail_successful(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
@@ -153,6 +165,8 @@ def test_setemail_successful(url):
         url + "user/profile/setemail",
         json={"token": user["token"], "email": "newemail@gmail.com"},
     )
+
+    # Assert that email is changed
     userProfile = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}
     ).json()["user"]
@@ -162,6 +176,8 @@ def test_setemail_successful(url):
 def test_set_illegal_email(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
+
+    # Attempt to change to a invalid email
     r = requests.put(
         url + "user/profile/setemail",
         json={"token": user["token"], "email": "invalid_email_address.com"},
@@ -172,6 +188,8 @@ def test_set_illegal_email(url):
 def test_invalid_token_access(url):
     requests.delete(url + "clear")
     invalid_token = "HAHA"
+
+    # Attempt to change email with an invalid token
     r = requests.put(
         url + "user/profile/setemail",
         json={"token": invalid_token, "email": "newemail@gmail.com"},
@@ -179,7 +197,9 @@ def test_invalid_token_access(url):
     assert r.status_code == 403
 
 
-# ----------------------------user_profile_sethandle----------------------------
+##############################################################
+#              Tests for user/profile/sethandle              #
+##############################################################
 def test_sethandle_successful(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
@@ -252,11 +272,13 @@ def test_users_all_many_users(url):
 
     users = http_register_n_users(url, 3, include_admin=True)
 
+    # Get the three user profile via users/all request
     valid_token = users[1]["token"]
     all_users = requests.get(url + "users/all", params={"token": valid_token}).json()[
         "users"
     ]
 
+    # Get the three user profile one by one via user/profile request
     all_users_info = []
     for user in users:
         profile = requests.get(
@@ -264,11 +286,13 @@ def test_users_all_many_users(url):
         ).json()["user"]
         all_users_info.append(profile)
 
+    # Assert that the info retrieved either way equals
     assert all_users == all_users_info
 
 
 def test_users_all_invalid_token(url):
     requests.delete(url + "clear")
 
+    # The request should fail as a result of invalid token
     r = requests.get(url + "users/all", params={"token": -1})
     assert r.status_code == 403
