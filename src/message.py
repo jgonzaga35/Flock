@@ -110,6 +110,9 @@ def message_edit(token, message_id, message):
         message_remove(token, message_id)
         return {}
 
+    if len(message) > 1000:
+        raise InputError("message cannot exceed 1000 characters (see assumptions.md)")
+
     # Edit message if user is authorised, delete if message = ''
     for msg in database["channels"][channel_id_for_message]["messages"].values():
         if msg["message_id"] == message_id and (

@@ -164,12 +164,12 @@ def test_message_send_too_long(url):
 
 def test_message_send_large_flock(url):
     requests.delete(url + "clear")
-    admin, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
+    owner, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
 
-    # Admin creates a public channel
+    # owner creates a public channel
     response = requests.post(
         url + "channels/create",
-        json={"token": admin["token"], "name": "channel_01", "is_public": True},
+        json={"token": owner["token"], "name": "channel_01", "is_public": True},
     )
     assert response.status_code == 200
     channel = response.json()
@@ -199,7 +199,7 @@ def test_message_send_large_flock(url):
     )
     assert response.status_code == 200
 
-    # Each user (expect admin) sends a single message
+    # Each user (expect owner) sends a single message
     response = requests.post(
         url + "message/send",
         json={
@@ -362,7 +362,7 @@ def test_remove_owner(url):
     requests.delete(url + "clear")
     user01, user02 = http_register_n_users(url, 2)
 
-    # Create a new channel with User01 as admin
+    # Create a new channel with User01 as owner
     channel_params = {
         "token": user01["token"],
         "name": "channel_01",
@@ -389,7 +389,7 @@ def test_remove_owner(url):
     assert response.status_code == 200
     message = response.json()
 
-    # User01 (admin) removes it
+    # User01 (owner) removes it
     message_remove_params = {
         "token": user01["token"],
         "message_id": message["message_id"],
@@ -413,12 +413,12 @@ def test_remove_owner(url):
 
 def test_remove_large_flockr(url):
     requests.delete(url + "clear")
-    admin, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
+    owner, user_01, user_02, user_03, user_04 = http_register_n_users(url, 5)
 
-    # Admin creates a public channel
+    # owner creates a public channel
     response = requests.post(
         url + "channels/create",
-        json={"token": admin["token"], "name": "channel_01", "is_public": True},
+        json={"token": owner["token"], "name": "channel_01", "is_public": True},
     )
     assert response.status_code == 200
     channel = response.json()
@@ -448,7 +448,7 @@ def test_remove_large_flockr(url):
     )
     assert response.status_code == 200
 
-    # Each user (expect admin) sends a single message
+    # Each user (expect owner) sends a single message
     response = requests.post(
         url + "message/send",
         json={
@@ -510,13 +510,13 @@ def test_remove_large_flockr(url):
     assert "message from user_03" in messages
     assert "message from user_04" in messages
 
-    # Admin removes all messages from users
+    # owner removes all messages from users
     message_ids = [message_id_01, message_id_02, message_id_03, message_id_04]
     for i in message_ids:
         response = requests.delete(
             url + "message/remove",
             json={
-                "token": admin["token"],
+                "token": owner["token"],
                 "message_id": i,
             },
         )
@@ -649,7 +649,7 @@ def test_edit_owner(url):
     requests.delete(url + "clear")
     user01, user02 = http_register_n_users(url, 2)
 
-    # Create a new channel with User01 as admin
+    # Create a new channel with User01 as owner
     channel_params = {
         "token": user01["token"],
         "name": "channel_01",
@@ -675,7 +675,7 @@ def test_edit_owner(url):
     assert response.status_code == 200
     message = response.json()
 
-    # User01 (admin) edits it
+    # User01 (owner) edits it
     message_edit = {
         "token": user01["token"],
         "message_id": message["message_id"],
@@ -751,3 +751,38 @@ def test_edit_empty_string(url):
     assert message["message_id"] not in [
         x["message_id"] for x in channel_messages_dict["messages"]
     ]
+
+
+# Input error raised if edited message exceeds 100 characters
+# see assumptions.md
+def test_message_edit_exceeeds_limit(url):
+    requests.delete(url + "clear")
+    user = http_register_n_users(url, 1)
+    # Create a new channel
+    channel_params = {
+        "token": user["token"],
+        "name": "channel_01",
+        "is_public": True,
+    }
+    response = requests.post(url + "channels/create", json=channel_params)
+    assert response.status_code == 200
+    channel = response.json()
+
+    # User sends a message
+    message_params = {
+        "token": user["token"],
+        "channel_id": channel["channel_id"],
+        "message": "test message",
+    }
+    response = requests.post(url + "message/send", json=message_params)
+    assert response.status_code == 200
+    message = response.json()
+
+    # Edited message exeeds 1000 chars
+    message_edit_data = {
+        "token": user["token"],
+        "message_id": message["message_id"],
+        "message": "a" * 1001,
+    }
+    response = requests.put(url + "message/edit", json=message_edit_data)
+    assert response.status_code == 400
