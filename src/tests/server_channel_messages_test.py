@@ -97,3 +97,175 @@ def test_messages_invalid_token(url):
         },
     )
     assert response.status_code == 403
+
+
+def test_messages_negative_start_index(url):
+    requests.delete(url + "clear")
+    # Add a user and log them in
+    user = http_register_n_users(url, 1)
+
+    # Create a channel
+    response = requests.post(
+        url + "channels/create",
+        json={
+            "token": user["token"],
+            "name": "channel_01",
+            "is_public": True,
+        },
+    )
+    assert response.status_code == 200
+    channel = response.json()
+
+    # Send a message
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "message": "test message",
+        },
+    )
+    assert response.status_code == 200
+
+    # Channel messages with invalid start index
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "start": -1,
+        },
+    )
+    assert response.status_code == 400
+
+
+def test_messages_simple_success(url):
+    requests.delete(url + "clear")
+    # Add a user and log them in
+    user = http_register_n_users(url, 1)
+
+    # Create a channel
+    response = requests.post(
+        url + "channels/create",
+        json={
+            "token": user["token"],
+            "name": "channel_01",
+            "is_public": True,
+        },
+    )
+    assert response.status_code == 200
+    channel = response.json()
+
+    # Send a message
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "message": "test message",
+        },
+    )
+    assert response.status_code == 200
+    message = response.json()
+
+    # Get channel messages
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "start": 0,
+        },
+    )
+    assert response.status_code == 200
+    channel_messages_dict = response.json()
+
+    assert message["message_id"] in [
+        x["message_id"] for x in channel_messages_dict["messages"]
+    ]
+
+
+def test_messages_start_overflow(url):
+    requests.delete(url + "clear")
+    # Add a user and log them in
+    user = http_register_n_users(url, 1)
+
+    # Create a channel
+    response = requests.post(
+        url + "channels/create",
+        json={
+            "token": user["token"],
+            "name": "channel_01",
+            "is_public": True,
+        },
+    )
+    assert response.status_code == 200
+    channel = response.json()
+
+    # Send a message
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "message": "test message",
+        },
+    )
+    assert response.status_code == 200
+
+    # Get channel messages
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "start": 100,
+        },
+    )
+
+    # Start amount is over total number of messages in channel
+    assert response.status_code == 400
+
+
+def test_messages_start_underflow(url):
+    requests.delete(url + "clear")
+    # Add a user and log them in
+    user = http_register_n_users(url, 1)
+
+    # Create a channel
+    response = requests.post(
+        url + "channels/create",
+        json={
+            "token": user["token"],
+            "name": "channel_01",
+            "is_public": True,
+        },
+    )
+    assert response.status_code == 200
+    channel = response.json()
+
+    # Send a message
+    response = requests.post(
+        url + "message/send",
+        json={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "message": "test message",
+        },
+    )
+    assert response.status_code == 200
+
+    # Get channel messages
+    response = requests.get(
+        url + "channel/messages",
+        params={
+            "token": user["token"],
+            "channel_id": channel["channel_id"],
+            "start": 0,
+        },
+    )
+    assert response.status_code == 200
+
+    # End is -1 since less than 50 messages
+    channel_messages_dict = response.json()
+    assert channel_messages_dict["end"] == -1
