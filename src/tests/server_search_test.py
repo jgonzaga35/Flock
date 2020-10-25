@@ -1,7 +1,6 @@
 import requests
 from test_helpers import url, http_register_n_users
 
-
 def test_search_one_channel_three_users(url):
     requests.delete(url + "clear")
 

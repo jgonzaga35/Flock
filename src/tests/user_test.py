@@ -109,7 +109,6 @@ def test_setemail_successful():
     user_profile_setemail(user_a["token"], "newemail@gmail.com")
     user_a_profile = user_profile(user_a["token"], user_a["u_id"])["user"]
 
-    # Assert that email is changed
     assert user_a_profile["email"] == "newemail@gmail.com"
 
 
@@ -196,11 +195,11 @@ def test_users_all_many_users():
 
     users = register_n_users(3, include_admin=True)
 
-    # Get the three user profile via users/all function
+    # Get three users' profile via users/all function
     valid_token = users[1]["token"]
     all_users = users_all(valid_token)["users"]
 
-    # Get the three user profile one by one via user/profile function
+    # Get three users' profile one by one via user/profile function
     all_users_info = []
     for user in users:
         all_users_info.append(get_user_details_from_user_id(user["u_id"]))
