@@ -1,11 +1,13 @@
 import requests
 from test_helpers import url, http_register_n_users
 
+
 def test_search_one_channel_three_users(url):
     requests.delete(url + "clear")
 
     usera, userb, userc = http_register_n_users(url, 3)
 
+    # User_a create an channel and play around with friends
     channel_id = requests.post(
         url + "channels/create",
         json={"token": usera["token"], "name": "channel of A", "is_public": True},
@@ -64,6 +66,7 @@ def test_search_one_channel_three_users(url):
             "message": "So many people",
         },
     )
+    # Search message for usera
     matching = requests.get(
         url + "search", params={"token": usera["token"], "query_str": "#match"}
     ).json()

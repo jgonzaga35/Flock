@@ -240,7 +240,7 @@ def admin_userpermission_change_handler():
 
 
 @APP.route("/search", methods=["GET"])
-def search_messages():
+def search_messages_handler():
     token = request.args.get("token")
     query_str = request.args.get("query_str")
 

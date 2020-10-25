@@ -21,6 +21,7 @@ def test_channels_listall_invalid_token(url):
     response = requests.get(url + "channels/listall", params={"token": invalid_token})
     assert response.status_code == 403
 
+
 # Test when no channel can be list
 def test_channels_listall_empty(url):
     requests.delete(url + "clear")
@@ -30,6 +31,7 @@ def test_channels_listall_empty(url):
     )
     assert response.status_code == 200
     assert response.json() == []
+
 
 # Test one user list multiple public channel
 def test_channels_listall_public(url):
@@ -52,6 +54,7 @@ def test_channels_listall_public(url):
     channel_ids = [channel["channel_id"] for channel in response.json()]
     assert channel_ids == [channel_id_1, channel_id_2]
 
+
 # Test one user list multiple public channel
 def test_channels_listall_private(url):
     requests.delete(url + "clear")
@@ -72,6 +75,7 @@ def test_channels_listall_private(url):
     assert response.status_code == 200
     channel_ids = [channel["channel_id"] for channel in response.json()]
     assert channel_ids == [channel_id_1, channel_id_2]
+
 
 # Test multiple users list multiple public channels
 def test_channels_listall_multiple_users_public(url):
@@ -119,7 +123,6 @@ def test_channels_listall_multiple_users_private(url):
     channel_ids = []
     names = ["private_channel_01", "private_channel_02"]
 
-
     # Create a list of tuple which include elements from
     # names and token, and use it to create two channel
     for name, token in zip(names, tokens):
@@ -128,7 +131,6 @@ def test_channels_listall_multiple_users_private(url):
             json={"token": token, "name": name, "is_public": False},
         ).json()["channel_id"]
         channel_ids.append(channel_id)
-
 
     # Authorised channel is our expectation to the
     # channels which should be listed.
