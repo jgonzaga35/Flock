@@ -53,7 +53,16 @@ def register_n_users(num_users, *, include_admin=False):
 
 
 def get_user_details_from_user_id(user_id):
-
+    """
+    Returns a user_detail from user_id:
+    >>> {
+        "u_id": current_user["id"],
+        "email": current_user["email"],
+        "name_first": current_user["first_name"],
+        "name_last": current_user["last_name"],
+        "handle_str": current_user["handle"],
+    }
+    """
     for user in database["users"].values():
         if user_id == user["id"]:
             current_user = user
