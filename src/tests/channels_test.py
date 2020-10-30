@@ -62,6 +62,7 @@ def test_creator_becomes_owner_and_member():
     assert details["all_members"][0]["u_id"] == user["u_id"]
 
 
+# Test that calling channels_list with invalid token raises AccessError
 def test_channels_list_invalid_token():
     clear()
     user = register_n_users(1)
@@ -74,26 +75,29 @@ def test_channels_list_invalid_token():
         assert channels_list(invalid_token)
 
 
+# Simple test for using channel list for public channels
 def test_channels_list_public():
     clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
     channel_id = channels_create(token, name, is_public=True)["channel_id"]
-    authorised_channels = [{"channel_id": channel_id, "name": name}]
+    authorised_channels = {"channels": [{"channel_id": channel_id, "name": name}]}
     assert channels_list(token) == authorised_channels
 
 
+# Simple test for using channel list for private channels
 def test_channels_list_private():
     clear()
     user = register_n_users(1)
     token = user["token"]
     name = "channel"
     channel_id = channels_create(token, name, is_public=False)["channel_id"]
-    authorised_channels = [{"channel_id": channel_id, "name": name}]
+    authorised_channels = {"channels": [{"channel_id": channel_id, "name": name}]}
     assert channels_list(token) == authorised_channels
 
 
+# Testing that channels list can list multiple public channels
 def test_channels_list_multiple_public():
     clear()
     user = register_n_users(1)
@@ -106,9 +110,10 @@ def test_channels_list_multiple_public():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
-    assert channels_list(token) == authorised_channels
+    assert channels_list(token) == {"channels": authorised_channels}
 
 
+# Testing that channels list can list multiple private channels
 def test_channels_list_multiple_private():
     clear()
     user = register_n_users(1)
@@ -121,9 +126,10 @@ def test_channels_list_multiple_private():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
-    assert channels_list(token) == authorised_channels
+    assert channels_list(token) == {"channels": authorised_channels}
 
 
+# Testing that channels list does not list public channels for which user is unauthorised
 def test_channels_list_unauthorised_multiple_public():
     clear()
 
@@ -138,17 +144,18 @@ def test_channels_list_unauthorised_multiple_public():
         "channel_id"
     ]
 
-    assert channels_list(user_01["token"]) == [
-        {"channel_id": channel_id_01, "name": "channel1"}
-    ]
-    assert channels_list(user_02["token"]) == [
-        {"channel_id": channel_id_02, "name": "channel2"}
-    ]
-    assert channels_list(user_03["token"]) == [
-        {"channel_id": channel_id_03, "name": "channel3"}
-    ]
+    assert channels_list(user_01["token"]) == {
+        "channels": [{"channel_id": channel_id_01, "name": "channel1"}]
+    }
+    assert channels_list(user_02["token"]) == {
+        "channels": [{"channel_id": channel_id_02, "name": "channel2"}]
+    }
+    assert channels_list(user_03["token"]) == {
+        "channels": [{"channel_id": channel_id_03, "name": "channel3"}]
+    }
 
 
+# Testing that channels list does not list public channels for which user is unauthorised
 def test_channels_list_unauthorised_multiple_private():
     clear()
 
@@ -163,23 +170,25 @@ def test_channels_list_unauthorised_multiple_private():
         "channel_id"
     ]
 
-    assert channels_list(user_01["token"]) == [
-        {"channel_id": channel_id_01, "name": "channel1"}
-    ]
-    assert channels_list(user_02["token"]) == [
-        {"channel_id": channel_id_02, "name": "channel2"}
-    ]
-    assert channels_list(user_03["token"]) == [
-        {"channel_id": channel_id_03, "name": "channel3"}
-    ]
+    assert channels_list(user_01["token"]) == {
+        "channels": [{"channel_id": channel_id_01, "name": "channel1"}]
+    }
+    assert channels_list(user_02["token"]) == {
+        "channels": [{"channel_id": channel_id_02, "name": "channel2"}]
+    }
+    assert channels_list(user_03["token"]) == {
+        "channels": [{"channel_id": channel_id_03, "name": "channel3"}]
+    }
 
 
+# Testing for an empty list of channels
 def test_channels_list_empty():
     clear()
     user_01 = register_n_users(1)
-    assert channels_list(user_01["token"]) == []
+    assert channels_list(user_01["token"]) == {"channels": []}
 
 
+# Testing channels listall for invalid token raises
 def test_channels_listall_invalid_token():
     clear()
     user = register_n_users(1)
@@ -192,12 +201,14 @@ def test_channels_listall_invalid_token():
         assert channels_listall(invalid_token)
 
 
+# Testing channels listall when there are no channels to list
 def test_channels_listall_empty():
     clear()
     user_01 = register_n_users(1)
-    assert channels_listall(user_01["token"]) == []
+    assert channels_listall(user_01["token"]) == {"channels": []}
 
 
+# Testing channels listall for public channels
 def test_channels_listall_public():
     clear()
     user_01 = register_n_users(1)
@@ -211,9 +222,10 @@ def test_channels_listall_public():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
-    assert channels_listall(token) == authorised_channels
+    assert channels_listall(token) == {"channels": authorised_channels}
 
 
+# Testing channels listall for private channels
 def test_channels_listall_private():
     clear()
     user_01 = register_n_users(1)
@@ -227,9 +239,10 @@ def test_channels_listall_private():
     authorised_channels = []
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
-    assert channels_listall(token) == authorised_channels
+    assert channels_listall(token) == {"channels": authorised_channels}
 
 
+# Testing that channels listall lists all public channels
 def test_channels_listall_multiple_users_public():
     clear()
 
@@ -245,11 +258,12 @@ def test_channels_listall_multiple_users_public():
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
 
-    assert channels_listall(user_01["token"]) == authorised_channels
-    assert channels_listall(user_02["token"]) == authorised_channels
-    assert channels_listall(user_03["token"]) == authorised_channels
+    assert channels_listall(user_01["token"]) == {"channels": authorised_channels}
+    assert channels_listall(user_02["token"]) == {"channels": authorised_channels}
+    assert channels_listall(user_03["token"]) == {"channels": authorised_channels}
 
 
+# Testing that channels listall lists all private channels
 def test_channels_listall_multiple_users_private():
     clear()
 
@@ -265,6 +279,6 @@ def test_channels_listall_multiple_users_private():
     for channel_id, name in zip(channel_ids, names):
         authorised_channels.append({"channel_id": channel_id, "name": name})
 
-    assert channels_listall(user_01["token"]) == authorised_channels
-    assert channels_listall(user_02["token"]) == authorised_channels
-    assert channels_listall(user_03["token"]) == authorised_channels
+    assert channels_listall(user_01["token"]) == {"channels": authorised_channels}
+    assert channels_listall(user_02["token"]) == {"channels": authorised_channels}
+    assert channels_listall(user_03["token"]) == {"channels": authorised_channels}
