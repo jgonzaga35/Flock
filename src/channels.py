@@ -20,7 +20,7 @@ def channels_list(token):
             channel_info = get_channel_id_and_name(channel)
             channels.append(channel_info)
 
-    return channels
+    return {"channels": channels}
 
 
 def channels_listall(token):
@@ -32,7 +32,7 @@ def channels_listall(token):
         channel_info = get_channel_id_and_name(channel)
         channels.append(channel_info)
 
-    return channels
+    return {"channels": channels}
 
 
 def channels_create(token, name, is_public):

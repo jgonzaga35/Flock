@@ -17,7 +17,7 @@ def test_channels_list_1_channel(url):
     response = requests.get(url + "channels/list", params={"token": user["token"]})
     assert response.status_code == 200
     channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    assert channel["channel_id"] in [x["channel_id"] for x in channels_list["channels"]]
 
 
 # User admin of two chanels
@@ -36,8 +36,12 @@ def test_channels_list_2_channels(url):
     response = requests.get(url + "channels/list", params={"token": user["token"]})
     assert response.status_code == 200
     channels_list = response.json()
-    assert channel01["channel_id"] in [x["channel_id"] for x in channels_list]
-    assert channel02["channel_id"] in [x["channel_id"] for x in channels_list]
+    assert channel01["channel_id"] in [
+        x["channel_id"] for x in channels_list["channels"]
+    ]
+    assert channel02["channel_id"] in [
+        x["channel_id"] for x in channels_list["channels"]
+    ]
 
 
 # User admin of private channel
@@ -52,7 +56,7 @@ def test_channels_list_public(url):
     response = requests.get(url + "channels/list", params={"token": user["token"]})
     assert response.status_code == 200
     channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    assert channel["channel_id"] in [x["channel_id"] for x in channels_list["channels"]]
 
 
 # Non-admin requests channels list
@@ -72,7 +76,7 @@ def tests_channels_list_non_admin(url):
     response = requests.get(url + "channels/list", params={"token": user["token"]})
     assert response.status_code == 200
     channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    assert channel["channel_id"] in [x["channel_id"] for x in channels_list["channels"]]
 
 
 # User in multiple different channels
@@ -108,7 +112,7 @@ def test_channel_list_user_multiple(url):
 
     response = requests.get(url + "channels/list", params={"token": user["token"]})
     assert response.status_code == 200
-    channels_list_dict = response.json()
+    channels_list_dict = response.json()["channels"]
     channel_list = [x["channel_id"] for x in channels_list_dict]
 
     assert channel_01["channel_id"] in channel_list
@@ -179,22 +183,23 @@ def tests_channels_list_large(url):
     assert r.status_code == 200
 
     # Ensure each user has this channel in their channel list
-    response = requests.get(url + "channels/list", params={"token": admin["token"]})
-    assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
-
     response = requests.get(url + "channels/list", params={"token": user01["token"]})
     assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    channels_list_dict = response.json()["channels"]
+    channel_list = [x["channel_id"] for x in channels_list_dict]
+
+    assert channel["channel_id"] in channel_list
 
     response = requests.get(url + "channels/list", params={"token": user02["token"]})
     assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    channels_list_dict = response.json()["channels"]
+    channel_list = [x["channel_id"] for x in channels_list_dict]
+
+    assert channel["channel_id"] in channel_list
 
     response = requests.get(url + "channels/list", params={"token": user03["token"]})
     assert response.status_code == 200
-    channels_list = response.json()
-    assert channel["channel_id"] in [x["channel_id"] for x in channels_list]
+    channels_list_dict = response.json()["channels"]
+    channel_list = [x["channel_id"] for x in channels_list_dict]
+
+    assert channel["channel_id"] in channel_list

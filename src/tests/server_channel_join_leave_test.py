@@ -26,7 +26,9 @@ def test_join_successful(url):
 
     # Assert channel is part of channels user has membership in
     response = requests.get(url + "channels/list", params={"token": user["token"]})
-    assert channel["channel_id"] in [x["channel_id"] for x in response.json()]
+    assert channel["channel_id"] in [
+        x["channel_id"] for x in response.json()["channels"]
+    ]
 
 
 # User with invalid token tries to join a channel

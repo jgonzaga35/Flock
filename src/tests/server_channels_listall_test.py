@@ -30,7 +30,7 @@ def test_channels_listall_empty(url):
         url + "channels/listall", params={"token": user_01["token"]}
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json()["channels"] == []
 
 
 # Test one user list multiple public channel
@@ -51,7 +51,7 @@ def test_channels_listall_public(url):
 
     response = requests.get(url + "channels/listall", params={"token": token})
     assert response.status_code == 200
-    channel_ids = [channel["channel_id"] for channel in response.json()]
+    channel_ids = [channel["channel_id"] for channel in response.json()["channels"]]
     assert channel_ids == [channel_id_1, channel_id_2]
 
 
@@ -73,7 +73,7 @@ def test_channels_listall_private(url):
 
     response = requests.get(url + "channels/listall", params={"token": token})
     assert response.status_code == 200
-    channel_ids = [channel["channel_id"] for channel in response.json()]
+    channel_ids = [channel["channel_id"] for channel in response.json()["channels"]]
     assert channel_ids == [channel_id_1, channel_id_2]
 
 
@@ -109,8 +109,8 @@ def test_channels_listall_multiple_users_public(url):
     response02 = requests.get(
         url + "channels/listall", params={"token": user_02["token"]}
     )
-    assert response01.json() == authorised_channels
-    assert response02.json() == authorised_channels
+    assert response01.json()["channels"] == authorised_channels
+    assert response02.json()["channels"] == authorised_channels
 
 
 # Test multiple users list multiple private channels
@@ -144,5 +144,5 @@ def test_channels_listall_multiple_users_private(url):
     response02 = requests.get(
         url + "channels/listall", params={"token": user_02["token"]}
     )
-    assert response01.json() == authorised_channels
-    assert response02.json() == authorised_channels
+    assert response01.json()["channels"] == authorised_channels
+    assert response02.json()["channels"] == authorised_channels
