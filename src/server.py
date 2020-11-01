@@ -106,7 +106,7 @@ def remove_message():
 @APP.route("/message/send", methods=["POST"])
 def send_message():
     data = request.get_json()
-    return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
+    return jsonify(message_send(data["token"], int(data["channel_id"]), data["message"]))
 
 
 # User functions
