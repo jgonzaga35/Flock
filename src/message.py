@@ -129,3 +129,55 @@ def message_edit(token, message_id, message):
 
     # Unauthorised to edit message
     raise AccessError
+
+
+def message_pin(token, message_id):
+    """Given a message within a channel, mark it as "pinned" to be
+    given special display treatment by the frontend"""
+
+    # Check token is valid - error checking in function
+    user_id = auth_get_current_user_id_from_token(token)
+
+    # Check message exists in database
+    message_exists = False
+    for ch in database["channels"].values():
+        if message_id in ch["messages"]:
+            channel_id_for_message = ch["id"]
+            message_exists = True
+
+    if message_exists == False:
+        raise InputError
+
+    # Check message is not already pinned
+    channel_msg = database["channels"][channel_id_for_message]["messages"][message_id]
+    if channel_msg["is_pinned"] == True:
+        raise InputError(f"message with message id {message_id} is already pinned")
+
+    # Check user is in channel within which the message exists
+    if (
+        database["users"][user_id]["is_admin"] is False
+        and user_id
+        not in database["channels"][channel_id_for_message]["all_members_id"]
+    ):
+        raise AccessError(
+            "user must be part of the channel to remove his/her message (see assumptions.md)"
+        )
+
+    # Pin message if user is authorised
+    database["channels"][channel_id_for_message]["messages"][message_id][
+        "is_pinned"
+    ] = True
+    for msg in database["channels"][channel_id_for_message]["messages"].values():
+        if msg["message_id"] == message_id and (
+            msg["u_id"] == user_id
+            or (
+                user_id
+                in database["channels"][channel_id_for_message]["owner_members_id"]
+            )
+            or (database["users"][user_id]["is_admin"])
+        ):
+            msg["is_pinned"] = True
+            return {}
+
+    # User not authorised to pin message
+    raise AccessError
