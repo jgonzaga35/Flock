@@ -139,19 +139,21 @@ def test_message_pin_channel_admin_pin():
 # an access error will be raised
 def test_message_pin_unauthorised_user():
     clear()
-    admin, user_01, user_02 = register_n_users(3)
+    admin, user_01, user_02 = register_n_users(3, include_admin=True)
     # Create a channel and send a message
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
-    channel_join(user_02["token"], channel["channel_id"])
-    message = message_send(user_02["token"], channel["channel_id"], "test")
+    channel_join(user_01["token"], channel["channel_id"])
+    message = message_send(user_01["token"], channel["channel_id"], "test")
 
     # Return messages in channel
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
 
     # Ensure user_02 cannot pin message
-    message_pin(user_02["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == True
+    channel_join(user_01["token"], channel["channel_id"])
+    with pytest.raises(AccessError):
+        message_pin(user_02["token"], message["message_id"])
+
 
 
 def test_message_pin_large():
