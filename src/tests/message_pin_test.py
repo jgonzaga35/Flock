@@ -47,7 +47,7 @@ def test_message_pin_invalid_message_id():
     user = register_n_users(1)
     # Create a channel and send a message
     channel = channels_create(user["token"], "channel_01", is_public=True)
-    message = message_send(user["token"], channel["channel_id"], "test")
+    message_send(user["token"], channel["channel_id"], "test")
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
