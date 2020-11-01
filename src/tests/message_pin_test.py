@@ -155,7 +155,6 @@ def test_message_pin_unauthorised_user():
         message_pin(user_02["token"], message["message_id"])
 
 
-
 def test_message_pin_large():
     clear()
     admin, user_01, user_02, user_03, user_04 = register_n_users(5)
