@@ -117,7 +117,7 @@ def test_message_pin_flockr_admin_pin():
 # Ensure admin of channel can pin any message
 def test_message_pin_channel_admin_pin():
     clear()
-    admin, user_01, user_02 = register_n_users(3, include_admin=True)
+    user_01, user_02 = register_n_users(2)
     # Create a channel
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
 
@@ -139,7 +139,7 @@ def test_message_pin_channel_admin_pin():
 # an access error will be raised
 def test_message_pin_unauthorised_user():
     clear()
-    admin, user_01, user_02 = register_n_users(3, include_admin=True)
+    user_01, user_02 = register_n_users(2)
     # Create a channel and send a message
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
     channel_join(user_01["token"], channel["channel_id"])
@@ -150,14 +150,14 @@ def test_message_pin_unauthorised_user():
     assert channel_msg["messages"][0]["is_pinned"] == False
 
     # Ensure user_02 cannot pin message
-    channel_join(user_01["token"], channel["channel_id"])
+    channel_join(user_02["token"], channel["channel_id"])
     with pytest.raises(AccessError):
         message_pin(user_02["token"], message["message_id"])
 
 
 def test_message_pin_large():
     clear()
-    admin, user_01, user_02, user_03, user_04 = register_n_users(5)
+    user_01, user_02, user_03, user_04 = register_n_users(4)
 
     # Create three channels with admins 01, 02, 03 respectively
     channel_01 = channels_create(user_01["token"], "channel_01", is_public=True)
