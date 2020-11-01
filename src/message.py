@@ -28,6 +28,7 @@ def message_send(token, channel_id, message):
         "u_id": user_id,
         "message": message,
         "time_created": time.time(),
+        "is_pinned": False,
     }
 
     database["messages_id_head"] += 1
