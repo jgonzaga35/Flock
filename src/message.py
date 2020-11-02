@@ -28,6 +28,7 @@ def message_send(token, channel_id, message):
         "u_id": user_id,
         "message": message,
         "time_created": time.time(),
+        "is_pinned": False,
     }
 
     database["messages_id_head"] += 1
@@ -174,7 +175,7 @@ def message_unpin(token, message_id):
             )
             or (database["users"][user_id]["is_admin"])
         ):
-            msg["is_pinned"] = False 
+            msg["is_pinned"] = False
             return {}
 
     # User not authorised to pin message

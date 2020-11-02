@@ -1,7 +1,7 @@
 from channel import channel_messages, channel_join
 from channels import channels_create
 from test_helpers import register_n_users
-from message import message_send, message_pin
+from message import message_send, message_pin, message_unpin
 from other import clear
 import pytest
 from error import InputError, AccessError
@@ -9,12 +9,13 @@ from database import database
 
 INVALID_MESSAGE_ID = -1
 
+
 def test_message_unpin_public_simple():
     clear()
     user = register_n_users(1)
     # Create a channel and send a message
     channel = channels_create(user["token"], "channel_01", is_public=True)
-    message = message_send(user["token"], channel["channel_id"])
+    message = message_send(user["token"], channel["channel_id"], "test")
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
@@ -28,6 +29,7 @@ def test_message_unpin_public_simple():
     message_unpin(user["token"], message["message_id"])
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
+
 
 def test_message_unpin_private_simple():
     clear()
@@ -55,7 +57,7 @@ def test_message_unpin_invalid_message_id():
     user = register_n_users(1)
     # Create a channel and send a message
     channel = channels_create(user["token"], "channel_01", is_public=True)
-    message_send(user["token"], channel["channel_id"], "test")
+    message = message_send(user["token"], channel["channel_id"], "test")
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
@@ -63,7 +65,7 @@ def test_message_unpin_invalid_message_id():
     # Ensure message is not pinned, then pin message
     assert channel_msg["messages"][0]["is_pinned"] == False
     message_pin(user["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == True 
+    assert channel_msg["messages"][0]["is_pinned"] == True
 
     with pytest.raises(InputError):
         message_unpin(user["token"], INVALID_MESSAGE_ID)
@@ -86,6 +88,7 @@ def test_message_pin_already_unpinned():
     with pytest.raises(InputError):
         message_unpin(user["token"], message["message_id"])
 
+
 # Raise error if user is not a member of the channel that
 # the message is within
 def test_message_unpin_user_not_in_channel():
@@ -98,12 +101,13 @@ def test_message_unpin_user_not_in_channel():
     # Return messages in channel
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
-    message_pin(user["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == True 
+    message_pin(user_01["token"], message["message_id"])
+    assert channel_msg["messages"][0]["is_pinned"] == True
 
-    # User_02 tries to unpin message 
+    # User_02 tries to unpin message
     with pytest.raises(AccessError):
         message_unpin(user_02["token"], message["message_id"])
+
 
 # Ensure admin of flockr can unpin any message
 def test_message_unpin_flockr_admin_unpin():
@@ -116,10 +120,10 @@ def test_message_unpin_flockr_admin_unpin():
     # Return messages in channel
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
-    
+
     # Pin message
     message_pin(user_02["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == True 
+    assert channel_msg["messages"][0]["is_pinned"] == True
 
     # Owner of flockr can unpin any message
     channel_join(admin["token"], channel["channel_id"])
@@ -148,8 +152,7 @@ def test_message_unpin_channel_admin_pin():
 
     # Admin attempts to unpin
     message_unpin(user_01["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == False 
-
+    assert channel_msg["messages"][0]["is_pinned"] == False
 
 
 # If any user who tries to pin a message and is part of the
