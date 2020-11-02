@@ -9,6 +9,7 @@ from database import database
 
 INVALID_MESSAGE_ID = -1
 
+
 @pytest.fixture
 def create_channel():
     clear()
@@ -19,8 +20,9 @@ def create_channel():
 
     return [user, channel, message]
 
+
 def test_message_pin_public_simple(create_channel):
-    user, channel, message = create_channel 
+    user, channel, message = create_channel
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
@@ -48,7 +50,12 @@ def test_message_pin_private_simple():
 
 
 def test_message_pin_invalid_message_id(create_channel):
-    user, channel, message = create_channel
+    clear()
+    user = register_n_users(1)
+    # Create a channel and send a message
+    channel = channels_create(user["token"], "channel_01", is_public=False)
+    message_send(user["token"], channel["channel_id"], "test")
+
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
 
