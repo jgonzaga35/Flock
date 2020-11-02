@@ -177,5 +177,5 @@ def message_unpin(token, message_id):
             msg["is_pinned"] = False
             return {}
 
-    # User not authorised to pin message
+    # User not authorised to unpin message
     raise AccessError
