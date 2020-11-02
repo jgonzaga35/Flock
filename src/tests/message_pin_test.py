@@ -9,13 +9,18 @@ from database import database
 
 INVALID_MESSAGE_ID = -1
 
-
-def test_message_pin_public_simple():
+@pytest.fixture
+def create_channel():
     clear()
     user = register_n_users(1)
     # Create a channel and send a message
     channel = channels_create(user["token"], "channel_01", is_public=True)
     message = message_send(user["token"], channel["channel_id"], "test")
+
+    return [user, channel, message]
+
+def test_message_pin_public_simple(create_channel):
+    user, channel, message = create_channel 
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
@@ -42,13 +47,8 @@ def test_message_pin_private_simple():
     assert channel_msg["messages"][0]["is_pinned"] == True
 
 
-def test_message_pin_invalid_message_id():
-    clear()
-    user = register_n_users(1)
-    # Create a channel and send a message
-    channel = channels_create(user["token"], "channel_01", is_public=True)
-    message_send(user["token"], channel["channel_id"], "test")
-
+def test_message_pin_invalid_message_id(create_channel):
+    user, channel, message = create_channel
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
 
@@ -60,12 +60,8 @@ def test_message_pin_invalid_message_id():
 
 
 # Raise InputError if message already pinned
-def test_message_pin_already_pinned():
-    clear()
-    user = register_n_users(1)
-    # Create a channel and send a message
-    channel = channels_create(user["token"], "channel_01", is_public=True)
-    message = message_send(user["token"], channel["channel_id"], "test")
+def test_message_pin_already_pinned(create_channel):
+    user, channel, message = create_channel
 
     # Return messages in channel
     channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
@@ -96,7 +92,7 @@ def test_message_pin_user_not_in_channel():
         message_pin(user_02["token"], message["message_id"])
 
 
-# Ensure admin of flockr can pin any message
+# Ensure admin of flockr can pin message sent by other users
 def test_message_pin_flockr_admin_pin():
     clear()
     admin, user_01, user_02 = register_n_users(3, include_admin=True)
