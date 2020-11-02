@@ -23,6 +23,7 @@ def test_message_unpin_public_simple():
     # Ensure message is not pinned, then pin message
     assert channel_msg["messages"][0]["is_pinned"] == False
     message_pin(user["token"], message["message_id"])
+    channel_msg = channel_messages(user["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == True
 
     # Unpin message, ensuring it becomes unpinned
@@ -109,7 +110,7 @@ def test_message_unpin_user_not_in_channel():
         message_unpin(user_02["token"], message["message_id"])
 
 
-# Ensure admin of flockr can unpin any message
+# Ensure admin of flockr can unpin messages sent by other users
 def test_message_unpin_flockr_admin_unpin():
     clear()
     admin, user_01, user_02 = register_n_users(3, include_admin=True)
@@ -117,12 +118,13 @@ def test_message_unpin_flockr_admin_unpin():
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
     channel_join(user_02["token"], channel["channel_id"])
     message = message_send(user_02["token"], channel["channel_id"], "test")
+
     # Return messages in channel
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
 
     # Pin message
-    message_pin(user_02["token"], message["message_id"])
+    message_pin(admin["token"], message["message_id"])
     assert channel_msg["messages"][0]["is_pinned"] == True
 
     # Owner of flockr can unpin any message
@@ -146,8 +148,8 @@ def test_message_unpin_channel_admin_pin():
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
 
-    # User_02 pins message
-    message_pin(user_02["token"], message["message_id"])
+    # admin of channel pins message
+    message_pin(user_01["token"], message["message_id"])
     assert channel_msg["messages"][0]["is_pinned"] == True
 
     # Admin attempts to unpin
@@ -172,7 +174,7 @@ def test_message_unpin_unauthorised_user():
 
     # User_01 pins message
     message_pin(user_01["token"], message["message_id"])
-    assert channel_msg["messages"][0]["is_pinned"] == True 
+    assert channel_msg["messages"][0]["is_pinned"] == True
 
     # Ensure user_02 cannot unpin message
     channel_join(user_02["token"], channel["channel_id"])

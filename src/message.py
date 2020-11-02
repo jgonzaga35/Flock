@@ -162,19 +162,18 @@ def message_unpin(token, message_id):
             "user must be part of the channel to remove his/her message (see assumptions.md)"
         )
 
-    # Unpin message if user is authorised
-    database["channels"][channel_id_for_message]["messages"][message_id][
-        "is_pinned"
-    ] = True
+    # Unpin message if user is authorised - i.e. user is either a flockr owner
+    # or the owner of the channel
+    if (
+        user_id in database["channels"][channel_id_for_message]["owner_members_id"]
+        or database["users"][user_id]["is_admin"]
+    ):
+        user_id_is_owner = True
+    else:
+        user_id_is_owner = False
+
     for msg in database["channels"][channel_id_for_message]["messages"].values():
-        if msg["message_id"] == message_id and (
-            msg["u_id"] == user_id
-            or (
-                user_id
-                in database["channels"][channel_id_for_message]["owner_members_id"]
-            )
-            or (database["users"][user_id]["is_admin"])
-        ):
+        if msg["message_id"] == message_id and user_id_is_owner:
             msg["is_pinned"] = False
             return {}
 
