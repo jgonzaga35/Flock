@@ -100,10 +100,12 @@ def test_message_pin_user_not_in_channel():
 def test_message_pin_flockr_admin_pin():
     clear()
     admin, user_01, user_02 = register_n_users(3, include_admin=True)
+    print(database)
     # Create a channel and send a message
     channel = channels_create(user_01["token"], "channel_01", is_public=True)
     channel_join(user_02["token"], channel["channel_id"])
     message = message_send(user_02["token"], channel["channel_id"], "test")
+
     # Return messages in channel
     channel_msg = channel_messages(user_01["token"], channel["channel_id"], 0)
     assert channel_msg["messages"][0]["is_pinned"] == False
