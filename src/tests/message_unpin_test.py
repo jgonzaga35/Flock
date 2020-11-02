@@ -172,6 +172,7 @@ def test_message_unpin_unauthorised_user():
 
     # User_01 pins message
     message_pin(user_01["token"], message["message_id"])
+    assert channel_msg["messages"][0]["is_pinned"] == True 
 
     # Ensure user_02 cannot unpin message
     channel_join(user_02["token"], channel["channel_id"])
