@@ -106,7 +106,9 @@ def remove_message():
 @APP.route("/message/send", methods=["POST"])
 def send_message():
     data = request.get_json()
-    return jsonify(message_send(data["token"], data["channel_id"], data["message"]))
+    return jsonify(
+        message_send(data["token"], int(data["channel_id"]), data["message"])
+    )
 
 
 # User functions
@@ -166,7 +168,7 @@ def channel_invite_handler():
     data = request.get_json()
 
     token = data["token"]
-    channel_id = data["channel_id"]
+    channel_id = int(data["channel_id"])
     user_id = data["u_id"]
 
     return jsonify(channel_invite(token, channel_id, user_id))
@@ -203,7 +205,7 @@ def messages_channel():
 @APP.route("/channel/leave", methods=["POST"])
 def channel_leave_handler():
     data = request.get_json()
-    return jsonify(channel_leave(data["token"], data["channel_id"]))
+    return jsonify(channel_leave(data["token"], int(data["channel_id"])))
 
 
 @APP.route("/channel/addowner", methods=["POST"])
@@ -211,7 +213,7 @@ def channel_addowner_handler():
     data = request.get_json()
 
     token = data["token"]
-    channel_id = data["channel_id"]
+    channel_id = int(data["channel_id"])
     u_id = data["u_id"]
 
     return jsonify(channel_addowner(token, channel_id, u_id))
@@ -222,7 +224,7 @@ def channel_removeowner_handler():
     data = request.get_json()
 
     token = data["token"]
-    channel_id = data["channel_id"]
+    channel_id = int(data["channel_id"])
     u_id = data["u_id"]
 
     return jsonify(channel_removeowner(token, channel_id, u_id))
