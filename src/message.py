@@ -180,3 +180,8 @@ def message_pin(token, message_id):
 
     # User not authorised to pin message
     raise AccessError
+def message_react(token, message_id, react_id):
+    pass
+
+def message_unreact(token, message_id, react_id):
+    pass
