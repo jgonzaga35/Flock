@@ -29,6 +29,7 @@ def message_send(token, channel_id, message):
         "message": message,
         "time_created": time.time(),
         "is_pinned": False,
+        "reacts": {},
     }
 
     database["messages_id_head"] += 1
@@ -180,8 +181,67 @@ def message_pin(token, message_id):
 
     # User not authorised to pin message
     raise AccessError
+
+
 def message_react(token, message_id, react_id):
-    pass
+
+    # Ensure react id is valid
+    if not is_react_id_valid(react_id):
+        raise InputError("react id is invalid")
+
+    # If token is invalid, the function below will raise AccessError
+    user_id = auth_get_current_user_id_from_token(token)
+
+    channels = [
+        channel
+        for channel in database["channels"].values()
+        if user_id in channel["all_members_id"]
+    ]
+
+    # User is not in any channel
+    if channels == []:
+        raise InputError("user is not in any channel")
+
+    # Ensure there is a message match the message_id
+    message = next(
+        (
+            message
+            for channel in channels
+            for message in channel["messages"].values()
+            if message_id == message["message_id"]
+        ),
+        None,
+    )
+
+    if message == None:
+        raise InputError("Message_id is invalid")
+
+    # If react_id still not in database
+    if react_id not in message["reacts"]:
+        message["reacts"][react_id] = {
+            "react_id": react_id,
+            "u_ids": [user_id],
+        }
+    else:
+        # If user has reacted
+        if user_id in message["reacts"][react_id]["u_ids"]:
+            raise InputError("This user has reacted")
+        else:
+            message["reacts"][react_id]["u_ids"].append(user_id)
+
 
 def message_unreact(token, message_id, react_id):
     pass
+
+
+# Helper functions
+def is_react_id_valid(react_id):
+    """
+    Ensure react id is valid
+    Return True if it is valid
+    False otherwise
+    """
+    if react_id not in [1]:
+        return False
+    else:
+        return True

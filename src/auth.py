@@ -94,6 +94,10 @@ def auth_register(email, password, name_first, name_last):
 
 # Helper to get u_id from token
 def auth_get_current_user_id_from_token(token):
+    """
+    Get current user id from token
+    If token is not exist, raise AccessError
+    """
     if token not in database["active_tokens"]:
         raise AccessError("token is invalid")
 
