@@ -20,11 +20,12 @@ database = {
         #               "message": "Hello world",
         #               "time_created": 1582426789,
         #               "is_pinned": False,
-        #               "reacts": {
-        #                           1: { "react_id" : 1,
+        #               "reacts": [
+        #                           { "react_id" : 1,
         #                                "u_ids": [1, 2, 3, 4],
-        #                           }
-        #                       }
+        #                           },
+        #                         ]
+        #
         #           }
         #       },
         # },

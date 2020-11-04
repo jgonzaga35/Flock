@@ -1,10 +1,10 @@
 import pytest
 from message import message_react, message_send
 from channels import channels_create
-from channel import channel_join
+from channel import channel_join, channel_messages
 from other import clear
 from error import InputError, AccessError
-from test_helpers import register_n_users, is_user_reacted
+from test_helpers import register_n_users
 
 
 def test_react_succesfully():
@@ -18,20 +18,32 @@ def test_react_succesfully():
     message_id = message_send(
         user_a["token"], public_channel_id, "Nice to see you mate"
     )["message_id"]
-    message_react(user_b["token"], message_id, 1)
-    # User_a and user_b are reacted
+
+    # user_a react to his own message
     message_react(user_a["token"], message_id, 1)
-    assert is_user_reacted(user_b["token"], public_channel_id, message_id, 1)
-    assert is_user_reacted(user_a["token"], public_channel_id, message_id, 1)
+
+    # Message from the perspective of user_a
+    message_a = channel_messages(user_a["token"], public_channel_id, 0)["messages"][0]
+    # user_a reacted
+    assert message_a["reacts"][0]["is_this_user_reacted"] == True
+    assert user_a["u_id"] in message_a["reacts"][0]["u_ids"]
+
+    # Message from the perspective of user_b
+    message_b = channel_messages(user_b["token"], public_channel_id, 0)["messages"][0]
+    # user_b haven't reacted
+    assert message_b["reacts"][0]["is_this_user_reacted"] == False
+    # user_b react to the message
+    message_react(user_b["token"], message_id, 1)
+    message_b = channel_messages(user_b["token"], public_channel_id, 0)["messages"][0]
+    assert message_b["reacts"][0]["is_this_user_reacted"] == True
+    assert user_b["u_id"] in message_a["reacts"][0]["u_ids"]
 
 
 def test_react_invalid_message_id_in_channel():
     clear()
     user_a, user_b = register_n_users(2)
     # user_a create a channel
-    public_channel_id_a = channels_create(user_a["token"], "public_channel_a", True)[
-        "channel_id"
-    ]
+    channels_create(user_a["token"], "public_channel_a", True)["channel_id"]
     # user_b create a channel and send message in his own channel
     public_channel_id_b = channels_create(user_b["token"], "public_channel_b", True)[
         "channel_id"

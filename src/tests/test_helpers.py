@@ -143,21 +143,6 @@ def http_register_n_users(url, num_users, include_admin=False):
     return users
 
 
-def is_user_reacted(token, channel_id, message_id, react_id):
-    """
-    Ensure that a authorized user has reacted to a certain message with
-    specific react_id
-    """
-    # Assume channel_id and message_id are valid
-    assert channel_id in database["channels"]
-    assert message_id in database["channels"][channel_id]["messages"]
-    message = database["channels"][channel_id]["messages"][message_id]
-    react = message["reacts"][react_id]
-    user_id = auth_get_current_user_id_from_token(token)
-    # User is reacted and user is in the react user_id list
-    return user_id in react["u_ids"]
-
-
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
 @pytest.fixture(scope="session")

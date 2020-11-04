@@ -1,7 +1,6 @@
 from database import database
 from auth import auth_get_current_user_id_from_token
 from channel import get_channel_from_id
-from channels import channels_list
 
 import time
 from error import AccessError, InputError
@@ -29,7 +28,7 @@ def message_send(token, channel_id, message):
         "message": message,
         "time_created": time.time(),
         "is_pinned": False,
-        "reacts": {},
+        "reacts": [],
     }
 
     database["messages_id_head"] += 1
@@ -216,18 +215,23 @@ def message_react(token, message_id, react_id):
     if message == None:
         raise InputError("Message_id is invalid")
 
-    # If react_id still not in database
-    if react_id not in message["reacts"]:
-        message["reacts"][react_id] = {
+    # Get the react from message
+    react = next(
+        (react for react in message["reacts"] if react["react_id"] == react_id), None
+    )
+    # React haven't being created
+    if react == None:
+        new_react = {
             "react_id": react_id,
             "u_ids": [user_id],
         }
+        message["reacts"].append(new_react)
     else:
         # If user has reacted
-        if user_id in message["reacts"][react_id]["u_ids"]:
+        if user_id in react["u_ids"]:
             raise InputError("This user has reacted")
         else:
-            message["reacts"][react_id]["u_ids"].append(user_id)
+            react["u_ids"].append(user_id)
 
 
 def message_unreact(token, message_id, react_id):
