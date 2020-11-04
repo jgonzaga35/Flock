@@ -9,7 +9,9 @@ from database import database
 
 INVALID_MESSAGE_ID = -1
 
-
+# Fixutre which creates a sample public channel
+# and sends a message, returning user,
+# channel and message info
 @pytest.fixture
 def create_channel():
     clear()
