@@ -49,7 +49,7 @@ def test_message_pin_private_simple():
     assert channel_msg["messages"][0]["is_pinned"] == True
 
 
-def test_message_pin_invalid_message_id(create_channel):
+def test_message_pin_invalid_message_id():
     clear()
     user = register_n_users(1)
     # Create a channel and send a message
