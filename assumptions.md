@@ -87,6 +87,12 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
     * messages will be sorted by date (newest first)
     * a query string matches a message if the query string is exactly contained within that message (cases matching)
 
+**standup**
+
+* standup_send:
+    * The maximum character is a message to standup_stand is 1000, while the length of the message in the queue can exceed 1000
+    * If a user changes his handle during standup period, the changed won't reflect in the standup message send
+
 **user_HTTP_wrapper**
 
 * user/profile

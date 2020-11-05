@@ -54,6 +54,9 @@ def channels_create(token, name, is_public):
         "owner_members_id": [creator_data["id"]],
         "all_members_id": [creator_data["id"]],
         "messages": {},
+        "standup_queue": [],
+        "standup_is_active": False,
+        "standup_finish_time": None
     }
     database["channels"][id] = new_channel
     database["channels_id_head"] += 1

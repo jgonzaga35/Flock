@@ -11,11 +11,13 @@ def user_profile(token, u_id):
     """
     take a valid token and u_id, return a dictionary as below:
     >>> {
-        'u_id': user['id'],
-        'email': user['email'],
-        'name_first': user['first_name'],
-        'name_last': user['last_name'],
-        'handle_str': user['handle'],
+        "user" : {
+            'u_id': user['id'],
+            'email': user['email'],
+            'name_first': user['first_name'],
+            'name_last': user['last_name'],
+            'handle_str': user['handle'],
+        }
     }
     """
     # Ensure token is valid

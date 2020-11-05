@@ -1,5 +1,15 @@
 database = {
-    "users": {},
+    "users": {
+        # u_id; {
+        #     "email": email,
+        #     "password": encrypt(password),
+        #     "first_name": name_first,
+        #     "last_name": name_last,
+        #     "id": u_id,
+        #     "handle": String
+        #     "is_admin": Bool,
+        # }
+    },
     "users_id_head": 1,
     # id_heads are only ever incremented, they are used to generate ids
     "channels_id_head": 1,
@@ -22,6 +32,11 @@ database = {
         #               "is_pinned": False,
         #           }
         #       },
+        #      "standup_queue" : [
+        #            (handle, message)
+        #       ]
+        #       "standup_is_active" : True
+        #       "standup_start_time": 
         # },
     },
     # no message should have the same id, even across channels
