@@ -39,7 +39,11 @@ def test_react_succesfully():
     assert user_b["u_id"] in message_a["reacts"][0]["u_ids"]
 
 
-def test_react_invalid_message_id_in_channel():
+def test_react_invalid_message_id_in_different_channel():
+    """
+    Test the situation where the user trying to react to a message but
+    not in that channel
+    """
     clear()
     user_a, user_b = register_n_users(2)
     # user_a create a channel
@@ -54,6 +58,18 @@ def test_react_invalid_message_id_in_channel():
     # user_a should not be able to react the the message in the public_channel_b
     with pytest.raises(InputError):
         message_react(user_a["token"], message_id_b, 1)
+
+
+def test_react_invalid_message_id_in_channel():
+    """
+    Test user trying to unreact to a invalid message id
+    """
+    clear()
+    user_a = register_n_users(1)
+    channels_create(user_a["token"], "channel_a", True)
+    invalid_channel_id = -1
+    with pytest.raises(InputError):
+        message_react(user_a["token"], invalid_channel_id, 1)
 
 
 def test_react_invalid_message_id_out_channel():

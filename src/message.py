@@ -235,7 +235,50 @@ def message_react(token, message_id, react_id):
 
 
 def message_unreact(token, message_id, react_id):
-    pass
+    # Ensure react id is valid
+    if not is_react_id_valid(react_id):
+        raise InputError("react id is invalid")
+
+    # If token is invalid, the function below will raise AccessError
+    user_id = auth_get_current_user_id_from_token(token)
+
+    channels = [
+        channel
+        for channel in database["channels"].values()
+        if user_id in channel["all_members_id"]
+    ]
+
+    # User is not in any channel
+    if channels == []:
+        raise InputError("user is not in any channel")
+
+    # Ensure there is a message match the message_id
+    message = next(
+        (
+            message
+            for channel in channels
+            for message in channel["messages"].values()
+            if message_id == message["message_id"]
+        ),
+        None,
+    )
+
+    if message == None:
+        raise InputError("Message_id is invalid")
+
+    # Get the react from message
+    react = next(
+        (react for react in message["reacts"] if react["react_id"] == react_id), None
+    )
+    # React haven't being created
+    if react == None:
+        raise InputError("React id id inactive")
+    else:
+        # If user has reacted
+        if user_id not in react["u_ids"]:
+            raise InputError("This user hasn't reacted")
+        else:
+            react["u_ids"].remove(user_id)
 
 
 # Helper functions
