@@ -1,12 +1,12 @@
 database = {
     "users": {
-        # u_id; {
+        # u_id: {
         #     "email": email,
         #     "password": encrypt(password),
         #     "first_name": name_first,
         #     "last_name": name_last,
         #     "id": u_id,
-        #     "handle": String
+        #     "handle": String,
         #     "is_admin": Bool,
         # }
     },
@@ -18,9 +18,9 @@ database = {
         #     "id": 1,
         #     "name": "greatest_channel",
         #     # the user id of the owners
-        #     "owner_members_id": [1, 2, 3]
+        #     "owner_members_id": [1, 2, 3],
         #     # the user id of all the members (including the owners)
-        #     "all_members_id": [1, 2, 3, 5, 4, 9]
+        #     "all_members_id": [1, 2, 3, 5, 4, 9],
         #     "is_public": True,
         #     "is_admin": False, # is a global "flockr owner"
         #     "messages": {
@@ -32,11 +32,11 @@ database = {
         #               "is_pinned": False,
         #           }
         #       },
-        #      "standup_queue" : [
-        #            (handle, message)
-        #       ]
-        #       "standup_is_active" : True
-        #       "standup_start_time": 
+        #     "standup_queue": [
+        #             (handle, message)
+        #         ],
+        #     "standup_is_active": True,
+        #     "standup_start_time": None
         # },
     },
     # no message should have the same id, even across channels
