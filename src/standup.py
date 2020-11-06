@@ -27,7 +27,7 @@ def standup_start(token, channel_id, length):
     t = Timer(length, send_message_from_queue, [user_id, channel])
     t.start()
 
-    return {"time_finish": channel["standup_finish_time"] - time()}
+    return {"time_finish": round(channel["standup_finish_time"] - time())}
 
 
 def standup_active(token, channel_id):
@@ -38,7 +38,7 @@ def standup_active(token, channel_id):
 
     return {
         "is_active": channel["standup_is_active"],
-        "time_finish": None if time_finish == None else time_finish - time(),
+        "time_finish": None if time_finish == None else round(time_finish - time()),
     }
 
 
