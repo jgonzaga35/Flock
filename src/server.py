@@ -261,12 +261,14 @@ def standup_start_handler():
 
     return jsonify(standup_start(token, channel_id, length))
 
+
 @APP.route("/standup/active", methods=["GET"])
 def standup_active_handler():
     token = request.args.get("token")
     channel_id = int(request.args.get("channel_id"))
 
     return jsonify(standup_active(token, channel_id))
+
 
 @APP.route("/standup/send", methods=["POST"])
 def standup_send_handler():
@@ -277,6 +279,7 @@ def standup_send_handler():
     message = data["message"]
 
     return jsonify(standup_send(token, channel_id, message))
+
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
