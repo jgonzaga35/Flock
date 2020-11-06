@@ -26,6 +26,7 @@ from channel import (
     channel_removeowner,
     channel_addowner,
 )
+from standup import standup_start, standup_active, standup_send
 from other import clear, users_all, search
 from other import clear, admin_userpermission_change
 
@@ -248,6 +249,34 @@ def search_messages_handler():
 
     return jsonify(search(token, query_str))
 
+
+# Standup functions
+@APP.route("/standup/start", methods=["POST"])
+def standup_start_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    channel_id = data["channel_id"]
+    length = data["length"]
+
+    return jsonify(standup_start(token, channel_id, length))
+
+@APP.route("/standup/active", methods=["GET"])
+def standup_active_handler():
+    token = request.args.get("token")
+    channel_id = int(request.args.get("channel_id"))
+
+    return jsonify(standup_active(token, channel_id))
+
+@APP.route("/standup/send", methods=["POST"])
+def standup_send_handler():
+    data = request.get_json()
+
+    token = data["token"]
+    channel_id = data["channel_id"]
+    message = data["message"]
+
+    return jsonify(standup_send(token, channel_id, message))
 
 if __name__ == "__main__":
     APP.run(port=0)  # Do not edit this port
