@@ -50,13 +50,11 @@ def test_standup_start_simple():
     messages = channel_messages(user1["token"], channel["channel_id"], 0)["messages"]
     assert len(messages) == 1
 
-    user1_handle = user_profile(user1["token"], user1["u_id"])["user"]["handle_str"]
+    user1_profile = user_profile(user1["token"], user1["u_id"])["user"]
+    user1_handle = user1_profile["handle_str"]
     user2_handle = user_profile(user2["token"], user2["u_id"])["user"]["handle_str"]
     assert messages[0]["message"] == f"{user1_handle}: test1\n{user2_handle}: test2"
-    assert (
-        messages[0]["u_id"]
-        == user_profile(user1["token"], user1["u_id"])["user"]["u_id"]
-    )
+    assert messages[0]["u_id"] == user1_profile["u_id"]
 
 
 def test_standup_start_invalid_channel_id():
@@ -106,9 +104,7 @@ def test_standup_active_simple():
 
     # Assert the return value of standup_active is correct
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert (
-        round(standup_active(user1["token"], channel["channel_id"])["time_finish"]) == 1
-    )
+    assert standup_active(user1["token"], channel["channel_id"])["time_finish"] == 1
 
     sleep(2)
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == False
@@ -225,9 +221,7 @@ def test_standup_start_complex():
     # Assert the standup is activated succesfullly
     assert standup["time_finish"] == 3
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert (
-        round(standup_active(user1["token"], channel["channel_id"])["time_finish"]) == 3
-    )
+    assert standup_active(user1["token"], channel["channel_id"])["time_finish"] == 3
 
     # Send two standup message
     standup_send(user1["token"], channel["channel_id"], "test1")
@@ -250,16 +244,15 @@ def test_standup_start_complex():
     assert standup_active(user1["token"], channel["channel_id"])["time_finish"] == None
 
     # Assert that the message is as expexted
-    user1_handle = user_profile(user1["token"], user1["u_id"])["user"]["handle_str"]
-    user2_handle = user_profile(user2["token"], user2["u_id"])["user"]["handle_str"]
+    user1_profile = user_profile(user1["token"], user1["u_id"])["user"]
+    user2_profile = user_profile(user2["token"], user2["u_id"])["user"]
+    user1_handle = user1_profile["handle_str"]
+    user2_handle = user2_profile["handle_str"]
     assert (
         messages[0]["message"]
         == f"{user1_handle}: test1\n{user2_handle}: test2\n{user2_handle}: test3"
     )
-    assert (
-        messages[0]["u_id"]
-        == user_profile(user1["token"], user1["u_id"])["user"]["u_id"]
-    )
+    assert messages[0]["u_id"] == user1_profile["u_id"]
 
     # No standup is active
     with pytest.raises(InputError):
@@ -273,9 +266,7 @@ def test_standup_start_complex():
     # Assert the standup is activated succesfullly
     assert standup["time_finish"] == 1
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert (
-        round(standup_active(user2["token"], channel["channel_id"])["time_finish"]) == 1
-    )
+    assert standup_active(user2["token"], channel["channel_id"])["time_finish"] == 1
 
     # User3 join the channel during standup
     channel_join(user3["token"], channel["channel_id"])
@@ -296,7 +287,4 @@ def test_standup_start_complex():
         messages[0]["message"]
         == f"{user1_handle}: LMAO\n{user2_handle}: LOL\n{user3_handle}: WTF\n"
     )
-    assert (
-        messages[0]["u_id"]
-        == user_profile(user2["token"], user2["u_id"])["user"]["u_id"]
-    )
+    assert messages[0]["u_id"] == user2_profile["u_id"]
