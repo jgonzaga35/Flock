@@ -3,7 +3,7 @@ import pytest
 import re
 import signal
 from database import database
-from auth import auth_register
+from auth import auth_register, auth_get_current_user_id_from_token
 from subprocess import Popen, PIPE
 from time import sleep
 
