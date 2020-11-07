@@ -5,7 +5,11 @@ import jwt
 from hashlib import sha256
 import random
 import string
-from auth import auth_get_user_data_from_id, auth_register, encrypt
+from auth import (
+    auth_get_user_data_from_id,
+    auth_register,
+    encrypt,
+)
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -57,34 +61,33 @@ def auth_get_user_data_from_email(email):
 
 # Sends user an email with a code allowing them to reset their password
 def auth_passwordreset_request(email):
+
+    # Check if email is valid and get user data from email
     user = auth_get_user_data_from_email(email)
+    length_of_code = 10
     previously_resetted = False
 
-    # Generate random alphanumeric code of length 10
-    reset_code = generate_reset_code(10)
-
-    # If user has resetted their password before, just change existing reset_code.
+    # Add encrpyted reset_code to database and send email to user
+    reset_code = generate_reset_code(length_of_code)
     for user_reset_code in database["reset_codes"].values():
-        if user["id"] == user_reset_code["u_id"]:
-            user_reset_code["reset_code"] = reset_code
+        if user_reset_code["u_id"] == user["id"]:
+            user_reset_code["reset_code"] = encrypt(reset_code)
             previously_resetted = True
             break
 
     # If user has not resetted their password before, add to database.
     # Store reset code in index corresponding to the appropriate user_id
-    if previously_resetted == False:
+    if not previously_resetted:
         user_reset_code = {
             "u_id": user["id"],
-            "reset_code": reset_code,
+            "reset_code": encrypt(reset_code),
         }
         index = database["reset_codes_head"]
-        database["reset_codes_head"] += 1
-
         database["reset_codes"][index] = user_reset_code
+        database["reset_codes_head"] += 1
 
     # Send password reset email to user
     send_passwordreset_request_email(email, user, reset_code)
-
     return {}
 
 

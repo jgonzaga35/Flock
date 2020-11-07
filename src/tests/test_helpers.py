@@ -168,8 +168,9 @@ def url():
 
 # Tests if passwordreset_request successfully stores one reset code in database
 def contains_reset_code(user):
+    # Length of reset code should be at least 10 characters
     for user_reset_code in database["reset_codes"].values():
-        if len(user_reset_code["reset_code"]) == 10:
+        if len(user_reset_code["reset_code"]) >= 10:
             return True
     return False
 

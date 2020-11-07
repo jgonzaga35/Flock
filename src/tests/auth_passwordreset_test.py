@@ -4,9 +4,6 @@ from auth import (
     auth_logout,
     auth_register,
     auth_get_user_data_from_id,
-    check_email,
-    encrypt,
-    jwt_decode,
 )
 from auth_passwordreset import (
     auth_passwordreset_reset,
@@ -24,7 +21,7 @@ from hashlib import sha256
 # Testing that passwordreset_request does not work for invalid emails.
 def test_passwordreset_request_invalid_email():
     clear()
-    user = register_n_users(1)
+    register_n_users(1)
     invalid_email = "12345"
 
     with pytest.raises(InputError):
@@ -91,7 +88,6 @@ def test_passwordreset_reset_success():
     auth_passwordreset_request(email)
     reset_code = get_reset_code_from_user_id(u_id)
     new_password = "NewPassword123"
-    assert len(reset_code) == 10
     auth_passwordreset_reset(reset_code, new_password)
 
     # Assert user can login with new password
