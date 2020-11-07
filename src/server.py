@@ -33,6 +33,8 @@ from message import (
     message_edit,
     message_pin,
     message_unpin,
+    message_react,
+    message_unreact,
 )
 from channel import (
     channel_details,
@@ -347,6 +349,21 @@ def standup_send_handler():
 @APP.route("/static/<path>")
 def upload(path):
     return send_from_directory("../static", path)
+@APP.route("/message/react", methods=["POST"])
+def message_react_handler():
+    data = request.get_json()
+    token = data["token"]
+    message_id = data["message_id"]
+    react_id = data["react_id"]
+    return jsonify(message_react(token, message_id, react_id))
+
+
+@APP.route("/message/unreact", methods=["POST"])
+def message_unreact_handlers():
+    token = request.args.get("token")
+    message_id = request.args.get("message_id")
+    react_id = request.args.get("react_id")
+    message_unreact(token, message_id, react_id)
 
 
 if __name__ == "__main__":

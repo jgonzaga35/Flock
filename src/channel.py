@@ -83,7 +83,6 @@ def channel_messages(token, channel_id, start):
                    }
         ],
         "start": start,
-        # showing off again...
         "end": -1 if len(channel_messages) < 50 else start + 50,
     }
 

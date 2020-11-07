@@ -3,7 +3,7 @@ from message import message_react, message_send
 from channels import channels_create
 from channel import channel_join, channel_messages
 from other import clear
-from error import InputError, AccessError
+from error import InputError
 from test_helpers import register_n_users
 
 
@@ -36,7 +36,7 @@ def test_react_succesfully():
     message_react(user_b["token"], message_id, 1)
     message_b = channel_messages(user_b["token"], public_channel_id, 0)["messages"][0]
     assert message_b["reacts"][0]["is_this_user_reacted"] == True
-    assert user_b["u_id"] in message_a["reacts"][0]["u_ids"]
+    assert user_b["u_id"] in message_b["reacts"][0]["u_ids"]
 
 
 def test_react_invalid_message_id_in_different_channel():
