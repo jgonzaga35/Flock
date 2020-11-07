@@ -128,7 +128,7 @@ def test_passwordreset_reset_double_reset():
     # Assert user can login with new password
     token = auth_login(email, new_password)["token"]
 
-    # Ensure user cannot login with old password
+    # Ensure user cannot reset password with old reset code
     auth_logout(token)
     with pytest.raises(InputError):
         assert auth_passwordreset_reset(reset_code, "NewPassWord2")
