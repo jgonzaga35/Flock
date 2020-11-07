@@ -106,12 +106,6 @@ def auth_get_user_data_from_id(user_id):
     never happen, because only valid id should be generated from tokens"""
     return database["users"][user_id]
 
-# Helper to get all user data from their email
-def auth_get_user_data_from_email(email):
-    for user in database["users"].values():
-        if user["email"] == email:
-            return user
-    return None
 
 # Helper function for validating an Email
 def check_email(email):

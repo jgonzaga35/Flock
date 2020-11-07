@@ -164,3 +164,18 @@ def url():
     else:
         server.kill()
         raise Exception("Couldn't get URL from local server")
+
+
+# Tests if passwordreset_request successfully stores one reset code in database
+def contains_reset_code(user):
+    for user_reset_code in database["reset_codes"].values():
+        if len(user_reset_code["reset_code"]) == 10:
+            return True
+    return False
+
+
+# Gets the reset code for a specified user_id
+def get_reset_code_from_user_id(user_id):
+    for user_reset_code in database["reset_codes"].values():
+        if user_reset_code["u_id"] == user_id:
+            return user_reset_code["reset_code"]
