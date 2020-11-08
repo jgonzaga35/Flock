@@ -115,6 +115,5 @@ def auth_passwordreset_reset(reset_code, new_password):
     for code in database["reset_codes"].values():
         if code["reset_code"] == reset_code:
             code["reset_code"] = "invalid"
-            break
 
     return {}

@@ -165,3 +165,38 @@ def test_passwordreset_reset_success_twice():
     auth_passwordreset_reset(reset_code_2, new_password_2)
 
     token = auth_login(email, new_password_2)["token"]
+
+
+def test_passwordreset_reset_success_multiple_users():
+    clear()
+    user1, user2 = register_n_users(2)
+
+    # User 1 Data
+    user1_data = auth_get_user_data_from_id(user1["u_id"])
+    u_id_1 = user1_data["id"]
+    email_1 = user1_data["email"]
+    old_password_1 = "passwordthatislongenough0"
+
+    # User 2 Data
+    user2_data = auth_get_user_data_from_id(user2["u_id"])
+    u_id_2 = user2_data["id"]
+    email_2 = user2_data["email"]
+    old_password_2 = "passwordthatislongenough1"
+
+    # Logout
+    assert auth_logout(user1["token"])["is_success"] == True
+    assert auth_logout(user2["token"])["is_success"] == True
+
+    # Reset password
+    auth_passwordreset_request(email_1)
+    auth_passwordreset_request(email_2)
+    reset_code_1 = get_reset_code_from_user_id(u_id_1)
+    reset_code_2 = get_reset_code_from_user_id(u_id_2)
+    new_password_1 = "NewPassword123"
+    new_password_2 = "NewPassword124"
+    auth_passwordreset_reset(reset_code_1, new_password_1)
+    auth_passwordreset_reset(reset_code_2, new_password_2)
+
+    # Assert user can login with new password
+    token_1 = auth_login(email_1, new_password_1)["token"]
+    token_2 = auth_login(email_2, new_password_2)["token"]
