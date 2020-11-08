@@ -190,7 +190,7 @@ def channel_listall():
 @APP.route("/channel/join", methods=["POST"])
 def join_channel():
     data = request.get_json()
-    return jsonify(channel_join(data["token"], data["channel_id"]))
+    return jsonify(channel_join(data["token"], int(data["channel_id"])))
 
 
 @APP.route("/channel/messages", methods=["GET"])
