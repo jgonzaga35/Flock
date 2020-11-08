@@ -175,13 +175,11 @@ def test_passwordreset_reset_success_multiple_users():
     user1_data = auth_get_user_data_from_id(user1["u_id"])
     u_id_1 = user1_data["id"]
     email_1 = user1_data["email"]
-    old_password_1 = "passwordthatislongenough0"
 
     # User 2 Data
     user2_data = auth_get_user_data_from_id(user2["u_id"])
     u_id_2 = user2_data["id"]
     email_2 = user2_data["email"]
-    old_password_2 = "passwordthatislongenough1"
 
     # Logout
     assert auth_logout(user1["token"])["is_success"] == True
@@ -198,5 +196,5 @@ def test_passwordreset_reset_success_multiple_users():
     auth_passwordreset_reset(reset_code_2, new_password_2)
 
     # Assert user can login with new password
-    token_1 = auth_login(email_1, new_password_1)["token"]
-    token_2 = auth_login(email_2, new_password_2)["token"]
+    assert auth_login(email_1, new_password_1)["token"]
+    assert auth_login(email_2, new_password_2)["token"]
