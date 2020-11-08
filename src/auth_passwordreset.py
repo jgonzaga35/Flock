@@ -93,9 +93,6 @@ def auth_passwordreset_request(email):
 
 # Helper function to get user id from reset code
 def get_u_id_from_reset_code(reset_code):
-    if reset_code == "invalid":
-        raise InputError("Invalid reset code")
-
     for user_reset_code in database["reset_codes"].values():
         if reset_code == user_reset_code["reset_code"]:
             return user_reset_code["u_id"]
