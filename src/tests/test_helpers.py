@@ -149,8 +149,6 @@ def http_register_n_users(url, num_users, include_admin=False):
 # so you don't need to.
 @pytest.fixture(scope="session")
 def url():
-    yield "http://127.0.0.1:55421/"
-    return
     url_re = re.compile(r" \* Running on ([^ ]*)")
     server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
