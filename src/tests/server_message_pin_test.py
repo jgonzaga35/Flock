@@ -116,7 +116,7 @@ def test_message_pin_private_simple(url):
 
 
 def test_message_pin_invalid_message_id(create_channel):
-    url, user, channel, message = create_channel
+    url, user, channel, _ = create_channel
 
     # Ensure message not pinned
     channel_msg = return_first_message_in_channel(url, user, channel)
