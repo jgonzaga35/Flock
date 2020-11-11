@@ -33,4 +33,6 @@ database = {
     # no message should have the same id, even across channels
     "messages_id_head": 1,
     "active_tokens": [],
+    "reset_codes_head": 1,
+    "reset_codes": {},
 }
