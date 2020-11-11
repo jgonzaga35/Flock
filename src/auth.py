@@ -73,7 +73,6 @@ def auth_register(email, password, name_first, name_last):
         "is_admin": False,
         "profile_img_url": get_host_url() + "static/default_user_profile.jpg",
     }
-    print(new_user["profile_img_url"])
 
     # first user to register automatically becomes an admin (flockr owner)
     if len(database["users"]) == 0:
