@@ -6,7 +6,12 @@ from flask_cors import CORS
 from error import InputError
 
 # Import the functions we are wrapping
-from auth import auth_login, auth_logout, auth_register, auth_get_current_user_id_from_token
+from auth import (
+    auth_login,
+    auth_logout,
+    auth_register,
+    auth_get_current_user_id_from_token,
+)
 
 from auth_passwordreset import (
     auth_passwordreset_request,
@@ -36,6 +41,7 @@ from channel import (
 from photo import user_profile_crop_image
 from other import clear, users_all, search
 from other import clear, admin_userpermission_change
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -270,6 +276,7 @@ def search_messages_handler():
 
     return jsonify(search(token, query_str))
 
+
 @APP.route("/user/profile/uploadphoto", methods=["POST"])
 def upload_photo():
     data = request.get_json()
@@ -286,6 +293,7 @@ def upload_photo():
     user_id = auth_get_current_user_id_from_token(token)
 
     return {}
+
 
 @APP.route("/static/<path>")
 def upload(path):
