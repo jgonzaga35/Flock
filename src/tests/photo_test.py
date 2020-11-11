@@ -17,6 +17,12 @@ def test_crop_dimensions_out_of_bounds():
     with pytest.raises(InputError):
         user_profile_crop_image(user["token"], IMG_1_URL, -1, 500, 800, 900)
 
+def test_crop_dimensions_not_within_original():
+    clear()
+    user = register_n_users(1)
+    with pytest.raises(InputError):
+        user_profile_crop_image(user["token"], IMG_1_URL, 0, 0, 8000, 9000)
+
 def test_crop_image_not_jpg():
     clear()
     user = register_n_users(1)
@@ -37,4 +43,4 @@ def test_invalid_user():
 def test_simple_crop():
     clear()
     user = register_n_users(1)
-    user_profile_crop_image(user["token"], IMG_1_URL, 40, 50, 80, 90)
+    user_profile_crop_image(user["token"], IMG_1_URL, 20, 50, 350, 490)
