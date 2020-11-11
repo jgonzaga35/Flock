@@ -39,5 +39,7 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
     cropped = original_img.crop((x_start, y_start, x_end, y_end))
     cropped.save("static/" + str(user_id) + ".jpg")
 
-    database["users"][user_id]["profile_img_url"] = get_host_url() + "static/" + str(user_id) + ".jpg"
+    database["users"][user_id]["profile_img_url"] = (
+        get_host_url() + "static/" + str(user_id) + ".jpg"
+    )
     return {}

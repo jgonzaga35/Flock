@@ -3,6 +3,7 @@ from auth import auth_get_current_user_id_from_token
 from user import get_user_details
 from error import AccessError, InputError
 
+
 def clear():
     database["users"].clear()
     database["channels"].clear()

@@ -5,6 +5,7 @@ IMG_1_URL = "https://diceware.dmuth.org/dice.jpg"
 IMG_PNG = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
 BAD_URL = "https://bad.url"
 
+
 def test_simple(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
@@ -18,7 +19,7 @@ def test_simple(url):
             "y_start": 0,
             "x_end": 300,
             "y_end": 300,
-        }
+        },
     )
 
     assert response.status_code == 200
@@ -36,4 +37,3 @@ def test_simple(url):
     url = user_data["user"]["profile_img_url"]
     assert url.startswith("http://")
     assert url.endswith("/static/" + str(user["u_id"]) + ".jpg")
-   
