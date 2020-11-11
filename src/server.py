@@ -1,7 +1,7 @@
 import sys
 import smtplib, ssl
 from json import dumps
-from flask import Flask, request, jsonify, send_from_directory, redirect
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from error import InputError
 
@@ -301,4 +301,4 @@ def upload(path):
 
 
 if __name__ == "__main__":
-    APP.run(port=8080, debug=True)  # Do not edit this port
+    APP.run(port=0)  # Do not edit this port
