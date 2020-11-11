@@ -215,7 +215,7 @@ def channel_listall():
     return jsonify(channels_listall(token))
 
 
-@APP.route("/cshannel/join", methods=["POST"])
+@APP.route("/channel/join", methods=["POST"])
 def join_channel():
     data = request.get_json()
     return jsonify(channel_join(data["token"], int(data["channel_id"])))
