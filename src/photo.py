@@ -3,6 +3,8 @@ from urllib import request
 from PIL import Image
 from error import InputError
 
+PHOTO_PATH = "static/"
+
 # /user/profile/uploadphoto wraps around this function
 def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
     """Given a URL of an image on the internet, crops the image within bounds
@@ -14,11 +16,11 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
 
     # Returns (filename, headers) if successful
     try:
-        response = request.urlretrieve(img_url, "user_photos/" + str(user_id) + ".jpg")
+        request.urlretrieve(img_url, PHOTO_PATH + str(user_id) + ".jpg")
     except:
         raise InputError("img_url returns an HTTP status other than 200")
 
-    original_img = Image.open("user_photos/" + str(user_id) + ".jpg")
+    original_img = Image.open(PHOTO_PATH + str(user_id) + ".jpg")
     original_width, original_height = original_img.size
 
     # Ensure image in correct format
@@ -34,4 +36,5 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
         raise InputError("Dimensions out of bounds from original image")
 
     cropped = original_img.crop((x_start, y_start, x_end, y_end))
-    cropped.save("user_photos/" + str(user_id) + ".jpg")
+    cropped.save(PHOTO_PATH + str(user_id) + ".jpg")
+    return {}

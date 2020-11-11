@@ -49,4 +49,5 @@ def test_invalid_user():
 def test_simple_crop():
     clear()
     user = register_n_users(1)
-    user_profile_crop_image(user["token"], IMG_1_URL, 20, 50, 350, 490)
+    assert user_profile_crop_image(user["token"], IMG_1_URL, 20, 50, 350, 490) == {}
+    
