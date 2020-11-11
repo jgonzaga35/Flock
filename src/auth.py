@@ -122,13 +122,25 @@ def check_email(email):
 # Helper function to check register info.
 def input_error_checking(email, password, name_first, name_last):
     check_email(email)
+    is_valid_password(password)
+    is_valid_name_first(name_first)
+    is_valid_name_last(name_last)
 
+
+# Helper function to check if password is valid
+def is_valid_password(password):
     if len(password) < 6:
         raise InputError("Password is too short.")
 
+
+# Helper function to check if first name is valid
+def is_valid_name_first(name_first):
     if len(name_first) > 50 or len(name_first) < 1:
         raise InputError("First name is invalid.")
 
+
+# Helper function to check if last name is valid
+def is_valid_name_last(name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
 

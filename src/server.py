@@ -1,4 +1,5 @@
 import sys
+import smtplib, ssl
 from json import dumps
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
@@ -6,6 +7,12 @@ from error import InputError
 
 # Import the functions we are wrapping
 from auth import auth_login, auth_logout, auth_register, auth_get_current_user_id_from_token
+
+from auth_passwordreset import (
+    auth_passwordreset_request,
+    auth_passwordreset_reset,
+)
+
 from user import (
     user_profile,
     user_profile_setname,
@@ -89,6 +96,19 @@ def register():
             data["email"], data["password"], data["name_first"], data["name_last"]
         )
     )
+
+
+# Reset Password functions
+@APP.route("/auth/passwordreset/request", methods=["POST"])
+def reset_password_request():
+    data = request.get_json()
+    return dumps(auth_passwordreset_request(data["email"]))
+
+
+@APP.route("/auth/passwordreset/reset", methods=["POST"])
+def reset_password_reset():
+    data = request.get_json()
+    return dumps(auth_passwordreset_reset(data["reset_code"], data["new_password"]))
 
 
 # Message functions
