@@ -61,6 +61,7 @@ def get_user_details_from_user_id(user_id):
         "name_first": current_user["first_name"],
         "name_last": current_user["last_name"],
         "handle_str": current_user["handle"],
+        "profile_img_url": current_user["profile_img_url"],
     }
     """
     for user in database["users"].values():
@@ -74,6 +75,7 @@ def get_user_details_from_user_id(user_id):
         "name_first": current_user["first_name"],
         "name_last": current_user["last_name"],
         "handle_str": current_user["handle"],
+        "profile_img_url": current_user["profile_img_url"],
     }
 
 
