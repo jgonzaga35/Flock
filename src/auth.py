@@ -4,7 +4,7 @@ from error import InputError, AccessError
 import jwt
 from hashlib import sha256
 from flask import request
-from other import get_host_url
+from has_context import get_host_url
 
 TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"  # The key to the JWT encoding
 

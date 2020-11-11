@@ -4,7 +4,7 @@ from PIL import Image
 from error import InputError
 from database import database
 from flask import request
-from other import get_host_url
+from has_context import get_host_url
 
 # /user/profile/uploadphoto wraps around this function
 def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
