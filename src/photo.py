@@ -3,8 +3,6 @@ from urllib import request
 from PIL import Image
 from error import InputError
 
-IMG = "https://images.squarespace-cdn.com/content/v1/588a02f11b10e3d4643f5c35/1529414023053-VYOZFJHYGK4ZP4J7ROU1/ke17ZwdGBToddI8pDm48kOAAkRx_t64z7DtxIgl8aowUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8N_N4V1vUb5AoIIIbLZhVYxCRW4BPu10St3TBAUQYVKcnu583A7KLrl1h8MSxVTZxTM6WgCx0nvYGVcb13pyTIh-GFpiPL4F-R40gAFIkKTs/agile-graphic.jpg"
-
 # /user/profile/uploadphoto wraps around this function
 def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
     """Given a URL of an image on the internet, crops the image within bounds
