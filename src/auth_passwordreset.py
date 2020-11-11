@@ -9,6 +9,7 @@ from auth import (
     auth_get_user_data_from_id,
     auth_register,
     encrypt,
+    is_valid_password,
 )
 import smtplib, ssl
 from email.mime.text import MIMEText
@@ -16,6 +17,7 @@ from email.mime.multipart import MIMEMultipart
 
 SENDER_EMAIL = "comp1531mangoteam2@gmail.com"
 PASSWORD = "mangosquad123"
+PORT = 465
 
 # Generates a random alphanumeric string of specified length.
 def generate_reset_code(length):
@@ -37,7 +39,10 @@ def send_passwordreset_request_email(receiver_email, user, reset_code):
     Hello {name},
 
     Please use the following code to reset your password.
-    Code: {reset_code}""".format(
+    Code: {reset_code}
+    
+    Regards, 
+    Flockr""".format(
         name=user["first_name"], reset_code=reset_code
     )
 
@@ -46,7 +51,7 @@ def send_passwordreset_request_email(receiver_email, user, reset_code):
 
     # Send message
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+    with smtplib.SMTP_SSL("smtp.gmail.com", PORT, context=context) as server:
         server.login(SENDER_EMAIL, PASSWORD)
         server.sendmail(SENDER_EMAIL, receiver_email, message.as_string())
 
@@ -102,8 +107,7 @@ def get_u_id_from_reset_code(reset_code):
 # Resets password with a new password given the correct reset code
 def auth_passwordreset_reset(reset_code, new_password):
     # Check if new password is valid.
-    if len(new_password) < 6:
-        raise InputError("Password is too short.")
+    is_valid_password(new_password)
 
     # Check if reset_code is valid.
     u_id = get_u_id_from_reset_code(reset_code)
@@ -112,8 +116,9 @@ def auth_passwordreset_reset(reset_code, new_password):
     database["users"][u_id]["password"] = encrypt(new_password)
 
     # Delete reset code
-    for code in database["reset_codes"].values():
+    for reset_code_id, code in database["reset_codes"].items():
         if code["reset_code"] == reset_code:
-            code["reset_code"] = "invalid"
+            to_remove = reset_code_id
+    del database["reset_codes"][to_remove]
 
     return {}

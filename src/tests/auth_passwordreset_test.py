@@ -192,9 +192,48 @@ def test_passwordreset_reset_success_multiple_users():
     reset_code_2 = get_reset_code_from_user_id(u_id_2)
     new_password_1 = "NewPassword123"
     new_password_2 = "NewPassword124"
-    auth_passwordreset_reset(reset_code_1, new_password_1)
     auth_passwordreset_reset(reset_code_2, new_password_2)
+    auth_passwordreset_reset(reset_code_1, new_password_1)
 
     # Assert user can login with new password
     assert auth_login(email_1, new_password_1)["token"]
     assert auth_login(email_2, new_password_2)["token"]
+
+
+# Testing that when calling passwordreset_request twice,
+# only the most recent code works.
+def test_passwordreset_reset_request_twice():
+    clear()
+    user = register_n_users(1)
+
+    # Logout, assert that user can login with old password, then logout again
+    assert auth_logout(user["token"])["is_success"] == True
+
+    user_data = auth_get_user_data_from_id(user["u_id"])
+    u_id = user_data["id"]
+    email = user_data["email"]
+    old_password = "passwordthatislongenough0"
+
+    token = auth_login(email, old_password)["token"]
+    assert auth_logout(token)["is_success"] == True
+
+    # Ask for a reset code twice
+    auth_passwordreset_request(email)
+    reset_code_1 = get_reset_code_from_user_id(u_id)
+    auth_passwordreset_request(email)
+    reset_code_2 = get_reset_code_from_user_id(u_id)
+
+    # The reset codes should be unique
+    assert reset_code_1 != reset_code_2
+
+    # Assert user cannot login with old reset code
+    new_password = "NewPassword123"
+    with pytest.raises(InputError):
+        assert auth_passwordreset_reset(reset_code_1, new_password)
+
+    # Assert user can reset password with new reset code
+    auth_passwordreset_reset(reset_code_2, new_password)
+
+    # Assert user can login with new password
+    token = auth_login(email, new_password)["token"]
+    auth_logout(token)
