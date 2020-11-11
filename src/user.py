@@ -97,10 +97,10 @@ def isNameLengthOK(name, min, max):
 
 def get_user_details(user):
     return {
-        "u_id": user["u_id"],
+        "u_id": user["id"],
         "email": user["email"],
-        "name_first": user["name_first"],
-        "name_last": user["name_last"],
-        "handle_str": user["handle_str"],
+        "name_first": user["first_name"],
+        "name_last": user["last_name"],
+        "handle_str": user["handle"],
         "profile_img_url": user["profile_img_url"],
     }
