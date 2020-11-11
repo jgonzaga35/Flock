@@ -1,9 +1,10 @@
 from auth import auth_get_current_user_id_from_token
-from urllib import request
+from urllib import request as urllib_request
 from PIL import Image
 from error import InputError
-
-PHOTO_PATH = "static/"
+from database import database
+from flask import request
+from other import get_host_url
 
 # /user/profile/uploadphoto wraps around this function
 def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
@@ -16,11 +17,11 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
 
     # Returns (filename, headers) if successful
     try:
-        request.urlretrieve(img_url, PHOTO_PATH + str(user_id) + ".jpg")
+        urllib_request.urlretrieve(img_url, "static/" + str(user_id) + ".jpg")
     except:
         raise InputError("img_url returns an HTTP status other than 200")
 
-    original_img = Image.open(PHOTO_PATH + str(user_id) + ".jpg")
+    original_img = Image.open("static/" + str(user_id) + ".jpg")
     original_width, original_height = original_img.size
 
     # Ensure image in correct format
@@ -36,5 +37,7 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
         raise InputError("Dimensions out of bounds from original image")
 
     cropped = original_img.crop((x_start, y_start, x_end, y_end))
-    cropped.save(PHOTO_PATH + str(user_id) + ".jpg")
+    cropped.save("static/" + str(user_id) + ".jpg")
+
+    database["users"][user_id]["profile_img_url"] = get_host_url() + "static/" + str(user_id) + ".jpg"
     return {}
