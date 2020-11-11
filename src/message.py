@@ -3,10 +3,13 @@ from auth import auth_get_current_user_id_from_token
 from channel import get_channel_from_id
 
 import time
+from threading import Timer
 from error import AccessError, InputError
 
 
-def message_send(token, channel_id, message):
+def message_send(token, channel_id, message, delay=0):
+    """ delay is in seconds """
+
     user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
 
@@ -20,6 +23,18 @@ def message_send(token, channel_id, message):
             f"No one is going to read a {len(message)} character long message!"
         )
 
+    if delay < 0:
+        raise InputError("Time to send the message is in the past")
+
+    if delay == 0:
+        message_id = perform_message_send_no_checking(channel, user_id, message)
+        return {"message_id": message_id}
+
+    timer = Timer(delay, perform_message_send_no_checking, [channel, user_id, message])
+    timer.start()
+
+
+def perform_message_send_no_checking(channel, user_id, message):
     message_id = database["messages_id_head"]
 
     channel["messages"][message_id] = {
@@ -32,8 +47,7 @@ def message_send(token, channel_id, message):
     }
 
     database["messages_id_head"] += 1
-
-    return {"message_id": message_id}
+    return message_id
 
 
 def message_remove(token, message_id):
@@ -279,6 +293,10 @@ def message_unreact(token, message_id, react_id):
             raise InputError("This user hasn't reacted")
         else:
             react["u_ids"].remove(user_id)
+
+
+def sendlater(token, channel_id, message, time_sent):
+    return message_send(token, channel_id, message, delay=time_sent - time.time())
 
 
 # Helper functions
