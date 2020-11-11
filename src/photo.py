@@ -1,7 +1,9 @@
 from auth import auth_get_current_user_id_from_token
-import requests
+from urllib import request
 from PIL import Image
-from io import BytesIO
+from error import InputError
+
+IMG = "https://images.squarespace-cdn.com/content/v1/588a02f11b10e3d4643f5c35/1529414023053-VYOZFJHYGK4ZP4J7ROU1/ke17ZwdGBToddI8pDm48kOAAkRx_t64z7DtxIgl8aowUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8N_N4V1vUb5AoIIIbLZhVYxCRW4BPu10St3TBAUQYVKcnu583A7KLrl1h8MSxVTZxTM6WgCx0nvYGVcb13pyTIh-GFpiPL4F-R40gAFIkKTs/agile-graphic.jpg"
 
 # /user/profile/uploadphoto wraps around this function
 def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
@@ -10,33 +12,28 @@ def user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end):
     Position (0,0) is the top left."""
 
     # Ensure token is valid - error checking in function
-    user_id = auth_get_current_user_id_from_token(token)
+    # user_id = auth_get_current_user_id_from_token(token)
 
-    response = requests.get(img_url)
-    if response.status_code != 200:
-        raise InputError(f"img_url status code is: {response.status_code()}")
+    # Returns (filename, headers) if successful
+    try:
+        response = request.urlretrieve(img_url, "user_photos/" + str(user_id))
+    except:
+        raise InputError("img_url returns an HTTP status other than 200")
 
-    im = Image.open(BytesIO(response.content))
-    # Get dimensions of given image - x_original_start = x_original_end = 0
-    x_original_end, y_original_end = im.size()
+    original_img = Image.open("user_photos/" + str(user_id))
+    original_width, original_height = original_img.size
 
-    # Check given dimensions are within original image
-    if (
-        x_start < 0 
-        or x_start > x_original_end
-        or x_end < 0 
-        or x_end > x_original_end
-        or y_start < 0
-        or y_start > y_original_end
-        or y_end < 0 
-        or y_end > y_original_end
-    ):
-        raise InputError(
-            "any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL"
-        )
+    # Ensure image in correct format
+    if(original_img.format != "JPG" and original_img.format != "JPEG"):
+        raise InputError("Image uploaded is not a JPG")
 
-    # TODO: What to do if start > end or vice versa 
+    # Basic error checking for given coordinates
+    if x_start < 0 or y_start < 0 or x_end < x_start or y_end < y_start:
+        raise InputError("given dimensions incorrectly formatted")
 
-    im.crop((x_start, y_start, x_end, y_end))
-    im.show()
-    
+    # Error checking that coordinates are within original image
+    if x_end > original_width or y_end > original_height:
+        raise InputError("Dimensions out of bounds from original image")
+
+    cropped = original_img.crop((x_start, y_start, x_end, y_end))
+    cropped.save("user_photos/" + str(user_id))
