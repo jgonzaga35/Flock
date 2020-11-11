@@ -290,7 +290,7 @@ def upload_photo():
     # Crop the image and stop it in user_photos folder
     # Name of image is user_id
     user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end)
-    user_id = auth_get_current_user_id_from_token(token)
+    auth_get_current_user_id_from_token(token)
 
     return {}
 
