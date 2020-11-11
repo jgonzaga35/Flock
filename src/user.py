@@ -29,15 +29,7 @@ def user_profile(token, u_id):
         raise InputError(f"{u_id} is not a valid user id")
 
     # We don't directly return user from database since password is included
-    return {
-        "user": {
-            "u_id": user["id"],
-            "email": user["email"],
-            "name_first": user["first_name"],
-            "name_last": user["last_name"],
-            "handle_str": user["handle"],
-        }
-    }
+    return {"user": get_user_details(user)}
 
 
 def user_profile_setname(token, name_first, name_last):

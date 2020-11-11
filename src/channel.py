@@ -237,6 +237,7 @@ def formated_user_details_from_user_data(user_data):
         "u_id": user_data["id"],
         "name_first": user_data["first_name"],
         "name_last": user_data["last_name"],
+        "profile_img_url": user_data["profile_img_url"],
     }
 
 
