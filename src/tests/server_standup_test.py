@@ -35,7 +35,7 @@ def test_standup_start_simple(url):
             "length": 1,
         },
     ).json()
-    assert standup["time_finish"] == 1
+    assert standup["time_finish"] == round(time() + 1)
 
     # Send two standup message
     requests.post(
@@ -206,7 +206,7 @@ def test_standup_active_simple(url):
     ).json()
 
     assert response["is_active"] == True
-    assert response["time_finish"] == 1
+    assert response["time_finish"] == round(time() + 1)
 
     sleep(2)
     response = requests.get(
@@ -428,7 +428,7 @@ def test_standup_start_complex(url):
     ).json()
 
     # Assert the standup is activated succesfullly
-    assert standup["time_finish"] == 1
+    assert standup["time_finish"] == round(time() + 1)
     assert (
         requests.get(
             url + "standup/active",
@@ -477,7 +477,7 @@ def test_standup_start_complex(url):
     ).json()
 
     # Assert the standup is activated succesfullly
-    assert standup["time_finish"] == 3
+    assert standup["time_finish"] == round(time() + 3)
 
     # Assert that standup active return the right value
     response = requests.get(
@@ -488,7 +488,7 @@ def test_standup_start_complex(url):
         },
     ).json()
     assert response["is_active"] == True
-    assert response["time_finish"] == 3
+    assert response["time_finish"] == round(time() + 3)
 
     # Send two standup message
     requests.post(
@@ -593,7 +593,7 @@ def test_standup_start_complex(url):
     ).json()
 
     # Assert the standup is activated succesfullly
-    assert standup["time_finish"] == 1
+    assert standup["time_finish"] == round(time() + 1)
 
     # Assert that standup active return the right value
     response = requests.get(
@@ -604,7 +604,7 @@ def test_standup_start_complex(url):
         },
     ).json()
     assert response["is_active"] == True
-    assert response["time_finish"] == 1
+    assert response["time_finish"] == round(time() + 1)
 
     # User3 join the channel during standup
     requests.post(
