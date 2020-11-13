@@ -9,7 +9,7 @@ from test_helpers import register_n_users
 
 # bump this up if you are running on a potato computer. It will scale delays,
 # but tests will *take* longer (not *run* slower)
-DELAY_SCALE = 0.1
+DELAY_SCALE = 1
 
 ERR_TOO_SLOW = "potato computer detected. Bump up DELAY_SCALE, or try to re-run"
 
