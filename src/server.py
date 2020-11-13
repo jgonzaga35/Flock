@@ -27,7 +27,13 @@ from user import (
 
 from channels import channels_create, channels_create, channels_list, channels_listall
 from channel import channel_details, channel_messages, channel_join, channel_leave
-from message import message_send, message_remove, message_edit, message_pin, message_unpin
+from message import (
+    message_send,
+    message_remove,
+    message_edit,
+    message_pin,
+    message_unpin,
+)
 from channel import (
     channel_details,
     channel_messages,
@@ -276,12 +282,18 @@ def search_messages_handler():
 
     return jsonify(search(token, query_str))
 
+
 @APP.route("/message/unpin", methods=["POST"])
 def unpin_message():
     data = request.get_json()
-    return jsonify(message_unpin(
-        data["token"], data["message_id"]
-    ))
+    return jsonify(message_unpin(data["token"], data["message_id"]))
+
+
+@APP.route("/message/pin", methods=["POST"])
+def pin_message():
+    data = request.get_json()
+    return jsonify(message_pin(data["token"], data["message_id"]))
+
 
 @APP.route("/user/profile/uploadphoto", methods=["POST"])
 def upload_photo():
