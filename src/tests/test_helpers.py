@@ -3,7 +3,7 @@ import pytest
 import re
 import signal
 from database import database
-from auth import auth_register
+from auth import auth_register, auth_get_current_user_id_from_token
 from subprocess import Popen, PIPE
 from time import sleep
 
@@ -61,6 +61,7 @@ def get_user_details_from_user_id(user_id):
         "name_first": current_user["first_name"],
         "name_last": current_user["last_name"],
         "handle_str": current_user["handle"],
+        "profile_img_url": current_user["profile_img_url"],
     }
     """
     for user in database["users"].values():
@@ -74,6 +75,7 @@ def get_user_details_from_user_id(user_id):
         "name_first": current_user["first_name"],
         "name_last": current_user["last_name"],
         "handle_str": current_user["handle"],
+        "profile_img_url": current_user["profile_img_url"],
     }
 
 
@@ -164,3 +166,19 @@ def url():
     else:
         server.kill()
         raise Exception("Couldn't get URL from local server")
+
+
+# Tests if passwordreset_request successfully stores one reset code in database
+def contains_reset_code(user):
+    # Length of reset code should be at least 10 characters
+    for user_reset_code in database["reset_codes"].values():
+        if len(user_reset_code["reset_code"]) >= 10:
+            return True
+    return False
+
+
+# Gets the reset code for a specified user_id
+def get_reset_code_from_user_id(user_id):
+    for user_reset_code in database["reset_codes"].values():
+        if user_reset_code["u_id"] == user_id:
+            return user_reset_code["reset_code"]
