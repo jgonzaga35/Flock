@@ -173,18 +173,21 @@ def profile():
 def setname():
     data = request.get_json()
     user_profile_setname(data["token"], data["name_first"], data["name_last"])
+    return dumps({})
 
 
 @APP.route("/user/profile/setemail", methods=["PUT"])
 def setemail():
     data = request.get_json()
     user_profile_setemail(data["token"], data["email"])
+    return dumps({})
 
 
 @APP.route("/user/profile/sethandle", methods=["PUT"])
 def sethandle():
     data = request.get_json()
     user_profile_sethandle(data["token"], data["handle_str"])
+    return dumps({})
 
 
 @APP.route("/users/all", methods=["GET"])
