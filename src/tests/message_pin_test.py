@@ -9,7 +9,9 @@ from database import database
 
 INVALID_MESSAGE_ID = -1
 
-
+# Fixutre which creates a sample public channel
+# and sends a message, returning user,
+# channel and message info
 @pytest.fixture
 def create_channel():
     clear()
@@ -49,7 +51,7 @@ def test_message_pin_private_simple():
     assert channel_msg["messages"][0]["is_pinned"] == True
 
 
-def test_message_pin_invalid_message_id(create_channel):
+def test_message_pin_invalid_message_id():
     clear()
     user = register_n_users(1)
     # Create a channel and send a message
