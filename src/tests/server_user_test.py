@@ -67,10 +67,11 @@ def test_setname_successful(url):
     user = http_register_n_users(url, 1)
 
     # set user name to Eric JOJO
-    requests.put(
+    r = requests.put(
         url + "user/profile/setname",
         json={"token": user["token"], "name_first": "Eric", "name_last": "JOJO"},
     )
+    assert r.status_code == 200
 
     # Assert that the name is changed successfully
     userProfile = requests.get(
@@ -161,10 +162,11 @@ def test_setname_invalid_token(url):
 def test_setemail_successful(url):
     requests.delete(url + "clear")
     user = http_register_n_users(url, 1)
-    requests.put(
+    r = requests.put(
         url + "user/profile/setemail",
         json={"token": user["token"], "email": "newemail@gmail.com"},
     )
+    assert r.status_code == 200
 
     # Assert that email is changed
     userProfile = requests.get(
@@ -205,10 +207,12 @@ def test_sethandle_successful(url):
     user = http_register_n_users(url, 1)
 
     # Set a new handle name as JOJOKING
-    requests.put(
+    r = requests.put(
         url + "user/profile/sethandle",
         json={"token": user["token"], "handle_str": "JOJOKING"},
     )
+    assert r.status_code == 200
+
     userProfile = requests.get(
         url + "user/profile", params={"token": user["token"], "u_id": user["u_id"]}
     ).json()["user"]
@@ -265,6 +269,11 @@ def test_handle_invalid_token(url):
         json={"token": invalid_token, "handle_str": "ha"},
     )
     assert r.status_code == 403
+
+
+##############################################################
+#                      Tests for users/all                   #
+##############################################################
 
 
 def test_users_all_many_users(url):
