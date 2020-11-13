@@ -89,6 +89,16 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * react:
     * Users can react to the their own messages
 
+**standup**
+
+* standup_send:
+    * The maximum character is a message to standup_stand is 1000, while the length of the message in the queue can exceed 1000
+    * If a user changes his handle during standup period, the changed won't reflect in the standup message send
+    * The time_finish returned is the absolute unix timestamp of when the standup will end
+    
+* standup_active:
+    * Any valid user are allow to check whether the standup period is active of other channel that he is not a member of
+
 **user_HTTP_wrapper**
 
 * user/profile
