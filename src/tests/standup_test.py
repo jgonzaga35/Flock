@@ -104,7 +104,9 @@ def test_standup_active_simple():
 
     # Assert the return value of standup_active is correct
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert standup_active(user1["token"], channel["channel_id"])["time_finish"] == round(time() + 1)
+    assert standup_active(user1["token"], channel["channel_id"])[
+        "time_finish"
+    ] == round(time() + 1)
 
     sleep(2)
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == False
@@ -221,7 +223,9 @@ def test_standup_start_complex():
     # Assert the standup is activated succesfullly
     assert standup["time_finish"] == round(time() + 3)
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert standup_active(user1["token"], channel["channel_id"])["time_finish"] == round(time() + 3)
+    assert standup_active(user1["token"], channel["channel_id"])[
+        "time_finish"
+    ] == round(time() + 3)
 
     # Send two standup message
     standup_send(user1["token"], channel["channel_id"], "test1")
@@ -266,7 +270,9 @@ def test_standup_start_complex():
     # Assert the standup is activated succesfullly
     assert standup["time_finish"] == round(time() + 1)
     assert standup_active(user1["token"], channel["channel_id"])["is_active"] == True
-    assert standup_active(user2["token"], channel["channel_id"])["time_finish"] == round(time() + 1)
+    assert standup_active(user2["token"], channel["channel_id"])[
+        "time_finish"
+    ] == round(time() + 1)
 
     # User3 join the channel during standup
     channel_join(user3["token"], channel["channel_id"])
