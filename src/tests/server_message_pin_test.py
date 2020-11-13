@@ -19,7 +19,7 @@ def create_channel(url):
         json={
             "token": user["token"],
             "name": "channel_01",
-            "is_public": False,
+            "is_public": True,
         },
     )
     assert response.status_code == 200
