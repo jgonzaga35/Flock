@@ -1,11 +1,23 @@
 import sys
+import smtplib, ssl
 from json import dumps
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from error import InputError
 
 # Import the functions we are wrapping
-from auth import auth_login, auth_logout, auth_register
+from auth import (
+    auth_login,
+    auth_logout,
+    auth_register,
+    auth_get_current_user_id_from_token,
+)
+
+from auth_passwordreset import (
+    auth_passwordreset_request,
+    auth_passwordreset_reset,
+)
+
 from user import (
     user_profile,
     user_profile_setname,
@@ -15,7 +27,13 @@ from user import (
 
 from channels import channels_create, channels_create, channels_list, channels_listall
 from channel import channel_details, channel_messages, channel_join, channel_leave
-from message import message_send, message_remove, message_edit
+from message import (
+    message_send,
+    message_remove,
+    message_edit,
+    message_pin,
+    message_unpin,
+)
 from channel import (
     channel_details,
     channel_messages,
@@ -26,9 +44,9 @@ from channel import (
     channel_removeowner,
     channel_addowner,
 )
+from photo import user_profile_crop_image
+from other import clear, users_all, search, admin_userpermission_change
 from standup import standup_start, standup_active, standup_send
-from other import clear, users_all, search
-from other import clear, admin_userpermission_change
 
 
 def defaultHandler(err):
@@ -48,8 +66,10 @@ def defaultHandler(err):
 APP = Flask(__name__)
 CORS(APP)
 
+
 APP.config["TRAP_HTTP_EXCEPTIONS"] = True
 APP.register_error_handler(Exception, defaultHandler)
+
 
 # Example
 @APP.route("/echo", methods=["GET"])
@@ -88,6 +108,19 @@ def register():
             data["email"], data["password"], data["name_first"], data["name_last"]
         )
     )
+
+
+# Reset Password functions
+@APP.route("/auth/passwordreset/request", methods=["POST"])
+def reset_password_request():
+    data = request.get_json()
+    return dumps(auth_passwordreset_request(data["email"]))
+
+
+@APP.route("/auth/passwordreset/reset", methods=["POST"])
+def reset_password_reset():
+    data = request.get_json()
+    return dumps(auth_passwordreset_reset(data["reset_code"], data["new_password"]))
 
 
 # Message functions
@@ -191,7 +224,7 @@ def channel_listall():
 @APP.route("/channel/join", methods=["POST"])
 def join_channel():
     data = request.get_json()
-    return jsonify(channel_join(data["token"], data["channel_id"]))
+    return jsonify(channel_join(data["token"], int(data["channel_id"])))
 
 
 @APP.route("/channel/messages", methods=["GET"])
@@ -250,6 +283,36 @@ def search_messages_handler():
     return jsonify(search(token, query_str))
 
 
+@APP.route("/message/unpin", methods=["POST"])
+def unpin_message():
+    data = request.get_json()
+    return jsonify(message_unpin(data["token"], data["message_id"]))
+
+
+@APP.route("/message/pin", methods=["POST"])
+def pin_message():
+    data = request.get_json()
+    return jsonify(message_pin(data["token"], data["message_id"]))
+
+
+@APP.route("/user/profile/uploadphoto", methods=["POST"])
+def upload_photo():
+    data = request.get_json()
+    token = data["token"]
+    img_url = str(data["img_url"])
+    x_start = int(data["x_start"])
+    y_start = int(data["y_start"])
+    x_end = int(data["x_end"])
+    y_end = int(data["y_end"])
+
+    # Crop the image and stop it in user_photos folder
+    # Name of image is user_id
+    user_profile_crop_image(token, img_url, x_start, y_start, x_end, y_end)
+    auth_get_current_user_id_from_token(token)
+
+    return {}
+
+
 # Standup functions
 @APP.route("/standup/start", methods=["POST"])
 def standup_start_handler():
@@ -279,6 +342,11 @@ def standup_send_handler():
     message = data["message"]
 
     return jsonify(standup_send(token, channel_id, message))
+
+
+@APP.route("/static/<path>")
+def upload(path):
+    return send_from_directory("../static", path)
 
 
 if __name__ == "__main__":
