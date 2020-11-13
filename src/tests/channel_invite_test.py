@@ -40,6 +40,7 @@ def test_channel_invite_simple():
         "u_id": usera["u_id"],
         "name_first": auth_get_user_data_from_id(usera["u_id"])["first_name"],
         "name_last": auth_get_user_data_from_id(usera["u_id"])["last_name"],
+        "profile_img_url": auth_get_user_data_from_id(usera["u_id"])["profile_img_url"],
     }
 
     channel_members_info = channel_details(userb["token"], channel_id)["all_members"]
@@ -61,6 +62,7 @@ def test_channel_invite_member_already_in_channel():
         "u_id": usera["u_id"],
         "name_first": auth_get_user_data_from_id(usera["u_id"])["first_name"],
         "name_last": auth_get_user_data_from_id(usera["u_id"])["last_name"],
+        "profile_img_url": auth_get_user_data_from_id(usera["u_id"])["profile_img_url"],
     }
 
     channel_join(usera["token"], channel_id)
