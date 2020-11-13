@@ -36,7 +36,7 @@ database = {
         #             (handle, message)
         #         ],
         #     "standup_is_active": True,
-        #     "standup_start_time": None
+        #     "standup_finish_time": None
         # },
     },
     # no message should have the same id, even across channels
