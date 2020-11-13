@@ -1,7 +1,6 @@
 from database import database
 from auth import auth_get_current_user_id_from_token
 from channel import get_channel_from_id
-from channels import channels_list
 
 import time
 from error import AccessError, InputError
@@ -29,6 +28,7 @@ def message_send(token, channel_id, message):
         "message": message,
         "time_created": time.time(),
         "is_pinned": False,
+        "reacts": [],
     }
 
     database["messages_id_head"] += 1
@@ -180,3 +180,165 @@ def message_pin(token, message_id):
 
     # User not authorised to pin message
     raise AccessError
+
+
+def message_unpin(token, message_id):
+    """Given a message within a channel, remove its mark as unpinned"""
+
+    # Check token is valid - error checking in function
+    user_id = auth_get_current_user_id_from_token(token)
+
+    # Check message exists in database
+    message_exists = False
+    for ch in database["channels"].values():
+        if message_id in ch["messages"]:
+            channel_id_for_message = ch["id"]
+            message_exists = True
+
+    if message_exists == False:
+        raise InputError
+
+    # Check message is not already unpinned
+    channel_msg = database["channels"][channel_id_for_message]["messages"][message_id]
+    if channel_msg["is_pinned"] == False:
+        raise InputError(f"message with message id {message_id} is already unpinned")
+
+    # Check user is in channel within which the message exists
+    if (
+        database["users"][user_id]["is_admin"] is False
+        and user_id
+        not in database["channels"][channel_id_for_message]["all_members_id"]
+    ):
+        raise AccessError(
+            "user must be part of the channel to remove his/her message (see assumptions.md)"
+        )
+
+    # Unpin message if user is authorised - i.e. user is either a flockr owner
+    # or the owner of the channel
+    if (
+        user_id in database["channels"][channel_id_for_message]["owner_members_id"]
+        or database["users"][user_id]["is_admin"]
+    ):
+        user_id_is_owner = True
+    else:
+        user_id_is_owner = False
+
+    for msg in database["channels"][channel_id_for_message]["messages"].values():
+        if msg["message_id"] == message_id and user_id_is_owner:
+            msg["is_pinned"] = False
+            return {}
+
+    # User not authorised to unpin message
+    raise AccessError
+
+
+def message_react(token, message_id, react_id):
+
+    # Ensure react id is valid
+    if not is_react_id_valid(react_id):
+        raise InputError("react id is invalid")
+
+    # If token is invalid, the function below will raise AccessError
+    user_id = auth_get_current_user_id_from_token(token)
+
+    channels = [
+        channel
+        for channel in database["channels"].values()
+        if user_id in channel["all_members_id"]
+    ]
+
+    # User is not in any channel
+    if channels == []:
+        raise InputError("user is not in any channel")
+
+    # Ensure there is a message match the message_id
+    message = next(
+        (
+            message
+            for channel in channels
+            for message in channel["messages"].values()
+            if message_id == message["message_id"]
+        ),
+        None,
+    )
+
+    if message == None:
+        raise InputError("Message_id is invalid")
+
+    # Get the react from message
+    react = next(
+        (react for react in message["reacts"] if react["react_id"] == react_id), None
+    )
+    # React haven't being created
+    if react == None:
+        new_react = {
+            "react_id": react_id,
+            "u_ids": [user_id],
+        }
+        message["reacts"].append(new_react)
+    else:
+        # If user has reacted
+        if user_id in react["u_ids"]:
+            raise InputError("This user has reacted")
+        else:
+            react["u_ids"].append(user_id)
+
+
+def message_unreact(token, message_id, react_id):
+    # Ensure react id is valid
+    if not is_react_id_valid(react_id):
+        raise InputError("react id is invalid")
+
+    # If token is invalid, the function below will raise AccessError
+    user_id = auth_get_current_user_id_from_token(token)
+
+    channels = [
+        channel
+        for channel in database["channels"].values()
+        if user_id in channel["all_members_id"]
+    ]
+
+    # User is not in any channel
+    if channels == []:
+        raise InputError("user is not in any channel")
+
+    # Ensure there is a message match the message_id
+    message = next(
+        (
+            message
+            for channel in channels
+            for message in channel["messages"].values()
+            if message_id == message["message_id"]
+        ),
+        None,
+    )
+
+    if message == None:
+        raise InputError("Message_id is invalid")
+
+    # Get the react from message
+    react = next(
+        (react for react in message["reacts"] if react["react_id"] == react_id), None
+    )
+    # React haven't being created
+    if react == None:
+        raise InputError("React id id inactive")
+    else:
+        # If user has reacted
+        if user_id not in react["u_ids"]:
+            raise InputError("This user hasn't reacted")
+        else:
+            react["u_ids"].remove(user_id)
+
+
+# Helper functions
+def is_react_id_valid(react_id):
+    """
+    Ensure react id is valid
+    Return True if it is valid
+    False otherwise
+    """
+    if react_id not in [1]:
+        return False
+    else:
+        return True

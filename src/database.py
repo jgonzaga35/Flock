@@ -30,6 +30,12 @@ database = {
         #               "message": "Hello world",
         #               "time_created": 1582426789,
         #               "is_pinned": False,
+        #               "reacts": [
+        #                           { "react_id" : 1,
+        #                                "u_ids": [1, 2, 3, 4],
+        #                           },
+        #                         ]
+        #
         #           }
         #       },
         #     "standup_queue": [
@@ -42,4 +48,6 @@ database = {
     # no message should have the same id, even across channels
     "messages_id_head": 1,
     "active_tokens": [],
+    "reset_codes_head": 1,
+    "reset_codes": {},
 }

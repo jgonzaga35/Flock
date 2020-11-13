@@ -63,6 +63,32 @@ def channel_details(token, channel_id):
 
 
 def channel_messages(token, channel_id, start):
+    """
+    >>> Return:
+    {
+        "messages": [
+                   1: {
+                       "message_id": 1,
+                       "u_id": 1,
+                       "message": "Hello world",
+                       "time_created": 1582426789,
+                       "is_pinned": False,
+                       "reacts": [
+                                   { "react_id" : 1,
+                                        "u_ids": [1, 2, 3, 4],
+                                        "is_this_user_reacted": True
+                                   },
+                                 ]
+
+                   }
+        ],
+        "start": start,
+        # showing off again...
+        "end": -1 if len(channel_messages) < 50 else start + 50,
+    }
+
+    Note that "is_this_user_reacted" is not the data from database
+    """
     current_user_id = auth_get_current_user_id_from_token(token)
     channel = get_channel_from_id(channel_id)
 
@@ -89,6 +115,9 @@ def channel_messages(token, channel_id, start):
     channel_messages = sorted(
         channel["messages"].values(), key=lambda msg: msg["time_created"], reverse=True
     )[start : start + 50]
+
+    # Add "is_this_user_reacted" to every reacts in every messages
+    add_react_information_to_message(token, channel_messages)
 
     return {
         "messages": channel_messages,
@@ -208,6 +237,7 @@ def formated_user_details_from_user_data(user_data):
         "u_id": user_data["id"],
         "name_first": user_data["first_name"],
         "name_last": user_data["last_name"],
+        "profile_img_url": user_data["profile_img_url"],
     }
 
 
@@ -231,3 +261,62 @@ def get_channel_from_id(channel_id):
         return database["channels"][channel_id]
     except KeyError:
         raise InputError(f"{channel_id} is an invalid channel id")
+
+
+def add_react_information_to_message(token, messages):
+    """
+    This function is to add a key "is_this_user_reacted" to
+    the "reacts" data type in message datatype
+    >>> Before adding:
+        "messages": [
+            1: {
+                "message_id": 1,
+                "u_id": 1,
+                "message": "Hello world",
+                "time_created": 1582426789,
+                "is_pinned": False,
+                "reacts": [
+                            { "react_id" : 1,
+                                "u_ids": [1, 2, 3, 4],
+                            },
+                            ]
+
+            }
+        },
+    ],
+    >>> After adding:
+            "messages": [
+            1: {
+                "message_id": 1,
+                "u_id": 1,
+                "message": "Hello world",
+                "time_created": 1582426789,
+                "is_pinned": False,
+                "reacts": [
+                            { "react_id" : 1,
+                                "u_ids": [1, 2, 3, 4],
+    difference >>>>>>>>>>>>>>> "is_this_user_reacted": True
+                            },
+                            ]
+
+            }
+        },
+    ]
+
+
+    The reason I didn't directly add "is_this_user_reacted"
+    to the database is because this value should be change according
+    to different user when we output reacts data type. This needs
+    us to recognize who is the current user that on the web page.
+    I think it is inappropriate to store the current user who
+    access to web page in our database since our database serves multiple
+    user, but it will be controversial to the front-end interface.
+    So I add "is_this_user_reacted" in the process of output messages.
+    """
+    user_id = auth_get_current_user_id_from_token(token)
+    for message in messages:
+        for react in message["reacts"]:
+            if user_id in react["u_ids"]:
+                react["is_this_user_reacted"] = True
+            else:
+                react["is_this_user_reacted"] = False

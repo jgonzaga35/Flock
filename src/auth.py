@@ -3,6 +3,8 @@ from database import database
 from error import InputError, AccessError
 import jwt
 from hashlib import sha256
+from flask import request
+from has_context import get_host_url
 
 TOKEN_SECRET_KEY = "COMP1531_MANGO_FRI_666"  # The key to the JWT encoding
 
@@ -69,6 +71,7 @@ def auth_register(email, password, name_first, name_last):
         "id": u_id,
         "handle": generate_handle(name_first, name_last, u_id),
         "is_admin": False,
+        "profile_img_url": get_host_url() + "static/default_user_profile.jpg",
     }
 
     # first user to register automatically becomes an admin (flockr owner)
@@ -94,6 +97,10 @@ def auth_register(email, password, name_first, name_last):
 
 # Helper to get u_id from token
 def auth_get_current_user_id_from_token(token):
+    """
+    Get current user id from token
+    If token is not exist, raise AccessError
+    """
     if token not in database["active_tokens"]:
         raise AccessError("token is invalid")
 
@@ -118,13 +125,25 @@ def check_email(email):
 # Helper function to check register info.
 def input_error_checking(email, password, name_first, name_last):
     check_email(email)
+    is_valid_password(password)
+    is_valid_name_first(name_first)
+    is_valid_name_last(name_last)
 
+
+# Helper function to check if password is valid
+def is_valid_password(password):
     if len(password) < 6:
         raise InputError("Password is too short.")
 
+
+# Helper function to check if first name is valid
+def is_valid_name_first(name_first):
     if len(name_first) > 50 or len(name_first) < 1:
         raise InputError("First name is invalid.")
 
+
+# Helper function to check if last name is valid
+def is_valid_name_last(name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last name is invalid.")
 

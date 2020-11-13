@@ -86,6 +86,8 @@ It's assumed that the HTTP wrapper for the above functions are encoded in JSON
 * search:
     * messages will be sorted by date (newest first)
     * a query string matches a message if the query string is exactly contained within that message (cases matching)
+* react:
+    * Users can react to the their own messages
 
 **standup**
 
