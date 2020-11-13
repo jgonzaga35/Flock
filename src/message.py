@@ -345,7 +345,7 @@ def message_unreact(token, message_id, react_id):
             react["u_ids"].remove(user_id)
 
 
-def sendlater(token, channel_id, message, time_sent):
+def message_sendlater(token, channel_id, message, time_sent):
     return message_send(token, channel_id, message, delay=time_sent - time.time())
 
 

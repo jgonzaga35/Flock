@@ -35,6 +35,7 @@ from message import (
     message_unpin,
     message_react,
     message_unreact,
+    message_sendlater,
 )
 from channel import (
     channel_details,
@@ -144,6 +145,19 @@ def send_message():
     data = request.get_json()
     return jsonify(
         message_send(data["token"], int(data["channel_id"]), data["message"])
+    )
+
+
+@APP.route("/message/sendlater", methods=["POST"])
+def message_sendlater_handler():
+    data = request.get_json()
+    return jsonify(
+        message_sendlater(
+            data["token"],
+            int(data["channel_id"]),
+            data["message"],
+            data["time_sent"],
+        )
     )
 
 
