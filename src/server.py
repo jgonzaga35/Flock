@@ -349,6 +349,8 @@ def standup_send_handler():
 @APP.route("/static/<path>")
 def upload(path):
     return send_from_directory("../static", path)
+
+
 @APP.route("/message/react", methods=["POST"])
 def message_react_handler():
     data = request.get_json()
