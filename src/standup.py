@@ -91,6 +91,7 @@ def send_message_from_queue(user_id, channel):
             "message": messages,
             "time_created": channel["standup_finish_time"],
             "is_pinned": False,
+            "reacts": [],
         }
 
         database["messages_id_head"] += 1
