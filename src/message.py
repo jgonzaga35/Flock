@@ -230,6 +230,8 @@ def message_unpin(token, message_id):
 
     # User not authorised to unpin message
     raise AccessError
+
+
 def message_react(token, message_id, react_id):
 
     # Ensure react id is valid
