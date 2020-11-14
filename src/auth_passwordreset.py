@@ -119,12 +119,9 @@ def auth_passwordreset_reset(reset_code, new_password):
     database["users"][u_id]["password"] = encrypt(new_password)
 
     # Delete reset code
-    to_remove = None
     for reset_code_id, code in database["reset_codes"].items():
         if code["reset_code"] == reset_code:
             to_remove = reset_code_id
-
-    if to_remove != None:
-        del database["reset_codes"][to_remove]
+    del database["reset_codes"][to_remove]
 
     return {}
