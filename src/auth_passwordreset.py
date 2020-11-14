@@ -96,8 +96,11 @@ def auth_passwordreset_request(email):
     return {}
 
 
-# Helper function to get user id from reset code
+# Helper function to get user id from encrypted reset code
 def get_u_id_from_reset_code(reset_code):
+    if len(reset_code) == 10:
+        reset_code = encrypt(reset_code)
+
     for user_reset_code in database["reset_codes"].values():
         if reset_code == user_reset_code["reset_code"]:
             return user_reset_code["u_id"]
@@ -116,9 +119,12 @@ def auth_passwordreset_reset(reset_code, new_password):
     database["users"][u_id]["password"] = encrypt(new_password)
 
     # Delete reset code
+    to_remove = None
     for reset_code_id, code in database["reset_codes"].items():
         if code["reset_code"] == reset_code:
             to_remove = reset_code_id
-    del database["reset_codes"][to_remove]
+
+    if to_remove != None:
+        del database["reset_codes"][to_remove]
 
     return {}
