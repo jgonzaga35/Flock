@@ -76,7 +76,7 @@ def auth_passwordreset_request(email):
     reset_code = generate_reset_code(length_of_code)
     for user_reset_code in database["reset_codes"].values():
         if user_reset_code["u_id"] == user["id"]:
-            user_reset_code["reset_code"] = encrypt(reset_code)
+            user_reset_code["reset_code"] = reset_code
             previously_resetted = True
             break
 
@@ -85,7 +85,7 @@ def auth_passwordreset_request(email):
     if not previously_resetted:
         user_reset_code = {
             "u_id": user["id"],
-            "reset_code": encrypt(reset_code),
+            "reset_code": reset_code,
         }
         index = database["reset_codes_head"]
         database["reset_codes"][index] = user_reset_code
@@ -96,7 +96,7 @@ def auth_passwordreset_request(email):
     return {}
 
 
-# Helper function to get user id from reset code
+# Helper function to get user id from encrypted reset code
 def get_u_id_from_reset_code(reset_code):
     for user_reset_code in database["reset_codes"].values():
         if reset_code == user_reset_code["reset_code"]:

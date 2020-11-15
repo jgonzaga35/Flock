@@ -61,7 +61,7 @@ def test_passwordreset_reset_invalid_reset_code():
     user = auth_get_user_data_from_id(u_id)
     auth_passwordreset_request(user["email"])
 
-    invalid_reset_code = "invalidresetcode"
+    invalid_reset_code = "1234567890"
     valid_password = "ValidPassword123"
 
     with pytest.raises(InputError):
