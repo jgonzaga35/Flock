@@ -98,9 +98,6 @@ def auth_passwordreset_request(email):
 
 # Helper function to get user id from encrypted reset code
 def get_u_id_from_reset_code(reset_code):
-    if len(reset_code) == 10:
-        reset_code = encrypt(reset_code)
-
     for user_reset_code in database["reset_codes"].values():
         if reset_code == user_reset_code["reset_code"]:
             return user_reset_code["u_id"]
@@ -111,6 +108,10 @@ def get_u_id_from_reset_code(reset_code):
 def auth_passwordreset_reset(reset_code, new_password):
     # Check if new password is valid.
     is_valid_password(new_password)
+
+    # The following functions assumes reset_code has been encrypted
+    if len(reset_code) == 10:
+        reset_code = encrypt(reset_code)
 
     # Check if reset_code is valid.
     u_id = get_u_id_from_reset_code(reset_code)
